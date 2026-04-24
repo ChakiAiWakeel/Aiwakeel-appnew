@@ -671,13 +671,48 @@ function goToStep(n,silent=false){
   if(!silent)window.scrollTo({top:0,behavior:'smooth'});
 }
 
-async function launch(){
-  try{await fetch(CONFIG.N8N_WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(state)});}catch(e){}
-  goToStep(5);
-  if(state.plan==='premium')document.getElementById('step5-whatsapp').style.display='block';
-  else document.getElementById('step5-classic').style.display='block';
-  sessionStorage.removeItem('awState');
+async function launch() {
+  const btn = document.getElementById('slide-thumb'); // Der Slider-Button
+  
+  try {
+    // 1. Daten an n8n senden und auf Antwort warten
+    const response = await fetch(CONFIG.N8N_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...state,
+        email: state.email || "customer@example.com", // Falls du ein Email-Feld hast
+        timestamp: new Date().toISOString()
+      })
+    });
+
+    if (!response.ok) throw new Error('Netzwerk-Antwort war nicht ok');
+
+    const data = await response.json();
+
+    // 2. Stripe-Weiterleitung (Sicherheits-Check)
+    if (data.checkoutUrl) {
+      // Wenn n8n den Stripe-Link schickt, leiten wir den Kunden zur Zahlung weiter
+      window.location.href = data.checkoutUrl;
+    } else {
+      // Falls kein Stripe-Link (z.B. Testmodus), gehe zu Schritt 5
+      goToStep(5);
+      if (state.plan === 'premium' || state.plan === 'premium') {
+        document.getElementById('step5-whatsapp').style.display = 'block';
+      } else {
+        document.getElementById('step5-classic').style.display = 'block';
+      }
+      sessionStorage.removeItem('awState');
+    }
+
+  } catch (e) {
+    console.error("Fehler beim Starten des Agenten:", e);
+    alert("Ein Fehler ist aufgetreten. Bitte versuche es erneut oder kontaktiere den Support.");
+    // Setze den Slider zurück, damit der Kunde es nochmal versuchen kann
+    location.reload(); 
+  }
 }
+
 
 // ── TESTIMONIALS ──
 let tIdx=0,tTimer;
