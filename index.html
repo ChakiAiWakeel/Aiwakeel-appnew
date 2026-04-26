@@ -4,7 +4,39 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Step 1/4 – AiWakeel Setup</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js">
+  function goToStep(n, silent = false) {
+  // Aktuelle Step ausblenden
+  document.getElementById('step-' + state.currentStep).classList.remove('active');
+  // Neue Step einblenden
+  document.getElementById('step-' + n).classList.add('active');
+  
+  // Summary für Step 4 befüllen
+  if (n === 4) {
+    document.getElementById('sum-setup').textContent = state.setupFee + '€';
+    document.getElementById('sum-fee').textContent = state.monthlyFee + '€ / mtl.';
+    document.getElementById('sum-budget').textContent = state.budget.toLocaleString('de-DE') + '€ / mtl.';
+  }
+  
+  // Progress Dots aktualisieren
+  const ROMAN = ['','I','II','III','IV'];
+  for (let i = 1; i <= 4; i++) {
+    const d = document.getElementById('dot-' + i);
+    if (d) {
+      d.classList.toggle('active', i === n);
+      d.classList.toggle('done', i < n);
+      d.textContent = i < n ? '✓' : ROMAN[i];
+    }
+    const l = document.getElementById('line-' + i);
+    if (l) l.classList.toggle('done', i < n);
+  }
+  
+  state.currentStep = n;
+  saveState();
+  
+  if (!silent) window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
