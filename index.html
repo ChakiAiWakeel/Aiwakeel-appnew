@@ -676,8 +676,17 @@ function validateStep2(){
   const chk=document.getElementById('domain-check'),ok=dom.includes('.')&&dom.length>3;
   chk.className='domain-check '+(ok?'domain-ok':'domain-err');
   chk.textContent=dom.length>2?(ok?'✓ Domain erkannt':'Domain ungültig'):'';
+  
+  // DAS HIER FEHLTE: Die Werte in den State schreiben und speichern!
+  if(ok && ind.length > 2) {
+      state.domain = dom;
+      state.industry = ind;
+      saveState();
+  }
+  
   document.getElementById('btn-step2-next').disabled=!(ok&&ind.length>2);
 }
+
 
 function updateBudget(val){
   val=parseInt(val);state.budget=val;saveState();
