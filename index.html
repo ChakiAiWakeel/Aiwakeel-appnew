@@ -637,11 +637,16 @@ async function connectGoogle(type) {
   try {
     // Öffnet das Google Popup
     const authData = await pb.collection('users').authWithOAuth2({ provider: 'google' });
-    
+       
     if (pb.authStore.isValid) {
       // E-Mail im State speichern
       state.email = authData.meta.email;
+      
+      // NEU: Wir speichern direkt die PocketBase ID!
+      state.userId = pb.authStore.model.id; 
+      
       saveState();
+
 
       // UI Update auf "Verifiziert"
       document.getElementById('btn-'+type).classList.add('connected');
