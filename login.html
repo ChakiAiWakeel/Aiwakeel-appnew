@@ -192,11 +192,11 @@ body::after{
 
 <script>
 const pb = new PocketBase('https://ads.aiwakeel.ai');
-const N8N_LOGIN_WEBHOOK = 'https://n8n.aiwakeel.ai/webhook/dashboard-login';
+const N8N_LOGIN_WEBHOOK = 'https://n8n.aiwakeel.ai/webhook/magic-code-request';
 
 window.onload = () => {
-  // 1. Auto-Login Check: Falls schon eingeloggt, direkt zum Dashboard leiten
-  if(localStorage.getItem('aw_session')) {
+  // 1. Auto-Login Check: Wir fragen PocketBase direkt
+  if(pb.authStore.isValid) {
     window.location.href = "dashboard.html";
   }
 
@@ -220,27 +220,26 @@ async function requestMagicCode() {
 
     if(!email) { msg.textContent = "Bitte E-Mail eingeben."; return; }
 
-    msg.textContent = "Code wird angefordert...";
+    msg.textContent = "Code wird gesendet...";
     msg.style.color = "var(--text-muted)";
     btn.disabled = true;
     
     try {
-        const res = await fetch(N8N_LOGIN_WEBHOOK, { 
+        // Triggert den n8n Workflow
+        await fetch(N8N_LOGIN_WEBHOOK, { 
             method:'POST', 
             headers:{'Content-Type':'application/json'}, 
             body:JSON.stringify({email: email}) 
         });
         
-        if(res.ok) {
-            document.getElementById('step-1').classList.add('hidden');
-            document.getElementById('step-2').classList.remove('hidden');
-            msg.textContent = "";
-        } else {
-            throw new Error();
-        }
+        // Wir gehen immer zu Schritt 2 über
+        document.getElementById('step-1').classList.add('hidden');
+        document.getElementById('step-2').classList.remove('hidden');
+        msg.textContent = "";
+        
     } catch(err) {
         msg.style.color = "var(--red)";
-        msg.textContent = "E-Mail nicht gefunden oder Fehler.";
+        msg.textContent = "Verbindungsfehler.";
     } finally {
         btn.disabled = false;
     }
@@ -259,13 +258,12 @@ async function verifyCode() {
     btn.disabled = true;
 
     try {
-        const record = await pb.collection('users').getFirstListItem(`email="${email}" && magic_code="${code}"`);
-        if(record) {
+        // Offizieller PocketBase Login mit dem Code als Passwort
+        await pb.collection('users').authWithPassword(email, code);
+        
+        if(pb.authStore.isValid) {
             msg.style.color = "#4CAF50";
             msg.textContent = "Erfolgreich! Leite weiter...";
-            
-            // Session speichern
-            localStorage.setItem('aw_session', JSON.stringify({ token: 'magic', record: record }));
             
             setTimeout(() => {
                 window.location.href = "dashboard.html";
@@ -274,6 +272,7 @@ async function verifyCode() {
     } catch(e) {
         msg.style.color = "var(--red)";
         msg.textContent = "Ungültiger Code. Bitte erneut versuchen.";
+        pb.authStore.clear(); // Session bei Fehler sauber leeren
     } finally {
         btn.disabled = false;
     }
@@ -306,5 +305,6 @@ function closeModal(e){
     if(!e||e.target.className==='modal') document.getElementById('legal-modal').style.display='none';
 }
 </script>
+
 </body>
 </html>
