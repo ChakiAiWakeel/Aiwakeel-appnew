@@ -12,6 +12,7 @@
   --obsidian:#080808;--surface:#0F0F0F;--surface2:#161616;
   --border:rgba(201,168,76,0.18);--border2:rgba(201,168,76,0.08);
   --text:#F0EDE8;--text-muted:rgba(240,237,232,0.42);--text-dim:rgba(240,237,232,0.22);
+  --red: #FF4B4B;
 }
 
 /* ── RESPONSIVE FIX ── */
@@ -89,7 +90,7 @@ body::after{
 .btn-back{background:none;border:none;color:var(--text-dim);cursor:pointer;width:100%;margin-top:20px;font-size:10px;text-transform:uppercase;letter-spacing:0.15em;font-family:'DM Sans',sans-serif;transition:color 0.3s;text-decoration:none;display:inline-block;}
 .btn-back:hover{color:var(--text-muted)}
 
-.status-msg{margin-top:15px;font-size:12px;color:var(--gold);min-height:18px;}
+.status-msg{margin-top:15px;font-size:12px;color:var(--gold);min-height:18px;transition: color 0.3s ease;}
 .hidden{display:none;}
 
 /* ── FOOTER ── */
@@ -100,7 +101,7 @@ body::after{
 .footer-copy{font-size:8px;color:rgba(240,237,232,0.18);text-transform:uppercase;letter-spacing:3px;margin-bottom:6px;display:block}
 .footer-location{font-size:8px;color:var(--gold);text-transform:uppercase;letter-spacing:4px;opacity:0.5}
 
-/* ── COOKIE & MODAL (Wie Hauptseite) ── */
+/* ── COOKIE & MODAL ── */
 #cookie-popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:99999;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px)}
 .cookie-popup-box{background:var(--surface);border:1px solid var(--border);border-bottom:none;border-radius:4px 4px 0 0;padding:26px 22px 30px;width:100%;max-width:520px;box-shadow:0 -24px 80px rgba(0,0,0,0.9);animation:slideUp 0.45s cubic-bezier(0.22,1,0.36,1) forwards;position:relative}
 .cookie-popup-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
@@ -162,10 +163,10 @@ body::after{
     </div>
 
     <div id="step-2" class="hidden">
-      <p style="font-size:12px; color:var(--text-muted); margin-bottom:20px;">Wir haben dir einen 6-stelligen Code gesendet.</p>
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom:20px;">Wir haben dir einen 8-stelligen Code gesendet.</p>
       <div class="field">
         <label>Magic Code</label>
-        <input type="text" id="code" placeholder="••••••" maxlength="6" style="text-align:center; letter-spacing:0.4em; font-size:20px;" onkeydown="if(event.key==='Enter')verifyCode()">
+        <input type="text" id="code" placeholder="••••••••" maxlength="8" style="text-align:center; letter-spacing:0.4em; font-size:20px;" onkeydown="if(event.key==='Enter')verifyCode()">
         <div class="field-underline"></div>
       </div>
       <button class="btn-primary" id="btn-verify" onclick="verifyCode()"><span>Einloggen</span></button>
@@ -195,17 +196,12 @@ const pb = new PocketBase('https://ads.aiwakeel.ai');
 const N8N_LOGIN_WEBHOOK = 'https://n8n.aiwakeel.ai/webhook/magic-code-request';
 
 window.onload = () => {
-  // 1. Auto-Login Check: Wir fragen PocketBase direkt
   if(pb.authStore.isValid) {
     window.location.href = "dashboard.html";
   }
-
-  // 2. Cookie Check
   if(!localStorage.getItem('cookieConsent')) {
       document.getElementById('cookie-popup-overlay').style.display='flex';
   }
-
-  // 3. Cursor Glow
   document.addEventListener('mousemove',e=>{
     const g=document.getElementById('cursor-glow');
     if(g){g.style.left=e.clientX+'px';g.style.top=e.clientY+'px';}
@@ -220,26 +216,35 @@ async function requestMagicCode() {
 
     if(!email) { msg.textContent = "Bitte E-Mail eingeben."; return; }
 
-    msg.textContent = "Code wird gesendet...";
+    msg.textContent = "Verifiziere Account...";
     msg.style.color = "var(--text-muted)";
     btn.disabled = true;
     
     try {
-        // Triggert den n8n Workflow
-        await fetch(N8N_LOGIN_WEBHOOK, { 
+        const response = await fetch(N8N_LOGIN_WEBHOOK, { 
             method:'POST', 
             headers:{'Content-Type':'application/json'}, 
             body:JSON.stringify({email: email}) 
         });
         
-        // Wir gehen immer zu Schritt 2 über
+        // Prüfung auf den 404 Fehler (E-Mail nicht gefunden)
+        if(response.status === 404) {
+            msg.style.color = "var(--red)";
+            msg.textContent = "E-Mail nicht im System hinterlegt.";
+            btn.disabled = false;
+            return;
+        }
+
+        if(!response.ok) throw new Error();
+
+        // Wenn 200 OK -> Schritt 2
         document.getElementById('step-1').classList.add('hidden');
         document.getElementById('step-2').classList.remove('hidden');
         msg.textContent = "";
         
     } catch(err) {
         msg.style.color = "var(--red)";
-        msg.textContent = "Verbindungsfehler.";
+        msg.textContent = "Dienst aktuell nicht erreichbar.";
     } finally {
         btn.disabled = false;
     }
@@ -258,21 +263,17 @@ async function verifyCode() {
     btn.disabled = true;
 
     try {
-        // Offizieller PocketBase Login mit dem Code als Passwort
         await pb.collection('users').authWithPassword(email, code);
         
         if(pb.authStore.isValid) {
             msg.style.color = "#4CAF50";
             msg.textContent = "Erfolgreich! Leite weiter...";
-            
-            setTimeout(() => {
-                window.location.href = "dashboard.html";
-            }, 800);
+            setTimeout(() => { window.location.href = "dashboard.html"; }, 800);
         }
     } catch(e) {
         msg.style.color = "var(--red)";
         msg.textContent = "Ungültiger Code. Bitte erneut versuchen.";
-        pb.authStore.clear(); // Session bei Fehler sauber leeren
+        pb.authStore.clear();
     } finally {
         btn.disabled = false;
     }
@@ -285,7 +286,7 @@ function resetLogin() {
     document.getElementById('msg').textContent = '';
 }
 
-/* ── RECHTLICHES (Modals & Cookies) ── */
+/* ── RECHTLICHES ── */
 function cookieDecision(a){
     localStorage.setItem('cookieConsent',a?'accepted':'declined');
     document.getElementById('cookie-popup-overlay').style.display='none';
