@@ -743,18 +743,46 @@ async function launch() {
     
     const data = await response.json();
     
-    if (data.checkoutUrl) {
-      window.location.href = data.checkoutUrl;
-    } else {
+    // 🚨 1. DER TÜRSTEHER: Prüfen, ob n8n unseren Error (False-Pfad) gesendet hat
+    if (data.status === "error" || data.error) {
+      
+      // Fehlermeldung aus n8n als Popup anzeigen
+      alert("Halt, Stopp! 🛑\n\n" + (data.message || data.error));
+      
+      // Deinen Swipe-Slider wieder in den Ursprungszustand zurücksetzen
+      const thumb = document.getElementById('slide-thumb');
+      thumb.style.transition = 'left 0.4s ease';
+      thumb.style.left = '4px';
+      document.getElementById('slide-bg').style.width = '0%';
+      document.getElementById('slide-text').classList.remove('hidden');
+      document.getElementById('slide-done').classList.remove('show');
+      thumb.textContent = '→';
+      
+      return; // Hier brechen wir ab! Der User kommt nicht zu Step 5.
+    }
+    
+    // ✅ 2. ALLES OK: Wenn Stripe eine URL geliefert hat (True-Pfad / Neu-Registrierung)
+    if (data.checkoutUrl || data.url) {
+      window.location.href = data.checkoutUrl || data.url;
+    } 
+    // 3. FALLBACK: Falls n8n erfolgreich war, aber warum auch immer keine URL schickt
+    else {
       goToStep(5);
       if (state.plan === 'premium') document.getElementById('step5-whatsapp').style.display = 'block';
       else document.getElementById('step5-classic').style.display = 'block';
       sessionStorage.removeItem('awState');
     }
+    
   } catch (e) {
     console.error("Launch Error:", e);
-    // Fallback zu Step 5 falls Webhook fehlschlägt
-    goToStep(5);
+    alert("Es gab ein Problem bei der Verbindung zum Server. Bitte versuche es nochmal.");
+    
+    // Auch bei einem echten Server-Fehler den Slider zurücksetzen
+    document.getElementById('slide-thumb').style.left = '4px';
+    document.getElementById('slide-bg').style.width = '0%';
+    document.getElementById('slide-text').classList.remove('hidden');
+    document.getElementById('slide-done').classList.remove('show');
+    document.getElementById('slide-thumb').textContent = '→';
   }
 }
 
