@@ -15,17 +15,15 @@
             --obsidian: #080808; --surface: #0F0F0F; --surface2: #161616;
             --border: rgba(201, 168, 76, 0.18); --border2: rgba(201, 168, 76, 0.08);
             --text: #F0EDE8; --text-muted: rgba(240, 237, 232, 0.42); --text-dim: rgba(240, 237, 232, 0.22);
-            --glow: rgba(201, 168, 76, 0.05);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
         body { background: var(--obsidian); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
         body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,168,76,0.07) 0%, transparent 60%); pointer-events: none; z-index: 0; }
 
         .header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border2); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; background: rgba(8, 8, 8, 0.8); }
         .logo-text { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--gold); letter-spacing: 0.15em; font-weight: 300; text-transform: uppercase; }
-        .logout-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 6px 14px; font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; transition: 0.3s; }
+        .logout-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 6px 14px; font-size: 9px; text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer; }
 
         .main-content { flex: 1; max-width: 500px; margin: 0 auto; padding: 40px 16px; position: relative; z-index: 1; width: 100%; }
         .greeting h1 { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; margin-bottom: 4px; }
@@ -47,16 +45,18 @@
         .budget-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; }
         .budget-btn { background: transparent; border: 1px solid var(--border2); color: var(--text-muted); padding: 12px; font-size: 11px; cursor: pointer; transition: 0.3s; }
         .budget-btn:hover { border-color: var(--gold); color: var(--gold); }
-
         .custom-input { width: 100%; background: var(--surface2); border: 1px solid var(--border2); padding: 14px; color: var(--text); font-family: 'DM Sans'; font-size: 13px; outline: none; margin-top: 15px; }
-        .custom-input:focus { border-color: var(--gold); }
 
-        /* History List */
+        /* Chart Controls */
+        .chart-controls { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
+        .chart-toggle-btn { background: var(--surface2); border: 1px solid var(--border2); color: var(--text-dim); padding: 8px 12px; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: 0.3s; }
+        .chart-toggle-btn.active { color: var(--gold); border-color: var(--gold); }
+
         .history-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border2); font-size: 12px; }
         .history-date { color: var(--text-dim); font-size: 10px; }
         .history-amount { color: var(--gold); font-family: 'Cormorant Garamond'; font-size: 16px; }
 
-        .footer { width: 100%; text-align: center; padding: 60px 0 40px; border-top: 1px solid var(--border2); margin-top: 40px; background: rgba(5,5,5,0.5); position: relative; z-index: 1; }
+        .footer { width: 100%; text-align: center; padding: 60px 0 40px; border-top: 1px solid var(--border2); margin-top: 40px; background: rgba(5,5,5,0.5); }
         .footer-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
         .footer-links a { color: var(--text-dim); font-size: 9px; text-decoration: none; text-transform: uppercase; letter-spacing: 1.8px; }
         .footer-copy { font-size: 8px; color: rgba(240,237,232,0.18); text-transform: uppercase; letter-spacing: 3px; }
@@ -78,10 +78,7 @@
 </header>
 
 <div class="main-content">
-    <div class="greeting">
-        <h1 id="user-name">Guten Tag</h1>
-        <p>Intelligence in Every Impression.</p>
-    </div>
+    <div class="greeting"><h1 id="user-name">Guten Tag</h1><p>Intelligence in Every Impression.</p></div>
 
     <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
@@ -103,30 +100,31 @@
             <h2 style="font-family:'Cormorant Garamond'; font-size:24px; font-weight: 300;">Monats-Budget</h2>
             <div id="current-budget-display" style="font-family:'Cormorant Garamond'; color:var(--gold); font-size: 26px;">0€</div>
         </div>
-        <div style="border-top: 1px solid var(--border2); padding-top: 20px;">
-            <div class="budget-grid">
-                <button class="budget-btn" onclick="updateBudget(500)">500€</button>
-                <button class="budget-btn" onclick="updateBudget(1000)">1000€</button>
-                <button class="budget-btn" onclick="updateBudget(2500)">2500€</button>
-            </div>
-            <div style="position: relative;">
-                <input type="number" id="custom-budget" class="custom-input" placeholder="Individueller Betrag in €">
-                <button onclick="saveCustomBudget()" style="position: absolute; right: 15px; top: 30px; background: none; border: none; color: var(--gold); font-size: 10px; text-transform: uppercase; cursor: pointer;">Speichern</button>
-            </div>
-            <p style="font-size: 9px; color: var(--text-dim); margin-top: 12px; font-style: italic;">*Zahlungen erfolgen direkt über Ihr Google Ads Konto.</p>
+        <div class="budget-grid">
+            <button class="budget-btn" onclick="updateBudget(500)">500€</button>
+            <button class="budget-btn" onclick="updateBudget(1000)">1000€</button>
+            <button class="budget-btn" onclick="updateBudget(2500)">2500€</button>
+        </div>
+        <div style="position: relative;">
+            <input type="number" id="custom-budget" class="custom-input" placeholder="Individueller Betrag">
+            <button onclick="saveCustomBudget()" style="position: absolute; right: 15px; top: 30px; background: none; border: none; color: var(--gold); font-size: 10px; text-transform: uppercase; cursor: pointer;">Speichern</button>
         </div>
     </div>
 
-    <div class="card">
-        <h2 style="font-family:'Cormorant Garamond'; font-size:20px; font-weight: 300; margin-bottom: 20px;">Budget Historie</h2>
-        <div id="history-list">
-            <p style="font-size: 11px; color: var(--text-dim);">Keine Einträge vorhanden.</p>
+    <div class="card" style="background:transparent; border:none; box-shadow:none; padding:0;">
+        <div style="font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;">Performance Analyse</div>
+        <div id="chart-container-box" style="background:var(--surface); border:1px solid var(--border); padding:20px 10px;">
+            <div id="chart"></div>
+            <div class="chart-controls">
+                <button id="toggle-imps" class="chart-toggle-btn active" onclick="toggleSeries('Impressionen')">Impressionen</button>
+                <button id="toggle-clicks" class="chart-toggle-btn active" onclick="toggleSeries('Klicks')">Klicks</button>
+            </div>
         </div>
     </div>
 
-    <div class="card" style="background: transparent; padding: 10px 0; border: none; box-shadow: none;">
-        <div style="font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;">Performance (30 Tage)</div>
-        <div id="chart"></div>
+    <div class="card" style="margin-top:20px;">
+        <h2 style="font-family:'Cormorant Garamond'; font-size:20px; font-weight: 300; margin-bottom: 20px;">Historie</h2>
+        <div id="history-list"></div>
     </div>
 </div>
 
@@ -135,9 +133,8 @@
         <a href="javascript:showLegal('impressum')">Impressum</a>
         <a href="javascript:showLegal('privacy')">Datenschutz</a>
         <a href="javascript:showLegal('agb')">AGB</a>
-        <a href="javascript:showLegal('widerruf')">Widerruf</a>
     </div>
-    <span class="footer-copy">© 2026 AIWAKEEL · DUBAI · FRANKFURT</span>
+    <span class="footer-copy">© 2026 AIWAKEEL · Intelligent Management</span>
 </footer>
 
 <div id="legal-modal" class="modal" onclick="closeModal(event)">
@@ -152,58 +149,70 @@ if (!pb.authStore.isValid) window.location.href = 'login.html';
 const user = pb.authStore.model;
 
 window.onload = async () => {
-    document.getElementById('user-name').textContent = `Guten Tag, ${user.name ? user.name.split(' ')[0] : 'Elite User'}`;
+    document.getElementById('user-name').textContent = `Guten Tag, ${user.name ? user.name.split(' ')[0] : 'User'}`;
     updateUI(user.agent_status === 'aktiv');
     document.getElementById('current-budget-display').textContent = `${user.budget || 0}€`;
     await loadDashboardData();
-    await loadHistory();
+    loadHistory();
 };
 
 async function loadDashboardData() {
     try {
         const records = await pb.collection('daily_reports').getList(1, 30, { filter: `user = "${user.id}"`, sort: '-created' });
+        const cBox = document.getElementById('chart');
         if (records.items.length > 0) {
             document.getElementById('clicks-val').textContent = records.items[0].clicks;
             document.getElementById('pos-val').textContent = records.items[0].position.toFixed(1);
             renderChart(records.items.reverse());
+        } else {
+            cBox.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-dim); font-size:10px; letter-spacing:2px;">WARTE AUF DATEN-SYNC...</div>';
+            document.querySelector('.chart-controls').style.display = 'none';
         }
-    } catch (e) { console.error(e); }
-}
-
-async function loadHistory() {
-    try {
-        // Wir nehmen die letzten 5 Änderungen aus dem User-Protokoll oder einer extra Collection
-        // Da wir keine extra Collection haben, simulieren wir hier den aktuellen Wert. 
-        // Für eine echte Historie müsstest du eine Collection "budget_logs" anlegen.
-        const list = document.getElementById('history-list');
-        list.innerHTML = `
-            <div class="history-item">
-                <div>Aktueller Plan<br><span class="history-date">Aktiviert am ${new Date(user.updated).toLocaleDateString()}</span></div>
-                <div class="history-amount">${user.budget}€</div>
-            </div>
-        `;
     } catch (e) {}
 }
 
+function renderChart(data) {
+    const options = {
+        series: [
+            { name: 'Impressionen', type: 'area', data: data.map(r => r.impressions) },
+            { name: 'Klicks', type: 'line', data: data.map(r => r.clicks) }
+        ],
+        chart: { height: 200, toolbar: { show: false }, background: 'transparent', stacked: false },
+        colors: ['#C9A84C', '#F0EDE8'],
+        stroke: { curve: 'smooth', width: [2, 2] },
+        fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: [0.4, 0], opacityTo: [0, 0] } },
+        grid: { show: false },
+        xaxis: { categories: data.map(r => new Date(r.created).toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit'})), labels: { style: { colors: '#333', fontSize: '9px' } } },
+        yaxis: { show: false },
+        dataLabels: { enabled: false },
+        tooltip: { theme: 'dark' },
+        legend: { show: false }
+    };
+    if(chart) chart.destroy();
+    chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+}
+
+function toggleSeries(name) {
+    const btn = name === 'Impressionen' ? document.getElementById('toggle-imps') : document.getElementById('toggle-clicks');
+    btn.classList.toggle('active');
+    chart.toggleSeries(name);
+}
+
 async function updateBudget(amt) {
-    try {
-        await pb.collection('users').update(user.id, { "budget": amt });
-        document.getElementById('current-budget-display').textContent = `${amt}€`;
-        showToast(`✦ Budget auf ${amt}€ gesetzt`);
-        loadHistory();
-    } catch (e) { showToast("Fehler"); }
+    await pb.collection('users').update(user.id, { "budget": amt });
+    location.reload();
 }
 
 async function saveCustomBudget() {
     const val = document.getElementById('custom-budget').value;
-    if(val > 0) await updateBudget(parseInt(val));
+    if(val > 0) updateBudget(parseInt(val));
 }
 
 async function toggleAgent() {
     const next = !document.getElementById('agent-toggle').classList.contains('active');
     await pb.collection('users').update(user.id, { "agent_status": next ? 'aktiv' : 'inaktiv' });
     updateUI(next);
-    showToast(next ? "✦ Agent aktiviert" : "Agent pausiert");
 }
 
 function updateUI(active) {
@@ -212,32 +221,18 @@ function updateUI(active) {
     t.classList.toggle('active', active);
     s.textContent = active ? "Aktiv" : "Pausiert";
     s.style.color = active ? "var(--gold)" : "var(--text-dim)";
-    s.style.borderColor = active ? "var(--gold)" : "var(--border2)";
 }
 
-function renderChart(data) {
-    const options = {
-        series: [{ name: 'Impressionen', data: data.map(r => r.impressions) }],
-        chart: { type: 'area', height: 180, toolbar: { show: false }, background: 'transparent' },
-        colors: ['#C9A84C'], stroke: { curve: 'smooth', width: 2 },
-        fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.3, opacityTo: 0 } },
-        grid: { show: false }, xaxis: { labels: { show: false }, axisBorder: { show: false } },
-        yaxis: { show: false }, dataLabels: { enabled: false }, tooltip: { theme: 'dark' }
-    };
-    if(chart) chart.destroy();
-    chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
+function loadHistory() {
+    document.getElementById('history-list').innerHTML = `<div class="history-item"><div>Aktueller Plan<br><span class="history-date">${new Date().toLocaleDateString()}</span></div><div class="history-amount">${user.budget}€</div></div>`;
 }
 
-function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 3000); }
-function logout() { pb.authStore.clear(); window.location.href = 'login.html'; }
 function showLegal(t){
-    const c = { impressum: '<h2>Impressum</h2><p>AiWakeel Management Systems...</p>', privacy: '<h2>Datenschutz</h2><p>Deine Daten sind sicher...</p>', agb: '<h2>AGB</h2><p>Es gelten unsere Geschäftsbedingungen...</p>', widerruf: '<h2>Widerruf</h2><p>14 Tage Widerrufsrecht...</p>' };
-    document.getElementById('modal-text').innerHTML = c[t];
+    document.getElementById('modal-text').innerHTML = `<h2>${t.toUpperCase()}</h2><p>Inhalte folgen basierend auf Ihren Google Ads Einstellungen.</p>`;
     document.getElementById('legal-modal').style.display = 'block';
 }
 function closeModal(e){ if(!e || e.target.className==='modal') document.getElementById('legal-modal').style.display='none'; }
+function logout() { pb.authStore.clear(); window.location.href = 'login.html'; }
 </script>
-
 </body>
 </html>
