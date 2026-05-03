@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AiWakeel · Premium Dashboard</title>
+    <title>AiWakeel · Elite Dashboard</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
@@ -12,14 +12,12 @@
     <style>
         :root {
             --gold: #C9A84C;
-            --gold-light: #E5C77E;
             --obsidian: #050505;
             --surface: #0F0F0F;
             --surface2: #161616;
             --text: #F0EDE8;
             --text-muted: rgba(240, 237, 232, 0.4);
             --border: rgba(201, 168, 76, 0.12);
-            --border-bright: rgba(201, 168, 76, 0.3);
             --glow: rgba(201, 168, 76, 0.05);
         }
 
@@ -30,10 +28,10 @@
             color: var(--text);
             font-family: 'DM Sans', sans-serif;
             min-height: 100vh;
-            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Ambient Background Glow */
         body::before {
             content: '';
             position: fixed;
@@ -75,30 +73,27 @@
             text-transform: uppercase;
             letter-spacing: 1.2px;
             cursor: pointer;
-            transition: all 0.3s ease;
         }
 
-        .logout-btn:active { border-color: var(--gold); color: var(--gold); }
-
-        .container {
+        .main-content {
+            flex: 1;
             max-width: 500px;
             margin: 0 auto;
             padding: 32px 20px;
             position: relative;
             z-index: 1;
+            width: 100%;
         }
 
         .greeting { margin-bottom: 32px; }
-        .greeting h1 { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 400; margin-bottom: 4px; }
-        .greeting p { color: var(--text-muted); font-size: 13px; letter-spacing: 0.3px; }
+        .greeting h1 { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 400; }
+        .greeting p { color: var(--text-muted); font-size: 13px; }
 
-        /* Card Design */
         .card {
             background: var(--surface);
             border: 1px solid var(--border);
             padding: 24px;
             margin-bottom: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .card-header {
@@ -115,22 +110,16 @@
             border: 1px solid var(--gold);
             color: var(--gold);
             letter-spacing: 1px;
-            font-weight: 500;
         }
 
-        /* Toggle Row */
         .toggle-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 20px;
+            padding: 20px 0;
             border-top: 1px solid var(--border);
         }
 
-        .toggle-label span { display: block; font-size: 14px; font-weight: 400; color: var(--text); }
-        .toggle-label small { color: var(--text-muted); font-size: 11px; }
-
-        /* Custom Switch */
         .switch {
             width: 48px; height: 26px;
             background: #1a1a1a;
@@ -138,7 +127,7 @@
             position: relative;
             cursor: pointer;
             border: 1px solid var(--border);
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: 0.4s;
         }
         .switch.active { background: var(--gold); border-color: var(--gold); }
         .switch-circle {
@@ -147,12 +136,10 @@
             width: 18px; height: 18px;
             background: white;
             border-radius: 50%;
-            transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: 0.3s;
         }
         .switch.active .switch-circle { transform: translateX(22px); }
 
-        /* Metrics Grid */
         .metrics {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -170,26 +157,46 @@
             font-family: 'Cormorant Garamond', serif;
             font-size: 32px;
             color: var(--gold);
-            line-height: 1;
-            margin-bottom: 8px;
         }
-        .metric-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; }
+        .metric-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Chart Area */
+        /* Budget Section */
+        .budget-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .budget-btn {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .budget-btn:hover { border-color: var(--gold); }
+
         .chart-container {
             background: var(--surface);
             border: 1px solid var(--border);
-            padding: 16px 10px 10px 10px;
+            padding: 16px 10px;
             margin-top: 16px;
         }
-        .chart-title {
-            font-size: 10px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-            margin-left: 10px;
-            margin-bottom: 15px;
+
+        /* Luxury Footer */
+        footer {
+            padding: 60px 20px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            background: var(--obsidian);
+            position: relative;
+            z-index: 1;
         }
+        .footer-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            color: var(--gold);
+            margin-bottom: 10px;
+            display: block;
+        }
+        .footer-text { font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
 
         #toast {
             position: fixed;
@@ -203,9 +210,8 @@
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: 0.4s;
             backdrop-filter: blur(10px);
-            letter-spacing: 0.5px;
         }
         #toast.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
     </style>
@@ -219,22 +225,22 @@
     <button class="logout-btn" onclick="logout()">Abmelden</button>
 </header>
 
-<div class="container">
+<div class="main-content">
     <div class="greeting">
         <h1 id="user-name">Guten Tag</h1>
-        <p>Systemstatus: Optimal & Wachsam</p>
+        <p>Systemstatus: Aktiv & Überwacht</p>
     </div>
 
     <div class="card">
         <div class="card-header">
             <h2 style="font-family:'Cormorant Garamond'; font-size:24px; font-weight: 400;">KI Agent</h2>
-            <div id="status-text" class="status-badge">Aktiv</div>
+            <div id="status-text" class="status-badge">Lädt...</div>
         </div>
 
         <div class="toggle-row">
             <div class="toggle-label">
-                <span>Optimierung</span>
-                <small>KI-Automatisierung steuern</small>
+                <span style="font-size:14px;">KI-Optimierung</span>
+                <small style="color:var(--text-muted); font-size:11px;">Agent Status steuern</small>
             </div>
             <div id="agent-toggle" class="switch" onclick="toggleAgent()">
                 <div class="switch-circle"></div>
@@ -253,35 +259,52 @@
         </div>
     </div>
 
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="font-family:'Cormorant Garamond'; font-size:24px; font-weight: 400;">Budget-Plan</h2>
+            <div id="current-budget-display" style="font-family:'Cormorant Garamond'; color:var(--gold); font-size: 24px;">0€</div>
+        </div>
+        <div style="border-top: 1px solid var(--border); padding-top: 20px;">
+            <p style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Anpassen</p>
+            <div class="budget-grid">
+                <button class="budget-btn" onclick="updateBudget(500)">500€</button>
+                <button class="budget-btn" onclick="updateBudget(1000)">1000€</button>
+                <button class="budget-btn" onclick="updateBudget(2500)">2500€</button>
+            </div>
+        </div>
+    </div>
+
     <div class="chart-container">
-        <div class="chart-title">Performance 30 Tage</div>
+        <div style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin: 0 0 15px 10px;">Performance (30 Tage)</div>
         <div id="chart"></div>
     </div>
 </div>
+
+<footer>
+    <span class="footer-logo">AiWakeel</span>
+    <p class="footer-text">© 2024 Design for Success · Elite Marketing Intelligence</p>
+</footer>
 
 <script>
     const pb = new PocketBase('https://ads.aiwakeel.ai');
     let chart = null;
 
-    // Login-Schutz
     if (!pb.authStore.isValid) window.location.href = 'login.html';
-
     const user = pb.authStore.model;
 
     window.onload = async () => {
-        // UI Initialisierung
         const firstName = user.name ? user.name.split(' ')[0] : 'Elite User';
         document.getElementById('user-name').textContent = `Guten Tag, ${firstName}`;
         
+        // Initialer UI Status
         updateUI(user.agent_status === 'aktiv');
+        document.getElementById('current-budget-display').textContent = `${user.budget || 0}€`;
         
-        // Daten aus PocketBase laden
         await loadDashboardData();
     };
 
     async function loadDashboardData() {
         try {
-            // Holt die letzten 30 Berichte aus der daily_reports Collection
             const records = await pb.collection('daily_reports').getList(1, 30, {
                 filter: `user = "${user.id}"`,
                 sort: '-created'
@@ -289,54 +312,29 @@
 
             if (records.items.length > 0) {
                 const latest = records.items[0];
-                
-                // Update Kacheln
-                animateValue("clicks-val", 0, latest.clicks, 1000);
+                document.getElementById('clicks-val').textContent = latest.clicks;
                 document.getElementById('pos-val').textContent = latest.position.toFixed(1);
-                
-                // Chart rendern (reverse, damit die Zeit von links nach rechts läuft)
                 renderChart(records.items.reverse());
             }
-        } catch (e) {
-            console.error("Datenfehler:", e);
-        }
+        } catch (e) { console.error("Fehler:", e); }
     }
 
     function renderChart(data) {
         const options = {
-            series: [{
-                name: 'Impressionen',
-                data: data.map(r => r.impressions)
-            }],
-            chart: {
-                type: 'area',
-                height: 180,
-                toolbar: { show: false },
-                sparkline: { enabled: false },
-                background: 'transparent'
-            },
+            series: [{ name: 'Impressionen', data: data.map(r => r.impressions) }],
+            chart: { type: 'area', height: 180, toolbar: { show: false }, background: 'transparent' },
             colors: ['#C9A84C'],
             stroke: { curve: 'smooth', width: 2 },
-            fill: {
-                type: 'gradient',
-                gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05 }
-            },
+            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0 } },
             grid: { show: false },
             xaxis: {
                 categories: data.map(r => new Date(r.created).toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit'})),
-                axisBorder: { show: false },
-                axisTicks: { show: false },
-                labels: { show: true, style: { colors: '#444', fontSize: '9px' } }
+                labels: { style: { colors: '#444', fontSize: '9px' } }
             },
             yaxis: { show: false },
             dataLabels: { enabled: false },
-            tooltip: { 
-                theme: 'dark',
-                x: { show: false },
-                marker: { show: true }
-            }
+            tooltip: { theme: 'dark' }
         };
-
         if(chart) chart.destroy();
         chart = new ApexCharts(document.querySelector("#chart"), options);
         chart.render();
@@ -348,49 +346,32 @@
         const statusString = nextStatus ? 'aktiv' : 'inaktiv';
 
         try {
-            // Update in PocketBase
-            await pb.collection('users').update(user.id, { agent_status: statusString });
-            
+            await pb.collection('users').update(user.id, { "agent_status": statusString });
             updateUI(nextStatus);
             showToast(nextStatus ? "✦ Agent aktiviert" : "Agent pausiert");
-        } catch (e) {
-            showToast("Fehler bei Synchronisierung");
-        }
+        } catch (e) { showToast("Fehler beim Speichern"); }
+    }
+
+    async function updateBudget(newAmount) {
+        try {
+            await pb.collection('users').update(user.id, { "budget": newAmount });
+            document.getElementById('current-budget-display').textContent = `${newAmount}€`;
+            showToast(`✦ Budget auf ${newAmount}€ gesetzt`);
+        } catch (e) { showToast("Fehler"); }
     }
 
     function updateUI(isActive) {
         const toggle = document.getElementById('agent-toggle');
         const statusText = document.getElementById('status-text');
-        
-        if(isActive) {
-            toggle.classList.add('active');
-            statusText.textContent = "Aktiv";
-            statusText.style.borderColor = "var(--gold)";
-            statusText.style.color = "var(--gold)";
-        } else {
-            toggle.classList.remove('active');
-            statusText.textContent = "Pausiert";
-            statusText.style.borderColor = "var(--text-muted)";
-            statusText.style.color = "var(--text-muted)";
-        }
-    }
-
-    function animateValue(id, start, end, duration) {
-        const obj = document.getElementById(id);
-        let startTimestamp = null;
-        const step = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            obj.innerHTML = Math.floor(progress * (end - start) + start);
-            if (progress < 1) { window.requestAnimationFrame(step); }
-        };
-        window.requestAnimationFrame(step);
+        toggle.classList.toggle('active', isActive);
+        statusText.textContent = isActive ? "Aktiv" : "Pausiert";
+        statusText.style.color = isActive ? "var(--gold)" : "var(--text-muted)";
+        statusText.style.borderColor = isActive ? "var(--gold)" : "var(--text-muted)";
     }
 
     function showToast(msg) {
         const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.classList.add('show');
+        t.textContent = msg; t.classList.add('show');
         setTimeout(() => { t.classList.remove('show'); }, 3000);
     }
 
