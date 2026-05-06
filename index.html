@@ -747,14 +747,16 @@ function validateStep2() {
   const ind = document.getElementById('industry').value.trim();
   const phone = document.getElementById('phone').value.trim();
   const wa = document.getElementById('whatsapp').value.trim();
+  const email = document.getElementById('email').value.trim(); // NEU
   
-  // Phone ist nun Pflicht, WhatsApp optional
-  const ok = dom.includes('.') && dom.length > 3 && ind.length > 2 && phone.length > 5;
+  // E-Mail muss ein @ enthalten
+  const ok = dom.includes('.') && dom.length > 3 && ind.length > 2 && phone.length > 5 && email.includes('@');
   
   state.domain = dom;
   state.industry = ind;
   state.phone = phone;
   state.whatsapp = wa;
+  state.email = email; // NEU
   saveState();
   
   document.getElementById('btn-step2-next').disabled = !ok;
