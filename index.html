@@ -804,17 +804,48 @@ function initSlide() {
   const thumb = document.getElementById('slide-thumb'), track = document.getElementById('slider-activate');
   let drag = false, startX = 0, cur = 0;
   const tw = () => track.offsetWidth - thumb.offsetWidth - 8;
+
   const move = x => {
     cur = Math.max(0, Math.min(x - startX, tw()));
     thumb.style.left = (4 + cur) + 'px';
     document.getElementById('slide-bg').style.width = (cur / tw() * 100) + '%';
     if (cur / tw() >= 0.95) complete();
   };
-  const complete = () => { drag = false; launch(); };
+
+  const complete = () => { if(!drag) return; drag = false; launch(); };
+
+  // Maus-Events (PC)
   thumb.addEventListener('mousedown', e => { drag = true; startX = e.clientX; thumb.style.transition = 'none'; });
+  
+  // Touch-Events (Handy/Tablet) - DAS FEHLTE
+  thumb.addEventListener('touchstart', e => { 
+    drag = true; 
+    startX = e.touches[0].clientX; 
+    thumb.style.transition = 'none';
+    e.preventDefault(); // Verhindert das Scrollen der Seite beim Ziehen
+  }, {passive: false});
+
   document.addEventListener('mousemove', e => { if (drag) move(e.clientX); });
-  document.addEventListener('mouseup', () => { if (drag) { drag = false; thumb.style.left = '4px'; document.getElementById('slide-bg').style.width = '0%'; } });
+  document.addEventListener('touchmove', e => { 
+    if (drag) {
+      move(e.touches[0].clientX);
+      e.preventDefault(); // Ganz wichtig für mobile!
+    }
+  }, {passive: false});
+
+  const stopDrag = () => { 
+    if (drag) { 
+      drag = false; 
+      thumb.style.transition = 'left 0.3s ease';
+      thumb.style.left = '4px'; 
+      document.getElementById('slide-bg').style.width = '0%'; 
+    } 
+  };
+  
+  document.addEventListener('mouseup', stopDrag);
+  document.addEventListener('touchend', stopDrag);
 }
+
 
 async function launch() {
   try {
