@@ -98,7 +98,8 @@ body::after{
 .field-underline{position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--gold);transition:width 0.4s ease}
 .field input:focus ~ .field-underline{width:100%}
 .domain-check{font-size:10px;margin-top:6px;height:14px}
-.domain-ok{color:var(--success)}.domain-err{color:var(--error)}
+.domain-ok{color:var(--success)}
+.domain-err{color:var(--error)}
 .auto-filled{background:rgba(201,168,76,0.05) !important;border-bottom-color:var(--gold) !important;color:var(--gold-light) !important}
 .auto-filled::placeholder{color:var(--gold-dim) !important}
 .field-note{font-size:10px;color:var(--text-dim);margin-top:4px;font-style:italic}
@@ -132,7 +133,8 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
 .wa-online{font-size:10px;color:#4CAF50}
 .wa-typing{display:flex;gap:4px;padding:10px 14px;background:#1E3A2F;border-radius:0 10px 10px 10px;width:52px;margin-bottom:8px}
 .wa-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.4);animation:waDot 1.2s ease infinite}
-.wa-dot:nth-child(2){animation-delay:0.2s}.wa-dot:nth-child(3){animation-delay:0.4s}
+.wa-dot:nth-child(2){animation-delay:0.2s}
+.wa-dot:nth-child(3){animation-delay:0.4s}
 @keyframes waDot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
 .wa-bubble{background:#1E3A2F;border-radius:0 10px 10px 10px;padding:10px 14px;font-size:12px;color:#E8E8E8;line-height:1.5;display:inline-block;opacity:0;transform:translateY(8px)}
 .wa-bubble.show{animation:waPop 0.4s ease forwards}
@@ -265,12 +267,12 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
 <div id="cookie-popup-overlay">
   <div class="cookie-popup-box">
     <div class="cookie-title">Cookies & Datenschutz</div>
-    <p class="cookie-text">Wir verwenden technisch notwendige Cookies fuer Zahlungen und Google-Verbindung. Keine Tracking-Cookies.</p>
+    <p class="cookie-text">Wir verwenden technisch notwendige Cookies für Zahlungen und Google-Verbindung. Keine Tracking-Cookies.</p>
     <div class="cookie-actions">
       <button class="cookie-btn-decline" onclick="cookieDecision(false)">Ablehnen</button>
       <button class="cookie-btn-accept" onclick="cookieDecision(true)">Akzeptieren</button>
     </div>
-    <p class="cookie-legal"><a href="javascript:cookieDecision(true);showLegal('cookies')">Cookie-Richtlinie</a> - <a href="javascript:cookieDecision(true);showLegal('privacy')">Datenschutz</a></p>
+    <p class="cookie-legal"><a href="javascript:cookieDecision(true);showLegal('cookies')">Cookie-Richtlinie</a> · <a href="javascript:cookieDecision(true);showLegal('privacy')">Datenschutz</a></p>
   </div>
 </div>
 
@@ -282,7 +284,6 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
 </div>
 
 <div class="wrapper">
-
   <div class="live-counter">
     <div class="live-dot"></div>
     <span class="live-num" id="live-num">7</span>
@@ -306,23 +307,22 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
   </div>
 
   <div class="card" style="position:relative;overflow:hidden">
-
     <div class="connect-success-overlay" id="success-overlay">
       <div class="success-particles" id="particles"></div>
       <div class="success-ring">&#10003;</div>
       <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold)">Verbunden</div>
-      <div style="font-size:12px;color:var(--text-muted)">Google Account erfolgreich verknuepft</div>
+      <div style="font-size:12px;color:var(--text-muted)">Google Account erfolgreich verknüpft</div>
     </div>
 
     <div id="step-1" class="step-panel active">
       <div class="step-title">Zero Touch Setup</div>
-      <div class="step-desc">Ein Klick. Dein Agent uebernimmt Search Console, Google Ads und erstellt automatisch Kampagnen.</div>
+      <div class="step-desc">Ein Klick. Dein Agent übernimmt Search Console, Google Ads und erstellt automatisch Kampagnen.</div>
 
       <button class="connect-btn" id="btn-google" onclick="startGoogleOAuth()">
         <span class="cbtn-icon">&#128269;</span>
         <span>
           <div class="cbtn-label">Google Account verbinden</div>
-          <div class="cbtn-sub">Search Console - Google Ads - Automatische Kampagnen</div>
+          <div class="cbtn-sub">Search Console · Google Ads · Automatische Kampagnen</div>
         </span>
         <span class="cbtn-status" id="status-google">Connect &rarr;</span>
       </button>
@@ -335,7 +335,7 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
           <label>Google Ads Kundennummer</label>
           <input type="text" id="auto-customer-id" class="auto-filled" readonly>
           <div class="field-underline"></div>
-          <div class="field-note">Wird automatisch aus deinem Google Ads Konto uebernommen</div>
+          <div class="field-note">Wird automatisch aus deinem Google Ads Konto übernommen</div>
         </div>
         <div class="field" style="margin-bottom:12px">
           <label>Kampagnen-Budget ID</label>
@@ -397,7 +397,7 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
       </div>
 
       <div style="background:var(--surface2);border:1px solid var(--border);padding:14px;margin:16px 0;border-radius:2px">
-        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.15em;color:var(--text-dim);margin-bottom:8px">Verknuepfte Google Konten</div>
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.15em;color:var(--text-dim);margin-bottom:8px">Verknüpfte Google Konten</div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
           <span style="color:var(--success);font-size:14px">&#10003;</span>
           <span style="font-size:12px;color:var(--text-muted)">Search Console: <span id="sc-status" style="color:var(--text)">Aktiv</span></span>
@@ -409,9 +409,9 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
       </div>
 
       <button class="btn-primary" id="btn-step2-next" onclick="goToStep(3)" disabled>
-        <span>Plaene waehlen</span>
+        <span>Pläne wählen</span>
       </button>
-      <button class="btn-back" onclick="goToStep(1)">&larr; Zurueck</button>
+      <button class="btn-back" onclick="goToStep(1)">&larr; Zurück</button>
     </div>
 
     <div id="step-3" class="step-panel">
@@ -422,7 +422,7 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
           <span class="plan-name">Atelier</span>
           <span class="plan-price">29&euro; <small>/mtl.</small></span>
         </div>
-        <div class="plan-desc">Ads Agent Optimierung & E-Mail Reports - Setup einmalig 49&euro;</div>
+        <div class="plan-desc">Ads Agent Optimierung & E-Mail Reports · Setup einmalig 49&euro;</div>
       </div>
 
       <div id="plan-premium" class="plan-card" onclick="selectPlan('premium',59,79)">
@@ -430,7 +430,7 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
           <span class="plan-name">&#10022; Maison <span class="plan-badge">Empfohlen</span></span>
           <span class="plan-price" style="color:var(--gold)">59&euro; <small>/mtl.</small></span>
         </div>
-        <div class="plan-desc">WhatsApp-Direktsteuerung + Echtzeit-Alerts - Setup einmalig 79&euro;</div>
+        <div class="plan-desc">WhatsApp-Direktsteuerung + Echtzeit-Alerts · Setup einmalig 79&euro;</div>
         <div class="wa-preview" id="wa-preview" style="display:none">
           <div class="wa-header">
             <div class="wa-avatar">&#129302;</div>
@@ -439,9 +439,9 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
           <div class="wa-typing"><div class="wa-dot"></div><div class="wa-dot"></div><div class="wa-dot"></div></div>
           <div class="wa-bubble" id="wa-bubble">
             &#10022; Heute Top-Keyword: <strong>„Immobilien Dubai kaufen"</strong><br>
-            CPC: 1.24&euro; - Potenzial: 840 Klicks<br>
-            Kampagne laeuft seit 3h 12m.
-            <div class="wa-time">Jetzt - &#10003;&#10003;</div>
+            CPC: 1.24&euro; · Potenzial: 840 Klicks<br>
+            Kampagne läuft seit 3h 12m.
+            <div class="wa-time">Jetzt · &#10003;&#10003;</div>
           </div>
         </div>
       </div>
@@ -451,7 +451,7 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
       <div class="budget-hero">
         <div class="budget-amount" id="budget-display">300&euro;</div>
         <div class="budget-period">pro Monat</div>
-        <div class="budget-reach">Schaetzte Reichweite: <strong id="budget-reach">~1.500 Klicks</strong></div>
+        <div class="budget-reach">Geschätzte Reichweite: <strong id="budget-reach">~1.500 Klicks</strong></div>
         <div class="slider-wrap">
           <input type="range" id="budget-slider" min="100" max="3000" step="50" value="300" oninput="updateBudget(this.value)">
         </div>
@@ -461,11 +461,11 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
       <button class="btn-primary" id="btn-step3-next" onclick="goToStep(4)" disabled>
         <span>Zusammenfassung</span>
       </button>
-      <button class="btn-back" onclick="goToStep(2)">&larr; Zurueck</button>
+      <button class="btn-back" onclick="goToStep(2)">&larr; Zurück</button>
     </div>
 
     <div id="step-4" class="step-panel">
-      <div class="step-title">Bestaetigung</div>
+      <div class="step-title">Bestätigung</div>
 
       <div class="summary-row">
         <span class="summary-label">Domain</span>
@@ -511,16 +511,16 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
       <div class="trust-badges" style="margin-top:8px">
         <div class="trust-badge"><span class="trust-badge-icon">&#128737;</span>DSGVO</div>
         <div class="trust-badge"><span class="trust-badge-icon">&#127465;&#127466;</span>Made in Germany</div>
-        <div class="trust-badge"><span class="trust-badge-icon">&#8617;</span>Jederzeit kuendbar</div>
+        <div class="trust-badge"><span class="trust-badge-icon">&#8617;</span>Jederzeit kündbar</div>
       </div>
-      <button class="btn-back" onclick="goToStep(3)">&larr; Zurueck</button>
+      <button class="btn-back" onclick="goToStep(3)">&larr; Zurück</button>
     </div>
 
     <div id="step-5" class="step-panel" style="text-align:center;padding:8px 0">
       <div style="font-size:42px;margin-bottom:14px;animation:livePulse 2s ease infinite">&#10022;</div>
       <div class="step-title">Agent aktiv</div>
       <p style="font-size:12px;color:var(--text-muted);line-height:1.7;margin-bottom:20px">
-        Dein Agent ist vollstaendig konfiguriert. Search Console wird analysiert, Google Ads Budget wird taeglich optimiert.
+        Dein Agent ist vollständig konfiguriert. Search Console wird analysiert, Google Ads Budget wird täglich optimiert.
       </p>
       <div id="step5-whatsapp" style="display:none">
         <p style="font-size:11px;color:var(--text-muted);margin-bottom:14px">Du erhältst in Kürze eine WhatsApp Nachricht vom Agenten.</p>
@@ -532,7 +532,6 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
         Agenten verwalten & pausieren im <a href="dashboard.html" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,168,76,0.3)">Kunden-Dashboard &rarr;</a>
       </p>
     </div>
-
   </div>
 
   <div class="info-title">So funktioniert dein Agent</div>
@@ -540,7 +539,7 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
   <div class="how-steps">
     <div class="how-step"><div class="how-icon">&#128269;</div><div class="how-label">Search Console</div><div class="how-desc">Analysiert echte Suchdaten & findet Potenziale</div></div>
     <div class="how-arrow">&rarr;</div>
-    <div class="how-step"><div class="how-icon">&#129302;</div><div class="how-label">KI-Analyse</div><div class="how-desc">Waehlt das staerkste Keyword mit maximalem ROI</div></div>
+    <div class="how-step"><div class="how-icon">&#129302;</div><div class="how-label">KI-Analyse</div><div class="how-desc">Wählt das stärkste Keyword mit maximalem ROI</div></div>
     <div class="how-arrow">&rarr;</div>
     <div class="how-step"><div class="how-icon">&#128227;</div><div class="how-label">Google Ads</div><div class="how-desc">Bucht & optimiert vollautomatisch</div></div>
   </div>
@@ -548,42 +547,42 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
   <div class="info-title">Exklusive Vorteile</div>
   <div class="info-ornament"><span>&#10022;</span></div>
   <div class="benefit-list">
-    <div class="benefit-item"><div class="benefit-icon">&#10022;</div><div class="benefit-text"><h4>Zero Touch Setup</h4><p>Ein Google Login - der Agent uebernimmt Search Console, Ads und Kampagnenerstellung vollautomatisch.</p></div></div>
+    <div class="benefit-item"><div class="benefit-icon">&#10022;</div><div class="benefit-text"><h4>Zero Touch Setup</h4><p>Ein Google Login - der Agent übernimmt Search Console, Ads und Kampagnenerstellung vollautomatisch.</p></div></div>
     <div class="benefit-item"><div class="benefit-icon">&#10022;</div><div class="benefit-text"><h4>Maximale Reichweite</h4><p>Dein Agent identifiziert ungenutzte Keyword-Potenziale und dominiert die Google-Suche.</p></div></div>
-    <div class="benefit-item"><div class="benefit-icon">&#10022;</div><div class="benefit-text"><h4>Echtzeit-Optimierung</h4><p>Algorithmen passen Gebote sekundlich an, um Streuverluste zu eliminieren.</p></div></div>
-    <div class="benefit-item"><div class="benefit-icon">&#10022;</div><div class="benefit-text"><h4>Volle Kontrolle</h4><p>Agenten jederzeit ueber das Kunden-Dashboard pausieren oder stoppen.</p></div></div>
+    <div class="benefit-item"><div class="benefit-icon">&#10022;</div><div class="benefit-text"><h4>Echtzeit-Optimierung</h4><p>Algorithmen passen Gebote sekündlich an, um Streuverluste zu eliminieren.</p></div></div>
+    <div class="benefit-item"><div class="benefit-icon">&#10022;</div><div class="benefit-text"><h4>Volle Kontrolle</h4><p>Agenten jederzeit über das Kunden-Dashboard pausieren oder stoppen.</p></div></div>
   </div>
 
-  <div class="info-title">Haeufige Fragen</div>
+  <div class="info-title">Häufige Fragen</div>
   <div class="info-ornament"><span>&#10022;</span></div>
   <div style="margin-bottom:56px">
     <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Wie funktioniert das Zero Touch Setup? <span class="faq-icon">+</span></div><div class="faq-answer">Sie melden sich mit Google an. Der Agent erkennt automatisch Ihre Search Console Domains, Google Ads Konten und Budgets. Fehlende Kampagnen werden automatisch erstellt - ohne manuelle Eingabe.</div></div>
-    <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Wie kuendige ich das Abo? <span class="faq-icon">+</span></div><div class="faq-answer">Jederzeit mit einem Klick ueber das Stripe-Kundenportal zum Ende des Abrechnungszeitraums kuendigen.</div></div>
-    <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Kann ich den Agenten pausieren? <span class="faq-icon">+</span></div><div class="faq-answer">Ja. Im Kunden-Dashboard koennen Sie den Agenten jederzeit pausieren oder wieder aktivieren - ohne Kuendigung.</div></div>
-    <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Wer zahlt das Google Ads Budget? <span class="faq-icon">+</span></div><div class="faq-answer">Ihr Werbebudget wird direkt von Google abgebucht. Unsere Gebuehr deckt ausschliesslich die intelligente Steuerung.</div></div>
-    <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Sind meine Daten sicher? <span class="faq-icon">+</span></div><div class="faq-answer">Ja. Hosting auf deutschen Servern, DSGVO-konform, nur offizielle Google-APIs - keine Passwoerter gespeichert.</div></div>
-    <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Wie funktioniert die WhatsApp-Steuerung? <span class="faq-icon">+</span></div><div class="faq-answer">Im Premium-Plan stellt der Agent proaktive Updates per WhatsApp zu und nimmt Befehle wie "Budget erhoehen" oder "Kampagne pausieren" direkt entgegen.</div></div>
+    <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Wie kündige ich das Abo? <span class="faq-icon">+</span></div><div class="faq-answer">Jederzeit mit einem Klick über das Stripe-Kundenportal zum Ende des Abrechnungszeitraums kündigen.</div></div>
+    <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Kann ich den Agenten pausieren? <span class="faq-icon">+</span></div><div class="faq-answer">Ja. Im Kunden-Dashboard können Sie den Agenten jederzeit pausieren oder wieder aktivieren - ohne Kündigung.</div></div>
+    <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Wer zahlt das Google Ads Budget? <span class="faq-icon">+</span></div><div class="faq-answer">Ihr Werbebudget wird direkt von Google abgebucht. Unsere Gebühr deckt ausschließlich die intelligente Steuerung.</div></div>
+    <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Sind meine Daten sicher? <span class="faq-icon">+</span></div><div class="faq-answer">Ja. Hosting auf deutschen Servern, DSGVO-konform, nur offizielle Google-APIs - keine Passwörter gespeichert.</div></div>
+    <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Wie funktioniert die WhatsApp-Steuerung? <span class="faq-icon">+</span></div><div class="faq-answer">Im Premium-Plan stellt der Agent proaktive Updates per WhatsApp zu und nimmt Befehle wie "Budget erhöhen" oder "Kampagne pausieren" direkt entgegen.</div></div>
   </div>
 
   <div class="testimonials-wrap">
     <div class="testi-header">Ergebnisse sprechen.</div>
-    <div class="testi-subhead">Echte Kunden - Verifizierte Resultate</div>
+    <div class="testi-subhead">Echte Kunden · Verifizierte Resultate</div>
     <div class="testi-filters">
       <button class="testi-filter active" onclick="filterTesti('alle',this)">Alle</button>
       <button class="testi-filter" onclick="filterTesti('immobilien',this)">Immobilien</button>
       <button class="testi-filter" onclick="filterTesti('beauty',this)">Beauty</button>
     </div>
     <div class="testi-track" id="testi-track">
-      <div class="testi-card" data-cat="immobilien"><div class="testi-quote-mark">"</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Der Agent identifizierte in 48h ein Keyword das wir seit Jahren uebersehen haben. Cost-per-Lead sank um 61%."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar">KA</div><div><div class="testi-name">Khalid Al-Rashidi</div><div class="testi-role">Immobilienmakler - Dubai</div></div><div class="testi-metric"><span class="testi-metric-num">-61%</span><span class="testi-metric-label">Cost-per-Lead</span></div></div></div>
-      <div class="testi-card" data-cat="beauty"><div class="testi-quote-mark">"</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Drei Kliniken, ein Agent - verwaltet alles gleichzeitig und meldet taeglich per WhatsApp. Wie ein echter Mitarbeiter."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar">SN</div><div><div class="testi-name">Dr. Soraya Nasseri</div><div class="testi-role">Geschaeftsfuehrerin - Beauty Clinic GmbH</div></div><div class="testi-metric"><span class="testi-metric-num">3x</span><span class="testi-metric-label">Mehr Anfragen</span></div></div></div>
-      <div class="testi-card" data-cat="immobilien"><div class="testi-quote-mark">"</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Streuverluste eliminiert, Budget optimiert - 40% mehr Umsatz bei gleichem Einsatz."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar">MH</div><div><div class="testi-name">Marcus Hoffmann</div><div class="testi-role">Unternehmer - Muenchen</div></div><div class="testi-metric"><span class="testi-metric-num">+40%</span><span class="testi-metric-label">Mehr Umsatz</span></div></div></div>
-      <div class="testi-card" data-cat="beauty"><div class="testi-quote-mark">"</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„AiWakeel versteht beide Maerkte - DACH und Gulf. Sichtbarkeit verdoppelt in 3 Wochen."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar">LI</div><div><div class="testi-name">Layla Ibrahim</div><div class="testi-role">Inhaberin - Al-Nour Trading GmbH</div></div><div class="testi-metric"><span class="testi-metric-num">x2</span><span class="testi-metric-label">Sichtbarkeit</span></div></div></div>
+      <div class="testi-card" data-cat="immobilien"><div class="testi-quote-mark">"</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Der Agent identifizierte in 48h ein Keyword das wir seit Jahren übersehen haben. Cost-per-Lead sank um 61%."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar">KA</div><div><div class="testi-name">Khalid Al-Rashidi</div><div class="testi-role">Immobilienmakler · Dubai</div></div><div class="testi-metric"><span class="testi-metric-num">-61%</span><span class="testi-metric-label">Cost-per-Lead</span></div></div></div>
+      <div class="testi-card" data-cat="beauty"><div class="testi-quote-mark">"</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Drei Kliniken, ein Agent - verwaltet alles gleichzeitig und meldet täglich per WhatsApp. Wie ein echter Mitarbeiter."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar">SN</div><div><div class="testi-name">Dr. Soraya Nasseri</div><div class="testi-role">Geschäftsführerin · Beauty Clinic GmbH</div></div><div class="testi-metric"><span class="testi-metric-num">3x</span><span class="testi-metric-label">Mehr Anfragen</span></div></div></div>
+      <div class="testi-card" data-cat="immobilien"><div class="testi-quote-mark">"</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Streuverluste eliminiert, Budget optimiert - 40% mehr Umsatz bei gleichem Einsatz."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar">MH</div><div><div class="testi-name">Marcus Hoffmann</div><div class="testi-role">Unternehmer · München</div></div><div class="testi-metric"><span class="testi-metric-num">+40%</span><span class="testi-metric-label">Mehr Umsatz</span></div></div></div>
+      <div class="testi-card" data-cat="beauty"><div class="testi-quote-mark">"</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„AiWakeel versteht beide Märkte - DACH und Gulf. Sichtbarkeit verdoppelt in 3 Wochen."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar">LI</div><div><div class="testi-name">Layla Ibrahim</div><div class="testi-role">Inhaberin · Al-Nour Trading GmbH</div></div><div class="testi-metric"><span class="testi-metric-num">x2</span><span class="testi-metric-label">Sichtbarkeit</span></div></div></div>
     </div>
     <div class="testi-dots" id="testi-dots"></div>
   </div>
 
   <footer class="footer">
-    <div class="footer-login"><a href="login.html">&rarr; Kunden-Login - Dashboard</a></div>
+    <div class="footer-login"><a href="login.html">&rarr; Kunden-Login · Dashboard</a></div>
     <div class="footer-links">
       <a href="javascript:showLegal('impressum')">Impressum</a>
       <a href="javascript:showLegal('privacy')">Datenschutz</a>
@@ -591,8 +590,8 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
       <a href="javascript:showLegal('widerruf')">Widerruf</a>
       <a href="javascript:showLegal('cookies')">Cookies</a>
     </div>
-    <span class="footer-copy">&copy; 2026 AIWAKEEL - Intelligent Management</span>
-    <span class="footer-location">Dubai - Frankfurt</span>
+    <span class="footer-copy">&copy; 2026 AIWAKEEL · Intelligent Management</span>
+    <span class="footer-location">Dubai · Frankfurt</span>
   </footer>
 </div>
 
@@ -845,10 +844,81 @@ function goToStep(n) {
 function showStatus(id, m, t) { const b = document.getElementById(id); b.textContent = m; b.className = 'status-box show ' + t; }
 function startLiveCounter() { setInterval(() => { let n = document.getElementById('live-num'); n.textContent = Math.max(3, Math.min(20, parseInt(n.textContent) + (Math.random() < 0.5 ? 1 : -1))); }, 7000); }
 function toggleFaq(e) { e.parentElement.classList.toggle('active'); }
-function showLegal(t) { alert("Rechtstext: " + t); }
-function filterTesti(c, b) { document.querySelectorAll('.testi-filter').forEach(x => x.classList.remove('active')); b.classList.add('active'); document.querySelectorAll('.testi-card').forEach(x => x.style.display = (c === 'alle' || x.dataset.cat === c) ? 'block' : 'none'); }
-function buildDots() {}
-function startTestiTimer() {}
+
+// --- REPARIERTE LEGAL/MODAL FUNKTION ---
+function showLegal(type){
+  const c={
+    impressum:'<h2 style="color:var(--gold);margin-bottom:12px;font-family:\'Cormorant Garamond\',serif;font-size:24px;font-weight:300;">Impressum</h2><p>AiWakeel Advertising Systems. Inhaber: [Dein Name]. Gemäß § 19 UStG keine MwSt. Standorte: Dubai & Frankfurt.</p>',
+    privacy:'<h2 style="color:var(--gold);margin-bottom:12px;font-family:\'Cormorant Garamond\',serif;font-size:24px;font-weight:300;">Datenschutz</h2><p>Daten werden verschlüsselt auf deutschen Servern verarbeitet. Nur Google OAuth, kein Tracking.</p>',
+    agb:'<h2 style="color:var(--gold);margin-bottom:12px;font-family:\'Cormorant Garamond\',serif;font-size:24px;font-weight:300;">AGB</h2><p>Monatlich kündbare Dienstleistung. Vertrag kommt mit erster Zahlung zustande.</p>',
+    widerruf:'<h2 style="color:var(--gold);margin-bottom:12px;font-family:\'Cormorant Garamond\',serif;font-size:24px;font-weight:300;">Widerruf</h2><p>Widerrufsrecht binnen 14 Tagen, sofern Dienstleistung noch nicht vollständig erbracht.</p>',
+    cookies:'<h2 style="color:var(--gold);margin-bottom:12px;font-family:\'Cormorant Garamond\',serif;font-size:24px;font-weight:300;">Cookies</h2><p>Technisch notwendig: Stripe (Zahlung), Google OAuth (Verbindung), Consent (Ihre Entscheidung).</p>'
+  };
+  document.getElementById('modal-text').innerHTML=c[type];
+  document.getElementById('legal-modal').style.display='block';
+}
+
+function closeModal(e){
+  if(!e||e.target.className==='modal') {
+    document.getElementById('legal-modal').style.display='none';
+  }
+}
+
+// --- REPARIERTE TESTIMONIAL SLIDER FUNKTIONEN ---
+let tIdx=0,tTimer;
+function buildDots(){
+  const track=document.getElementById('testi-track');
+  const dots=document.getElementById('testi-dots');
+  dots.innerHTML='';
+  [...track.querySelectorAll('.testi-card:not(.hidden)')].forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='testi-dot'+(i===0?' active':'');
+    d.onclick=()=>scrollT(i);
+    dots.appendChild(d);
+  });
+}
+
+function filterTesti(cat,btn){
+  document.querySelectorAll('.testi-filter').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.testi-card').forEach(c=>c.classList.toggle('hidden',cat!=='alle'&&c.dataset.cat!==cat));
+  tIdx=0;
+  document.getElementById('testi-track').scrollLeft=0;
+  buildDots();
+  resetT();
+}
+
+function scrollT(idx){
+  const track=document.getElementById('testi-track');
+  const v=[...track.querySelectorAll('.testi-card:not(.hidden)')];
+  if(!v[idx])return;
+  track.scrollLeft=v[idx].offsetLeft;
+  tIdx=idx;
+  document.querySelectorAll('.testi-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+}
+
+function startTestiTimer(){
+  buildDots();
+  resetT();
+  document.getElementById('testi-track').addEventListener('scroll',()=>{
+    const t=document.getElementById('testi-track');
+    const v=[...t.querySelectorAll('.testi-card:not(.hidden)')];
+    const idx=v.findIndex(c=>c.offsetLeft>=t.scrollLeft-10);
+    if(idx>=0){
+      tIdx=idx;
+      document.querySelectorAll('.testi-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+    }
+  });
+}
+
+function resetT(){
+  clearInterval(tTimer);
+  tTimer=setInterval(()=>{
+    const v=[...document.querySelectorAll('.testi-card:not(.hidden)')];
+    tIdx=(tIdx+1)%v.length;
+    scrollT(tIdx);
+  },4500);
+}
 </script>
 </body>
 </html>
