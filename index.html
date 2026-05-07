@@ -1,278 +1,440 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#080808">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; connect-src n8n.aiwakeel.ai ads.aiwakeel.ai; img-src 'self' data:; frame-ancestors 'none';">
 <title>AiWakeel Setup – Zero Touch Automation</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script>
+(function(){
+  if(localStorage.getItem('cookieConsent')==='accepted'){
+    document.documentElement.style.setProperty('--font-serif',"'Cormorant Garamond',Georgia,serif");
+    document.documentElement.style.setProperty('--font-sans',"'DM Sans',system-ui,sans-serif");
+    var pc=document.createElement('link');pc.rel='preconnect';pc.href='https://fonts.googleapis.com';document.head.appendChild(pc);
+    var pc2=document.createElement('link');pc2.rel='preconnect';pc2.href='https://fonts.gstatic.com';pc2.crossOrigin='anonymous';document.head.appendChild(pc2);
+    var fl=document.createElement('link');fl.rel='stylesheet';
+    fl.href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap';
+    document.head.appendChild(fl);
+  }
+})();
+</script>
 <style>
-:root {
+:root{
+  --font-serif:Georgia,'Times New Roman',serif;
+  --font-sans:system-ui,-apple-system,sans-serif;
   --gold:#C9A84C;--gold-light:#E8C97A;--gold-dim:rgba(201,168,76,0.1);
   --obsidian:#080808;--surface:#0F0F0F;--surface2:#161616;
   --border:rgba(201,168,76,0.18);--border2:rgba(201,168,76,0.08);
   --text:#F0EDE8;--text-muted:rgba(240,237,232,0.42);--text-dim:rgba(240,237,232,0.22);
   --success:#4CAF50;--error:rgba(255,80,80,0.8);
 }
-html { overflow-x: hidden; width: 100%; }
+html{overflow-x:hidden;width:100%}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{
-  background:var(--obsidian);color:var(--text);font-family:'DM Sans',sans-serif;
+  background:var(--obsidian);color:var(--text);font-family:var(--font-sans);
   min-height:100vh;display:flex;flex-direction:column;align-items:center;
-  padding:32px 14px 60px;position:relative; overflow-x:hidden; width: 100%;
+  padding:32px 14px max(60px,env(safe-area-inset-bottom));
+  position:relative;overflow-x:hidden;width:100%;
+  opacity:0;transition:opacity 0s;
 }
-body::before{
-  content:'';position:fixed;inset:0;
-  background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,168,76,0.07) 0%,transparent 60%);
-  pointer-events:none;z-index:0;
-}
-body::after{
-  content:'';position:fixed;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-  pointer-events:none;z-index:0;opacity:0.7;
-}
-.wrapper{position:relative;z-index:1;width:100%;max-width:480px;flex-grow:1;}
-.cursor-glow{
-  position:fixed;width:18px;height:18px;border-radius:50%;
-  border:1px solid rgba(201,168,76,0.5);pointer-events:none;z-index:99998;
-  transform:translate(-50%,-50%);transition:opacity 0.3s;
-  box-shadow:0 0 8px rgba(201,168,76,0.15);
-}
-.live-counter{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;font-size:11px;letter-spacing:0.08em;color:var(--text-muted)}
+body.ready{opacity:1;transition:opacity 0.6s ease}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,168,76,0.07) 0%,transparent 60%);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.7}
+.wrapper{position:relative;z-index:1;width:100%;max-width:480px;flex-grow:1}
+
+/* INTRO OVERLAY */
+#intro-overlay{position:fixed;inset:0;background:var(--obsidian);z-index:999999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;transition:opacity 0.7s ease,transform 0.7s ease}
+#intro-overlay.fade-out{opacity:0;transform:scale(1.04);pointer-events:none}
+.intro-logo{font-family:var(--font-serif);font-size:38px;font-weight:300;letter-spacing:0.22em;color:var(--gold);opacity:0;animation:introFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.2s forwards}
+.intro-line{width:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:introLine 0.8s cubic-bezier(0.22,1,0.36,1) 0.5s forwards}
+.intro-sub{font-size:9px;letter-spacing:0.4em;color:var(--text-dim);text-transform:uppercase;opacity:0;animation:introFadeUp 0.5s ease 0.9s forwards}
+@keyframes introFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes introLine{from{width:0}to{width:60px}}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease}
+.reveal.revealed{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}.reveal-delay-2{transition-delay:.2s}.reveal-delay-3{transition-delay:.3s}
+
+/* OFFLINE BANNER */
+#offline-banner{position:fixed;top:0;left:0;right:0;z-index:99998;background:rgba(255,80,80,0.12);border-bottom:1px solid rgba(255,80,80,0.3);padding:10px 16px;display:none;align-items:center;justify-content:center;gap:8px;font-size:11px;color:var(--error);letter-spacing:.06em;backdrop-filter:blur(8px)}
+#offline-banner.show{display:flex}
+
+/* TOAST */
+#toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface);border:1px solid var(--border);padding:12px 22px;font-size:12px;color:var(--text-muted);max-width:340px;width:90%;text-align:center;z-index:99997;border-radius:2px;transition:transform .4s cubic-bezier(0.22,1,0.36,1),opacity .4s;opacity:0;pointer-events:none}
+#toast::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto}
+#toast.error{border-color:rgba(255,80,80,.3);color:var(--error)}
+#toast.success{border-color:rgba(76,175,80,.3);color:var(--success)}
+#toast.info{border-color:var(--border);color:var(--gold)}
+
+/* EXIT INTENT */
+#exit-intent{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99996;display:none;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(12px)}
+#exit-intent.show{display:flex;animation:fadeInUp .4s ease}
+.exit-box{background:var(--surface);border:1px solid var(--border);padding:36px 28px;max-width:400px;width:100%;text-align:center;position:relative}
+.exit-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.exit-title{font-family:var(--font-serif);font-size:28px;font-weight:300;color:var(--gold);margin-bottom:10px;letter-spacing:.04em}
+.exit-text{font-size:12px;color:var(--text-muted);line-height:1.7;margin-bottom:24px;font-style:italic}
+.exit-btn{width:100%;padding:16px;background:transparent;border:1px solid var(--gold);color:var(--gold);cursor:pointer;font-size:11px;text-transform:uppercase;letter-spacing:.2em;font-family:var(--font-sans);margin-bottom:10px;transition:all .3s;position:relative;overflow:hidden}
+.exit-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--gold),#A8893A);transform:translateY(100%);transition:transform .3s;z-index:0}
+.exit-btn:hover{color:var(--obsidian)}.exit-btn:hover::before{transform:translateY(0)}
+.exit-btn span{position:relative;z-index:1}
+.exit-close{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:10px;text-transform:uppercase;letter-spacing:.15em;font-family:var(--font-sans);margin-top:4px;transition:color .3s}
+.exit-close:hover{color:var(--text-muted)}
+
+/* touch-action on all interactive */
+button,input,select,a,[role=button]{touch-action:manipulation}
+
+/* LANG TOGGLE */
+.lang-toggle{display:flex;align-items:center;justify-content:flex-end;margin-bottom:10px}
+.lang-btn{background:none;border:1px solid var(--border2);color:var(--text-dim);font-size:9px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;padding:4px 10px;font-family:var(--font-sans);transition:all .3s}
+.lang-btn:first-child{border-right:none;border-radius:2px 0 0 2px}
+.lang-btn:last-child{border-radius:0 2px 2px 0}
+.lang-btn.active{border-color:rgba(201,168,76,.4);color:var(--gold);background:var(--gold-dim)}
+
+/* RTL */
+[dir=rtl] .step-panel{direction:rtl;text-align:right}
+[dir=rtl] .field input{text-align:right}
+[dir=rtl] .connect-btn{flex-direction:row-reverse}
+[dir=rtl] .plan-row{flex-direction:row-reverse}
+[dir=rtl] .testi-author{flex-direction:row-reverse}
+[dir=rtl] .testi-metric{margin-left:0;margin-right:auto;text-align:left}
+[dir=rtl] .benefit-item{flex-direction:row-reverse}
+[dir=rtl] .how-arrow{transform:scaleX(-1)}
+[dir=rtl] .summary-row{flex-direction:row-reverse}
+
+/* CURSOR GLOW */
+.cursor-glow{position:fixed;width:52px;height:52px;border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(201,168,76,.22) 0%,rgba(201,168,76,.07) 45%,transparent 70%);filter:blur(6px);transition:opacity .3s}
+
+/* LIVE COUNTER */
+.live-counter{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;font-size:11px;letter-spacing:.08em;color:var(--text-muted)}
 .live-dot{width:7px;height:7px;border-radius:50%;background:#4CAF50;box-shadow:0 0 8px #4CAF50;animation:livePulse 1.8s ease infinite}
-@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.7)}}
-.live-num{color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:16px}
-.logo{text-align:center;margin-bottom:24px}
-.logo-text{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;letter-spacing:0.18em;color:var(--gold)}
-.logo-sub{font-size:8px;letter-spacing:0.4em;color:var(--text-dim);text-transform:uppercase;margin-top:5px}
-.logo-line{width:40px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:8px auto 0}
-.progress{display:flex;align-items:center;justify-content:center;margin-bottom:32px}
-.step-dot{
-  width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;
-  color:var(--text-dim);background:var(--surface);transition:0.4s ease;
-}
-.step-dot.active{border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 4px rgba(201,168,76,0.07),0 0 20px rgba(201,168,76,0.1)}
-.step-dot.done{border-color:var(--gold);background:var(--gold);color:var(--obsidian);font-size:11px;font-style:normal}
-.step-line{width:32px;height:1px;background:var(--border2);transition:background 0.5s}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.live-num{color:var(--gold);font-family:var(--font-serif);font-size:16px}
+
+/* LOGO */
+.logo{text-align:center;margin-bottom:18px}
+.logo-text{font-family:var(--font-serif);font-size:32px;font-weight:300;letter-spacing:.18em;color:var(--gold)}
+.logo-sub{font-size:8px;letter-spacing:.4em;color:var(--text-dim);text-transform:uppercase;margin-top:5px}
+.logo-line{width:60px;height:1px;margin:8px auto 0;background:linear-gradient(90deg,transparent,var(--gold-light),var(--gold),var(--gold-light),transparent);background-size:200% 100%;animation:logoShimmer 3s ease-in-out infinite}
+@keyframes logoShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* PROGRESS */
+.progress{display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.step-dot{width:34px;height:34px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:13px;font-style:italic;color:var(--text-dim);background:var(--surface);transition:border-color .4s,color .4s,background .4s,box-shadow .4s}
+.step-dot.active{border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 4px rgba(201,168,76,.07),0 0 20px rgba(201,168,76,.12)}
+.step-dot.done{border-color:var(--gold);background:var(--gold);color:var(--obsidian);font-size:11px;font-style:normal;animation:dotPop .4s cubic-bezier(0.34,1.56,0.64,1) forwards}
+@keyframes dotPop{0%{transform:scale(.7)}100%{transform:scale(1)}}
+.step-line{width:32px;height:1px;background:var(--border2);transition:background .5s}
 .step-line.done{background:var(--gold)}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:0;padding:38px 28px;position:relative;box-shadow:0 40px 100px rgba(0,0,0,0.8),0 0 0 1px rgba(201,168,76,0.04);margin-bottom:12px}
+#step-label{text-align:center;font-size:9px;color:var(--text-dim);letter-spacing:.18em;text-transform:uppercase;margin-bottom:22px;transition:opacity .3s}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:0;padding:38px 28px;position:relative;box-shadow:0 40px 100px rgba(0,0,0,.8),0 0 0 1px rgba(201,168,76,.04);margin-bottom:12px;overflow:hidden}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-.step-panel{display:none;animation:fadeIn 0.45s ease forwards}
-.step-panel.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.step-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--text);margin-bottom:6px;letter-spacing:0.02em}
-.step-desc{font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:var(--text-muted);line-height:1.7;margin-bottom:28px}
-.connect-btn{width:100%;padding:16px;background:var(--surface2);border:1px solid var(--border);color:var(--text);cursor:pointer;display:flex;align-items:center;margin-bottom:12px;border-radius:2px;transition:0.3s;gap:14px;font-family:'DM Sans',sans-serif}
-.connect-btn:disabled{opacity:0.35;cursor:not-allowed}
+@media(max-width:360px){
+  .card{padding:24px 16px}
+  body{padding-left:10px;padding-right:10px}
+  .cookie-actions{grid-template-columns:1fr}
+  .cookie-cat{flex-direction:column;gap:6px}
+}
+
+/* STEP TRANSITIONS */
+.step-panel{display:none}
+.step-panel.active{display:block;animation:stepIn .45s cubic-bezier(0.22,1,0.36,1) forwards}
+.step-panel.active.going-back{animation:stepInBack .45s cubic-bezier(0.22,1,0.36,1) forwards}
+@keyframes stepIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
+@keyframes stepInBack{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.step-title{font-family:var(--font-serif);font-size:30px;font-weight:300;color:var(--text);margin-bottom:6px;letter-spacing:.02em}
+.step-desc{font-family:var(--font-serif);font-size:14px;font-style:italic;color:var(--text-muted);line-height:1.7;margin-bottom:28px}
+
+/* CONNECT BUTTON */
+.connect-btn{width:100%;padding:16px;background:var(--surface2);border:1px solid var(--border);color:var(--text);cursor:pointer;display:flex;align-items:center;margin-bottom:12px;border-radius:2px;transition:border-color .3s,background .3s,box-shadow .3s;gap:14px;font-family:var(--font-sans)}
+.connect-btn:disabled{opacity:.35;cursor:not-allowed}
 .connect-btn:not(:disabled):hover{border-color:var(--gold);background:var(--gold-dim)}
 .connect-btn.connected{border-color:var(--gold);background:var(--gold-dim)}
 .connect-btn.processing{border-color:var(--gold);animation:pulseBorder 1.5s ease infinite}
-@keyframes pulseBorder{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,0.2)}50%{box-shadow:0 0 0 6px rgba(201,168,76,0)}}
-.cbtn-icon{font-size:20px;flex-shrink:0}
-.cbtn-label{font-size:13px;flex:1;text-align:left}
-.cbtn-sub{font-size:10px;color:var(--text-muted);margin-top:2px}
-.cbtn-status{font-size:11px;color:var(--gold);flex-shrink:0}
-.connect-success-overlay{position:absolute;inset:0;background:rgba(8,8,8,0.97);border-radius:3px;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:20}
-.connect-success-overlay.show{display:flex;animation:fadeIn 0.3s ease}
-.success-ring{width:72px;height:72px;border-radius:50%;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--gold);animation:ringPop 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards;box-shadow:0 0 30px rgba(201,168,76,0.2)}
+@keyframes pulseBorder{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.2)}50%{box-shadow:0 0 0 6px rgba(201,168,76,0)}}
+.cbtn-icon{font-size:20px;flex-shrink:0}.cbtn-label{font-size:13px;flex:1;text-align:left}.cbtn-sub{font-size:10px;color:var(--text-muted);margin-top:2px}.cbtn-status{font-size:11px;color:var(--gold);flex-shrink:0}
+
+/* SUCCESS OVERLAY */
+.connect-success-overlay{position:absolute;inset:0;background:rgba(8,8,8,.97);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:20}
+.connect-success-overlay.show{display:flex;animation:fadeInUp .3s ease}
+.success-ring{width:72px;height:72px;border-radius:50%;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--gold);animation:ringPop .6s cubic-bezier(0.34,1.56,0.64,1) forwards;box-shadow:0 0 30px rgba(201,168,76,.25)}
 @keyframes ringPop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
-.success-particles{position:absolute;inset:0;pointer-events:none}
-.particle{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--gold);animation:pFly 0.9s ease forwards;top:50%;left:50%}
-@keyframes pFly{from{transform:translate(-50%,-50%) scale(1);opacity:1}to{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+.success-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.particle{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--gold);top:50%;left:50%;animation:pFly .9s ease forwards;animation-delay:var(--delay,0s)}
+@keyframes pFly{from{transform:translate(-50%,-50%) scale(1);opacity:1}to{transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) scale(0);opacity:0}}
 .trust-badges{display:flex;justify-content:center;gap:18px;margin-top:12px}
 .trust-badge{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text-dim)}
 .trust-badge-icon{color:var(--gold);font-size:11px}
+
+/* FIELDS */
 .field{margin-bottom:22px;position:relative}
-.field label{font-size:9px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:10px;letter-spacing:0.15em}
-.field input{
-  width:100%;padding:12px 0;background:transparent;
-  border:none;border-bottom:1px solid var(--border2);
-  color:var(--text);outline:none;font-size:16px;
-  font-family:'Cormorant Garamond',serif;transition:border-color 0.3s;
-  border-radius:0;
-}
+.field label{font-size:9px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:10px;letter-spacing:.15em}
+.field input{width:100%;padding:12px 0;background:transparent;border:none;border-bottom:1px solid var(--border2);color:var(--text);outline:none;font-size:16px;font-family:var(--font-serif);transition:border-color .3s;border-radius:0;-webkit-appearance:none}
 .field input::placeholder{color:var(--text-dim);font-style:italic}
 .field input:focus{border-bottom-color:var(--gold)}
-.field-underline{position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--gold);transition:width 0.4s ease}
-.field input:focus ~ .field-underline{width:100%}
+.field-underline{position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--gold);transition:width .4s ease;pointer-events:none}
+.field input:focus~.field-underline{width:100%}
 .domain-check{font-size:10px;margin-top:6px;height:14px}
-.domain-ok{color:var(--success)}
-.domain-err{color:var(--error)}
-.auto-filled{background:rgba(201,168,76,0.05) !important;border-bottom-color:var(--gold) !important;color:var(--gold-light) !important}
-.auto-filled::placeholder{color:var(--gold-dim) !important}
+.domain-ok{color:var(--success)}.domain-err{color:var(--error)}
+.auto-filled{background:rgba(201,168,76,.05)!important;border-bottom-color:var(--gold)!important;color:var(--gold-light)!important}
 .field-note{font-size:10px;color:var(--text-dim);margin-top:4px;font-style:italic}
+
+/* BUDGET HERO */
 .budget-hero{text-align:center;margin-bottom:20px;padding:22px;background:var(--surface2);border:1px solid var(--border);border-radius:2px;position:relative;overflow:hidden}
-.budget-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-.budget-amount{font-family:'Cormorant Garamond',serif;font-size:54px;font-weight:300;color:var(--gold);line-height:1}
-.budget-period{font-size:11px;color:var(--text-muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px}
-.budget-reach{font-size:12px;color:var(--text-muted);margin-top:8px}
+.budget-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);z-index:1}
+.budget-hero::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 30%,rgba(201,168,76,.06) 50%,transparent 70%);background-size:200% 100%;animation:budgetShimmer 4s ease-in-out infinite}
+@keyframes budgetShimmer{0%,100%{background-position:200% 0}50%{background-position:-200% 0}}
+.budget-amount{font-family:var(--font-serif);font-size:54px;font-weight:300;color:var(--gold);line-height:1;position:relative;z-index:1}
+.budget-period{font-size:11px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-top:4px;position:relative;z-index:1}
+.budget-reach{font-size:12px;color:var(--text-muted);margin-top:8px;position:relative;z-index:1}
 .budget-reach strong{color:var(--text)}
-.slider-wrap{padding:14px 0 6px}
+.slider-wrap{padding:14px 0 6px;position:relative;z-index:1}
 input[type=range]{-webkit-appearance:none;width:100%;height:2px;background:var(--border);border-radius:2px;outline:none;background-image:linear-gradient(var(--gold),var(--gold));background-size:0% 100%;background-repeat:no-repeat}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--gold);cursor:pointer;box-shadow:0 0 0 4px rgba(201,168,76,0.12),0 2px 8px rgba(0,0,0,0.5);transition:box-shadow 0.2s}
-input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,168,76,0.15)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--gold);cursor:pointer;box-shadow:0 0 0 4px rgba(201,168,76,.12),0 2px 8px rgba(0,0,0,.5);transition:box-shadow .2s}
+input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,168,76,.15)}
 .slider-marks{display:flex;justify-content:space-between;font-size:9px;color:var(--text-dim);padding:0 2px;margin-top:4px}
-.plan-card{background:transparent;border:1px solid var(--border2);border-radius:0;padding:20px;margin-bottom:10px;cursor:pointer;transition:0.3s;position:relative;overflow:hidden}
-.plan-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:var(--gold);transition:width 0.3s}
-.plan-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:0;background:rgba(201,168,76,0.04);transition:height 0.3s}
+
+/* PLAN CARDS */
+.plan-card{background:transparent;border:1px solid var(--border2);border-radius:0;padding:20px;margin-bottom:10px;cursor:pointer;transition:border-color .3s,box-shadow .3s,background .3s;position:relative;overflow:hidden}
+.plan-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:var(--gold);transition:width .3s}
+.plan-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:0;background:rgba(201,168,76,.04);transition:height .3s}
 .plan-card:hover::before{height:100%}
-.plan-card.selected{border-color:var(--gold)}
-.plan-card.selected::after{width:2px}
+.plan-card.selected{border-color:var(--gold)}.plan-card.selected::after{width:2px}
+#plan-premium:hover{box-shadow:0 0 28px rgba(201,168,76,.14),0 0 0 1px rgba(201,168,76,.22)}
+#plan-premium.selected{box-shadow:0 0 40px rgba(201,168,76,.2),0 0 0 1px rgba(201,168,76,.4)}
+/* RIPPLE */
+.ripple-el{position:absolute;border-radius:50%;background:rgba(201,168,76,.15);transform:scale(0);animation:rippleAnim .6s linear forwards;pointer-events:none}
+@keyframes rippleAnim{to{transform:scale(4);opacity:0}}
 .plan-row{display:flex;justify-content:space-between;align-items:flex-start}
-.plan-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;letter-spacing:0.05em}
-.plan-price{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);text-align:right}
-.plan-price small{font-size:11px;color:var(--text-muted);display:block;font-family:'DM Sans',sans-serif;letter-spacing:0.05em}
+.plan-name{font-family:var(--font-serif);font-size:18px;font-weight:300;letter-spacing:.05em}
+.plan-price{font-family:var(--font-serif);font-size:24px;color:var(--gold);text-align:right}
+.plan-price small{font-size:11px;color:var(--text-muted);display:block;font-family:var(--font-sans);letter-spacing:.05em}
 .plan-desc{font-size:11px;color:var(--text-muted);margin-top:8px;line-height:1.6;font-style:italic}
-.plan-badge{font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,0.3);padding:2px 8px;margin-left:8px;vertical-align:middle}
-.wa-preview{background:#0B1218;border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:14px;margin-top:14px}
-.wa-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.plan-badge{font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,.3);padding:2px 8px;margin-left:8px;vertical-align:middle}
+
+/* WA PREVIEW */
+.wa-preview{background:#0B1218;border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:14px;margin-top:14px;animation:waSlideIn .5s cubic-bezier(0.22,1,0.36,1) forwards}
+@keyframes waSlideIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.wa-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.06)}
 .wa-avatar{width:32px;height:32px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px}
-.wa-name{font-size:12px;font-weight:500;color:#E8E8E8}
-.wa-online{font-size:10px;color:#4CAF50}
+.wa-name{font-size:12px;font-weight:500;color:#E8E8E8}.wa-online{font-size:10px;color:#4CAF50}
 .wa-typing{display:flex;gap:4px;padding:10px 14px;background:#1E3A2F;border-radius:0 10px 10px 10px;width:52px;margin-bottom:8px}
-.wa-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.4);animation:waDot 1.2s ease infinite}
-.wa-dot:nth-child(2){animation-delay:0.2s}
-.wa-dot:nth-child(3){animation-delay:0.4s}
+.wa-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);animation:waDot 1.2s ease infinite}
+.wa-dot:nth-child(2){animation-delay:.2s}.wa-dot:nth-child(3){animation-delay:.4s}
 @keyframes waDot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
-.wa-bubble{background:#1E3A2F;border-radius:0 10px 10px 10px;padding:10px 14px;font-size:12px;color:#E8E8E8;line-height:1.5;display:inline-block;opacity:0;transform:translateY(8px)}
-.wa-bubble.show{animation:waPop 0.4s ease forwards}
-@keyframes waPop{to{opacity:1;transform:translateY(0)}}
-.wa-time{font-size:9px;color:rgba(255,255,255,0.35);margin-top:6px;text-align:right}
+.wa-bubble{background:#1E3A2F;border-radius:0 10px 10px 10px;padding:10px 14px;font-size:12px;color:#E8E8E8;line-height:1.6;display:block;min-height:44px;width:100%;word-break:break-word}
+.wa-cursor{display:inline-block;width:1px;height:12px;background:#4CAF50;margin-left:1px;vertical-align:middle;animation:blink .8s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+.wa-time{font-size:9px;color:rgba(255,255,255,.35);margin-top:6px;text-align:right}
+
+/* SUMMARY */
 .summary-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border2);font-size:13px}
 .summary-label{color:var(--text-muted);font-size:12px}
-.summary-value{color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:18px}
-.slide-to-activate{position:relative;height:56px;background:var(--surface2);border:1px solid var(--border);border-radius:28px;overflow:hidden;margin-top:20px;user-select:none}
-.slide-bg{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(135deg,var(--gold),#A8893A);border-radius:28px;pointer-events:none}
-.slide-track-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);pointer-events:none;transition:opacity 0.3s}
+.summary-value{color:var(--gold);font-family:var(--font-serif);font-size:18px}
+
+/* SLIDE TO ACTIVATE */
+.slide-to-activate{position:relative;height:64px;background:var(--surface2);border:1px solid var(--border);border-radius:32px;overflow:hidden;margin-top:20px;user-select:none;touch-action:none}
+.slide-bg{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(135deg,var(--gold),#A8893A);border-radius:32px;pointer-events:none;transition:none}
+.slide-track-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);pointer-events:none;transition:opacity .3s;font-family:var(--font-sans)}
 .slide-track-text.hidden{opacity:0}
-.slide-thumb{position:absolute;left:4px;top:4px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#A8893A);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:grab;box-shadow:0 2px 12px rgba(201,168,76,0.4);touch-action:none;z-index:2}
-.slide-activated-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--obsidian);font-weight:600;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.slide-thumb{position:absolute;left:4px;top:4px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#A8893A);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:grab;box-shadow:0 2px 12px rgba(201,168,76,.4);z-index:2}
+.slide-thumb:active{cursor:grabbing}
+.slide-activated-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--obsidian);font-weight:600;opacity:0;pointer-events:none;transition:opacity .3s;font-family:var(--font-sans)}
 .slide-activated-text.show{opacity:1}
 .stripe-badge{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;font-size:10px;color:var(--text-dim)}
-.stripe-logo{font-size:13px;font-weight:700;color:#635BFF;letter-spacing:-0.02em}
-.btn-primary{
-  width:100%;padding:18px;background:transparent;
-  border:1px solid var(--gold);color:var(--gold);
-  font-weight:400;text-transform:uppercase;letter-spacing:0.2em;cursor:pointer;
-  font-size:11px;border-radius:0;font-family:'DM Sans',sans-serif;
-  transition:all 0.4s ease;position:relative;overflow:hidden;
-}
-.btn-primary::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,var(--gold),#A8893A);
-  transform:translateY(100%);transition:transform 0.4s ease;z-index:0;
-}
-.btn-primary span{position:relative;z-index:1}
-.btn-primary:hover:not(:disabled){color:var(--obsidian)}
+.stripe-logo{font-size:13px;font-weight:700;color:#635BFF;letter-spacing:-.02em}
+
+/* BUTTONS */
+.btn-primary{width:100%;padding:18px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-weight:400;text-transform:uppercase;cursor:pointer;font-size:11px;border-radius:0;font-family:var(--font-sans);transition:color .4s,box-shadow .4s;position:relative;overflow:hidden}
+.btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--gold),#A8893A);transform:translateY(100%);transition:transform .4s ease;z-index:0}
+.btn-primary span{position:relative;z-index:1;display:inline-block;letter-spacing:.2em;transition:letter-spacing .4s ease}
+.btn-primary:hover:not(:disabled){color:var(--obsidian);box-shadow:0 8px 32px rgba(201,168,76,.2)}
 .btn-primary:hover:not(:disabled)::before{transform:translateY(0)}
-.btn-primary:disabled{opacity:0.2;cursor:not-allowed;border-color:var(--border)}
-.btn-back{background:none;border:none;color:var(--text-dim);cursor:pointer;width:100%;margin-top:16px;font-size:10px;text-transform:uppercase;letter-spacing:0.15em;font-family:'DM Sans',sans-serif;transition:color 0.3s}
+.btn-primary:hover:not(:disabled) span{letter-spacing:.28em}
+.btn-primary:disabled{opacity:.2;cursor:not-allowed;border-color:var(--border)}
+.btn-back{background:none;border:none;color:var(--text-dim);cursor:pointer;width:100%;margin-top:16px;font-size:10px;text-transform:uppercase;letter-spacing:.15em;font-family:var(--font-sans);transition:color .3s}
 .btn-back:hover{color:var(--text-muted)}
-.btn-whatsapp{width:100%;padding:16px;background:#128C7E;border:none;color:#fff;font-weight:500;text-transform:uppercase;letter-spacing:0.12em;cursor:pointer;font-size:11px;border-radius:0;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'DM Sans',sans-serif;margin-top:12px;transition:opacity 0.3s}
-.btn-whatsapp:hover{opacity:0.9}
+
+/* CONFETTI */
+#celebration-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+.confetti-piece{position:absolute;top:-10px;animation:confettiFall linear forwards}
+@keyframes confettiFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* HOW IT WORKS */
 .how-steps{display:flex;align-items:flex-start;gap:0;margin:4px 0 8px}
 .how-step{flex:1;text-align:center;padding:0 4px}
 .how-icon{width:46px;height:46px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:19px;background:var(--surface2)}
 .how-label{font-size:11px;color:var(--text);font-weight:500;margin-bottom:4px}
 .how-desc{font-size:10px;color:var(--text-muted);line-height:1.45}
-.how-arrow{color:var(--gold);font-size:18px;margin-top:13px;opacity:0.35;flex-shrink:0}
-.info-title{
-  font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;
-  text-align:center;margin:56px 0 8px;color:var(--text);letter-spacing:0.05em;
-}
-.info-ornament{
-  display:flex;align-items:center;justify-content:center;gap:16px;
-  margin-bottom:28px;
-}
-.info-ornament::before,.info-ornament::after{
-  content:'';flex:1;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(201,168,76,0.2));
-}
-.info-ornament::after{background:linear-gradient(270deg,transparent,rgba(201,168,76,0.2))}
-.info-ornament span{color:var(--gold);font-size:10px;letter-spacing:0.2em;opacity:0.7}
+.how-arrow{color:var(--gold);font-size:18px;margin-top:13px;opacity:.35;flex-shrink:0}
+
+/* PRICE COMPARISON */
+.compare-wrap{margin-bottom:52px}
+.compare-table{width:100%;border-collapse:collapse;font-size:11px}
+.compare-table th{padding:10px 8px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);font-weight:400;text-align:center;border-bottom:1px solid var(--border2)}
+.compare-table th:first-child{text-align:left}
+.compare-table td{padding:12px 8px;border-bottom:1px solid var(--border2);color:var(--text-muted);text-align:center}
+.compare-table td:first-child{text-align:left;color:var(--text)}
+.compare-table tr:last-child td{border-bottom:none}
+.col-ai{color:var(--gold);font-weight:500}
+.col-ai-head{color:var(--gold);border-bottom-color:rgba(201,168,76,.3)}
+.check-yes{color:var(--success);font-size:13px}
+.check-no{color:var(--text-dim);font-size:13px}
+.check-partial{color:var(--gold);font-size:10px}
+.compare-price{font-family:var(--font-serif);font-size:15px}
+
+.info-title{font-family:var(--font-serif);font-size:26px;font-weight:300;text-align:center;margin:56px 0 8px;color:var(--text);letter-spacing:.05em}
+.info-ornament{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:28px}
+.info-ornament::before,.info-ornament::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.2))}
+.info-ornament::after{background:linear-gradient(270deg,transparent,rgba(201,168,76,.2))}
+.info-ornament span{color:var(--gold);font-size:10px;letter-spacing:.2em;opacity:.7}
+
+/* BENEFITS */
 .benefit-list{display:grid;gap:28px;margin-bottom:52px;padding:0 4px}
 .benefit-item{display:flex;align-items:flex-start;gap:20px;padding-bottom:28px;border-bottom:1px solid var(--border2)}
 .benefit-item:last-child{border-bottom:none;padding-bottom:0}
-.benefit-icon{color:var(--gold);font-size:13px;flex-shrink:0;margin-top:4px;opacity:0.6}
-.benefit-text h4{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--text);margin-bottom:5px;letter-spacing:0.02em}
+.benefit-icon{color:var(--gold);font-size:13px;flex-shrink:0;margin-top:4px;opacity:.6}
+.benefit-text h4{font-family:var(--font-serif);font-size:18px;font-weight:300;color:var(--text);margin-bottom:5px;letter-spacing:.02em}
 .benefit-text p{font-size:12px;color:var(--text-muted);line-height:1.65}
-.faq-item{border-bottom:1px solid var(--border2);transition:0.3s}
-.faq-question{padding:20px 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--text);letter-spacing:0.02em}
-.faq-answer{max-height:0;overflow:hidden;transition:all 0.35s ease-in-out;color:var(--text-muted);font-size:13px;line-height:1.7;padding:0}
+
+/* FAQ */
+.faq-item{border-bottom:1px solid var(--border2)}
+.faq-question{padding:20px 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:var(--font-serif);font-size:16px;color:var(--text);letter-spacing:.02em}
+.faq-answer{max-height:0;overflow:hidden;transition:all .35s ease-in-out;color:var(--text-muted);font-size:13px;line-height:1.7;padding:0}
 .faq-item.active .faq-answer{max-height:300px;padding-bottom:20px}
-.faq-icon{font-size:14px;color:var(--gold);transition:transform 0.3s;flex-shrink:0;opacity:0.7}
+.faq-icon{font-size:14px;color:var(--gold);transition:transform .3s;flex-shrink:0;opacity:.7}
 .faq-item.active .faq-icon{transform:rotate(45deg)}
-.testi-header{font-family:'Cormorant Garamond',serif;font-size:24px;text-align:center;color:var(--gold);letter-spacing:0.05em;margin:44px 0 6px}
-.testi-subhead{text-align:center;font-size:10px;color:var(--text-dim);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:18px}
+
+/* TESTIMONIALS */
+.testi-header{font-family:var(--font-serif);font-size:24px;text-align:center;color:var(--gold);letter-spacing:.05em;margin:44px 0 6px}
+.testi-subhead{text-align:center;font-size:10px;color:var(--text-dim);letter-spacing:.2em;text-transform:uppercase;margin-bottom:18px}
 .testi-filters{display:flex;justify-content:center;gap:8px;margin-bottom:18px}
-.testi-filter{padding:5px 14px;border:1px solid var(--border2);border-radius:20px;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);cursor:pointer;transition:0.3s;background:none;font-family:'DM Sans',sans-serif}
+.testi-filter{padding:5px 14px;border:1px solid var(--border2);border-radius:20px;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);cursor:pointer;transition:.3s;background:none;font-family:var(--font-sans)}
 .testi-filter.active{border-color:var(--gold);color:var(--gold);background:var(--gold-dim)}
 .testi-track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:10px;scrollbar-width:none;scroll-behavior:smooth}
 .testi-track::-webkit-scrollbar{display:none}
-.testi-card{flex:0 0 calc(100% - 2px);scroll-snap-align:start;background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:24px 20px;position:relative;overflow:hidden}
+.testi-card{flex:0 0 calc(100% - 2px);scroll-snap-align:start;background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:24px 20px;position:relative;overflow:hidden;transition:transform .3s ease,box-shadow .3s ease}
+.testi-card:hover{transform:translateY(-2px);box-shadow:0 16px 48px rgba(0,0,0,.6),0 0 0 1px rgba(201,168,76,.1)}
 .testi-card.hidden{display:none}
 .testi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-.testi-quote-mark{font-family:'Cormorant Garamond',serif;font-size:64px;line-height:0.8;color:var(--gold);opacity:0.1;position:absolute;top:16px;right:16px;pointer-events:none}
+.testi-quote-mark{font-family:var(--font-serif);font-size:64px;line-height:.8;color:var(--gold);opacity:.1;position:absolute;top:16px;right:16px;pointer-events:none}
 .testi-stars{color:var(--gold);font-size:11px;letter-spacing:3px;margin-bottom:14px}
-.testi-text{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:300;font-style:italic;color:var(--text);line-height:1.75;margin-bottom:18px;position:relative;z-index:1}
+.testi-text{font-family:var(--font-serif);font-size:15px;font-weight:300;font-style:italic;color:var(--text);line-height:1.75;margin-bottom:18px;position:relative;z-index:1}
 .testi-divider{height:1px;background:var(--border2);margin-bottom:14px}
 .testi-author{display:flex;align-items:center;gap:12px}
-.testi-avatar{width:36px;height:36px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--gold);flex-shrink:0;font-family:'Cormorant Garamond',serif}
+.testi-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0;font-family:var(--font-serif)}
+.av-gold{background:rgba(201,168,76,.18);border:1px solid rgba(201,168,76,.4);color:var(--gold-light)}
+.av-teal{background:rgba(32,178,170,.12);border:1px solid rgba(32,178,170,.3);color:#7fffd4}
+.av-slate{background:rgba(100,149,237,.12);border:1px solid rgba(100,149,237,.3);color:#b0c4de}
+.av-rose{background:rgba(188,143,143,.15);border:1px solid rgba(188,143,143,.35);color:#e8c5c5}
 .testi-name{font-size:13px;color:var(--text);font-weight:500}
-.testi-role{font-size:9px;color:var(--text-dim);letter-spacing:0.08em;text-transform:uppercase;margin-top:2px}
+.testi-role{font-size:9px;color:var(--text-dim);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
 .testi-metric{margin-left:auto;text-align:right}
-.testi-metric-num{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);display:block}
-.testi-metric-label{font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em}
+.testi-metric-num{font-family:var(--font-serif);font-size:22px;color:var(--gold);display:block}
+.testi-metric-label{font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em}
 .testi-dots{display:flex;justify-content:center;gap:6px;margin-top:14px}
-.testi-dot{width:5px;height:5px;border-radius:50%;background:var(--border);transition:0.3s;cursor:pointer}
+.testi-dot{width:5px;height:5px;border-radius:50%;background:var(--border);transition:.3s;cursor:pointer}
 .testi-dot.active{background:var(--gold);width:18px;border-radius:3px}
 .testimonials-wrap{margin-bottom:60px}
-#cookie-popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:99999;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px)}
-.cookie-popup-box{background:var(--surface);border:1px solid var(--border);border-bottom:none;border-radius:4px 4px 0 0;padding:26px 22px 30px;width:100%;max-width:520px;box-shadow:0 -24px 80px rgba(0,0,0,0.9);animation:slideUp 0.45s cubic-bezier(0.22,1,0.36,1) forwards;position:relative}
+
+/* COOKIE */
+#cookie-popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:99999;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px)}
+.cookie-popup-box{background:var(--surface);border:1px solid var(--border);border-bottom:none;border-radius:4px 4px 0 0;padding:26px 22px 30px;width:100%;max-width:520px;box-shadow:0 -24px 80px rgba(0,0,0,.9);animation:slideUp .45s cubic-bezier(0.22,1,0.36,1) forwards;position:relative}
 .cookie-popup-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
 @keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
-.cookie-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--text);margin-bottom:8px}
-.cookie-text{font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:18px}
+.cookie-title{font-family:var(--font-serif);font-size:20px;font-weight:300;color:var(--text);margin-bottom:8px}
+.cookie-text{font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:14px}
+.cookie-categories{border:1px solid var(--border2);border-radius:2px;margin-bottom:18px;overflow:hidden}
+.cookie-cat{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 14px;gap:12px}
+.cookie-cat+.cookie-cat{border-top:1px solid var(--border2)}
+.cookie-cat-info{flex:1;min-width:0}
+.cookie-cat-name{font-size:12px;color:var(--text);font-weight:500;margin-bottom:2px}
+.cookie-cat-desc{font-size:10px;color:var(--text-dim);line-height:1.4}
+.badge-required{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--success);white-space:nowrap;margin-top:2px;flex-shrink:0}
+.badge-blocked{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);white-space:nowrap;margin-top:2px;flex-shrink:0}
 .cookie-actions{display:grid;grid-template-columns:1fr 1.6fr;gap:10px}
-.cookie-btn-decline{padding:13px;background:none;border:1px solid var(--border);color:var(--text-muted);cursor:pointer;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;border-radius:2px;font-family:'DM Sans',sans-serif}
-.cookie-btn-accept{padding:13px;background:linear-gradient(135deg,var(--gold),#A8893A);border:none;color:var(--obsidian);cursor:pointer;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;border-radius:2px;font-family:'DM Sans',sans-serif}
+.cookie-btn-decline{padding:13px;background:none;border:1px solid var(--border);color:var(--text-muted);cursor:pointer;font-size:11px;letter-spacing:.1em;text-transform:uppercase;border-radius:2px;font-family:var(--font-sans);transition:color .3s,border-color .3s}
+.cookie-btn-decline:hover{color:var(--text)}
+.cookie-btn-accept{padding:13px;background:linear-gradient(135deg,var(--gold),#A8893A);border:none;color:var(--obsidian);cursor:pointer;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border-radius:2px;font-family:var(--font-sans)}
 .cookie-legal{font-size:10px;color:var(--text-dim);margin-top:12px}
 .cookie-legal a{color:var(--gold);text-decoration:none}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:30000;display:none;padding:40px 20px;overflow-y:auto}
-.modal-content{background:var(--surface);border:1px solid var(--border);max-width:560px;margin:0 auto;padding:32px;position:relative;line-height:1.65;font-size:13px;color:var(--text-muted)}
-.spinner{width:20px;height:20px;border:2px solid var(--gold);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;display:inline-block;margin-left:8px}
+
+/* MODAL */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:30000;display:none;padding:40px 20px;overflow-y:auto;backdrop-filter:blur(8px)}
+.modal-content{background:var(--surface);border:1px solid var(--border);max-width:560px;margin:0 auto;padding:32px;position:relative;line-height:1.65;font-size:13px;color:var(--text-muted);border-radius:2px}
+.modal-content::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.spinner{width:20px;height:20px;border:2px solid var(--gold);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;display:inline-block;margin-left:8px;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
 .status-box{padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:2px;margin:12px 0;font-size:12px;color:var(--text-muted);display:none}
-.status-box.show{display:block;animation:fadeIn 0.3s ease}
-.status-box.success{border-color:rgba(76,175,80,0.3);background:rgba(76,175,80,0.05);color:var(--success)}
-.status-box.error{border-color:rgba(255,80,80,0.2);background:rgba(255,80,80,0.05);color:var(--error)}
-.status-box.processing{border-color:rgba(201,168,76,0.3);background:rgba(201,168,76,0.05);color:var(--gold)}
-.footer{width:100%;text-align:center;padding:50px 0 36px;border-top:1px solid var(--border2);margin-top:20px}
+.status-box.show{display:block;animation:fadeInUp .3s ease}
+.status-box.success{border-color:rgba(76,175,80,.3);background:rgba(76,175,80,.05);color:var(--success)}
+.status-box.error{border-color:rgba(255,80,80,.2);background:rgba(255,80,80,.05);color:var(--error)}
+.status-box.processing{border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.05);color:var(--gold)}
+
+/* FOOTER */
+.footer{width:100%;text-align:center;padding:50px 0 36px;position:relative;margin-top:20px}
+.footer::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.15),transparent)}
+.footer-fade{position:absolute;bottom:100%;left:0;right:0;height:90px;background:linear-gradient(to top,var(--obsidian),transparent);pointer-events:none}
 .footer-links{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
-.footer-links a{color:var(--text-dim);font-size:9px;text-decoration:none;text-transform:uppercase;letter-spacing:1.8px;transition:color 0.3s}
+.footer-links a{color:var(--text-dim);font-size:9px;text-decoration:none;text-transform:uppercase;letter-spacing:1.8px;transition:color .3s}
 .footer-links a:hover{color:var(--gold)}
 .footer-login{margin-bottom:20px}
-.footer-login a{font-size:11px;color:var(--text-muted);text-decoration:none;letter-spacing:0.08em;border-bottom:1px solid var(--border);padding-bottom:2px;transition:color 0.3s}
-.footer-login a:hover{color:var(--gold)}
-.footer-copy{font-size:8px;color:rgba(240,237,232,0.18);text-transform:uppercase;letter-spacing:3px;margin-bottom:6px;display:block}
-.footer-location{font-size:8px;color:var(--gold);text-transform:uppercase;letter-spacing:4px;opacity:0.5}
+.footer-login a{font-size:11px;color:var(--text-muted);text-decoration:none;letter-spacing:.08em;border-bottom:1px solid var(--border);padding-bottom:2px;transition:color .3s,border-color .3s}
+.footer-login a:hover{color:var(--gold);border-color:rgba(201,168,76,.4)}
+.footer-copy{font-size:8px;color:rgba(240,237,232,.18);text-transform:uppercase;letter-spacing:3px;margin-bottom:6px;display:block}
+.footer-location{font-size:8px;color:var(--gold);text-transform:uppercase;letter-spacing:4px;opacity:.5}
+
+/* OAUTH LOADING */
+#oauth-loading{position:fixed;inset:0;background:var(--obsidian);z-index:99999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:22px}
+#oauth-loading.show{display:flex}
+.oauth-ring{width:60px;height:60px;border-radius:50%;border:1px solid rgba(201,168,76,.2);border-top-color:var(--gold);animation:spin 1.2s linear infinite}
+.oauth-loading-text{font-family:var(--font-serif);font-size:16px;color:var(--text-muted);letter-spacing:.1em}
+
+/* HEADER DIMMING */
+#page-header{transition:filter .3s ease}
 </style>
 </head>
 <body>
 
-<div class="cursor-glow" id="cursor-glow"></div>
+<div id="intro-overlay">
+  <div class="intro-logo">AiWakeel</div>
+  <div class="intro-line"></div>
+  <div class="intro-sub">Intelligent Ad Management</div>
+</div>
+
+<div id="celebration-container"></div>
+<div id="oauth-loading"><div class="oauth-ring"></div><div class="oauth-loading-text">Google wird verbunden …</div></div>
+<div id="offline-banner">&#9888; Keine Internetverbindung – bitte prüfen</div>
+<div id="toast"></div>
+
+<div id="exit-intent">
+  <div class="exit-box">
+    <div class="exit-title">Bleib dabei.</div>
+    <p class="exit-text">Dein Agent ist bereits eingerichtet – nur noch ein Klick bis zur ersten Optimierung. Tausende Euro Werbebudget werden täglich verschwendet.</p>
+    <button class="exit-btn" onclick="closeExitIntent();window.scrollTo({top:0,behavior:'smooth'})"><span>Setup fortsetzen &rarr;</span></button>
+    <button class="exit-close" onclick="closeExitIntent()">Nicht jetzt</button>
+  </div>
+</div>
 
 <div id="cookie-popup-overlay">
   <div class="cookie-popup-box">
-    <div class="cookie-title">Cookies & Datenschutz</div>
-    <p class="cookie-text">Wir verwenden technisch notwendige Cookies für Zahlungen und Google-Verbindung. Keine Tracking-Cookies.</p>
-    <div class="cookie-actions">
-      <button class="cookie-btn-decline" onclick="cookieDecision(false)">Ablehnen</button>
-      <button class="cookie-btn-accept" onclick="cookieDecision(true)">Akzeptieren</button>
+    <div class="cookie-title">Cookies &amp; Datenschutz</div>
+    <p class="cookie-text">Externe Ressourcen werden erst nach Ihrer Zustimmung geladen.</p>
+    <div class="cookie-categories">
+      <div class="cookie-cat"><div class="cookie-cat-info"><div class="cookie-cat-name">Technisch notwendig</div><div class="cookie-cat-desc">Stripe, Session-Speicher. Kein Tracking.</div></div><div class="badge-required">Immer aktiv</div></div>
+      <div class="cookie-cat"><div class="cookie-cat-info"><div class="cookie-cat-name">Google Fonts</div><div class="cookie-cat-desc">fonts.googleapis.com – IP-Übermittlung an Google.</div></div><div id="badge-fonts" class="badge-blocked">Deaktiviert</div></div>
+      <div class="cookie-cat"><div class="cookie-cat-info"><div class="cookie-cat-name">Google OAuth</div><div class="cookie-cat-desc">Verbindung zu Search Console &amp; Google Ads.</div></div><div id="badge-oauth" class="badge-blocked">Deaktiviert</div></div>
     </div>
-    <p class="cookie-legal"><a href="javascript:cookieDecision(true);showLegal('cookies')">Cookie-Richtlinie</a> · <a href="javascript:cookieDecision(true);showLegal('privacy')">Datenschutz</a></p>
+    <div class="cookie-actions">
+      <button class="cookie-btn-decline" onclick="cookieDecision(false)">Nur notwendige</button>
+      <button class="cookie-btn-accept" onclick="cookieDecision(true)">Alle akzeptieren</button>
+    </div>
+    <p class="cookie-legal"><a href="javascript:void(0)" onclick="cookieDecision(true);showLegal('cookies')">Cookie-Richtlinie</a> · <a href="javascript:void(0)" onclick="cookieDecision(true);showLegal('privacy')">Datenschutz</a></p>
   </div>
 </div>
 
@@ -284,71 +446,68 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
 </div>
 
 <div class="wrapper">
-  <div class="live-counter">
-    <div class="live-dot"></div>
-    <span class="live-num" id="live-num">7</span>
-    <span>Agenten gerade aktiv</span>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="lang-de" onclick="setLang('de')">DE</button>
+    <button class="lang-btn" id="lang-ar" onclick="setLang('ar')">AR</button>
   </div>
 
-  <div class="logo">
-    <div class="logo-text">AiWakeel</div>
-    <div class="logo-sub">Intelligent Ad Management</div>
-    <div class="logo-line"></div>
+  <div id="page-header">
+    <div class="live-counter">
+      <div class="live-dot"></div>
+      <span class="live-num" id="live-num">7</span>
+      <span id="lc-label">Agenten gerade aktiv</span>
+    </div>
+    <div class="logo">
+      <div class="logo-text">AiWakeel</div>
+      <div class="logo-sub" id="logo-sub">Intelligent Ad Management</div>
+      <div class="logo-line"></div>
+    </div>
   </div>
 
   <div class="progress">
-    <div id="dot-1" class="step-dot active">I</div>
-    <div id="line-1" class="step-line"></div>
-    <div id="dot-2" class="step-dot">II</div>
-    <div id="line-2" class="step-line"></div>
-    <div id="dot-3" class="step-dot">III</div>
-    <div id="line-3" class="step-line"></div>
+    <div id="dot-1" class="step-dot active">I</div><div id="line-1" class="step-line"></div>
+    <div id="dot-2" class="step-dot">II</div><div id="line-2" class="step-line"></div>
+    <div id="dot-3" class="step-dot">III</div><div id="line-3" class="step-line"></div>
     <div id="dot-4" class="step-dot">IV</div>
   </div>
+  <div id="step-label">Schritt 1 von 4</div>
 
-  <div class="card" style="position:relative;overflow:hidden">
+  <div class="card" style="position:relative">
     <div class="connect-success-overlay" id="success-overlay">
       <div class="success-particles" id="particles"></div>
       <div class="success-ring">&#10003;</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold)">Verbunden</div>
-      <div style="font-size:12px;color:var(--text-muted)">Google Account erfolgreich verknüpft</div>
+      <div style="font-family:var(--font-serif);font-size:22px;color:var(--gold)" id="s-connected">Verbunden</div>
+      <div style="font-size:12px;color:var(--text-muted)" id="s-linked">Google Account erfolgreich verknüpft</div>
     </div>
 
+    <!-- STEP 1 -->
     <div id="step-1" class="step-panel active">
-      <div class="step-title">Zero Touch Setup</div>
-      <div class="step-desc">Ein Klick. Dein Agent übernimmt Search Console, Google Ads und erstellt automatisch Kampagnen.</div>
-
+      <div class="step-title" id="s1-title">Zero Touch Setup</div>
+      <div class="step-desc" id="s1-desc">Ein Klick. Dein Agent übernimmt Search Console, Google Ads und erstellt automatisch Kampagnen.</div>
       <button class="connect-btn" id="btn-google" onclick="startGoogleOAuth()">
         <span class="cbtn-icon">&#128269;</span>
-        <span>
-          <div class="cbtn-label">Google Account verbinden</div>
-          <div class="cbtn-sub">Search Console · Google Ads · Automatische Kampagnen</div>
-        </span>
+        <span><div class="cbtn-label" id="s1-btn-label">Google Account verbinden</div><div class="cbtn-sub">Search Console · Google Ads · Automatische Kampagnen</div></span>
         <span class="cbtn-status" id="status-google">Connect &rarr;</span>
       </button>
-
       <div class="status-box" id="oauth-status"></div>
-
-      <div id="auto-data-preview" style="display:none;margin-top:16px;">
-        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.15em;color:var(--text-dim);margin-bottom:10px">Automatisch erkannt</div>
+      <div id="auto-data-preview" style="display:none;margin-top:16px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:var(--text-dim);margin-bottom:10px" id="s1-auto-label">Automatisch erkannt</div>
         <div class="field" style="margin-bottom:12px">
           <label>Google Ads Kundennummer</label>
-          <input type="text" id="auto-customer-id" class="auto-filled" readonly>
+          <input type="text" id="auto-customer-id" class="auto-filled" readonly autocomplete="off">
           <div class="field-underline"></div>
           <div class="field-note">Wird automatisch aus deinem Google Ads Konto übernommen</div>
         </div>
         <div class="field" style="margin-bottom:12px">
           <label>Kampagnen-Budget ID</label>
-          <input type="text" id="auto-budget-id" class="auto-filled" readonly>
+          <input type="text" id="auto-budget-id" class="auto-filled" readonly autocomplete="off">
           <div class="field-underline"></div>
           <div class="field-note">Wird automatisch erkannt oder neu erstellt</div>
         </div>
       </div>
-
       <button class="btn-primary" id="btn-step1-next" onclick="goToStep(2)" disabled style="margin-top:10px">
-        <span>Weiter zur Konfiguration</span>
+        <span id="s1-next-label">Weiter zur Konfiguration</span>
       </button>
-
       <div class="trust-badges">
         <div class="trust-badge"><span class="trust-badge-icon">&#128274;</span>SSL</div>
         <div class="trust-badge"><span class="trust-badge-icon">&#128737;</span>DSGVO</div>
@@ -356,246 +515,196 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
       </div>
     </div>
 
+    <!-- STEP 2 -->
     <div id="step-2" class="step-panel">
-      <div class="step-title">Konfiguration</div>
-      <div class="step-desc">Dein Agent scannt bereits deine Search Console. Bestätige nur noch deine Branche und Kontakt.</div>
-
+      <div class="step-title" id="s2-title">Konfiguration</div>
+      <div class="step-desc" id="s2-desc">Dein Agent scannt bereits deine Search Console. Bestätige Branche und Kontakt.</div>
       <div class="field">
         <label>Website Domain <span style="color:var(--gold)">*</span></label>
-        <input type="text" id="domain" placeholder="dein-unternehmen.de" oninput="validateStep2()" onblur="cleanDomain()">
-        <div class="field-underline"></div>
-        <div class="domain-check" id="domain-check"></div>
+        <input type="text" id="domain" placeholder="dein-unternehmen.de" autocomplete="url" oninput="validateStep2()" onblur="cleanDomain()">
+        <div class="field-underline"></div><div class="domain-check" id="domain-check"></div>
       </div>
-
       <div class="field">
         <label>Deine Branche <span style="color:var(--gold)">*</span></label>
-        <input type="text" id="industry" placeholder="z.B. Webdesign Agentur" oninput="validateStep2()">
+        <input type="text" id="industry" placeholder="z.B. Webdesign Agentur" autocomplete="organization" oninput="validateStep2()">
         <div class="field-underline"></div>
       </div>
-
-      <div class="field">
-        <label>Telefonnummer <span style="color:var(--gold)">*</span></label>
-        <input type="tel" id="phone" placeholder="0170 1234567" oninput="validateStep2()">
-        <div class="field-underline"></div>
-        <div class="field-note">Für allgemeine Rückfragen zu deinem Account.</div>
-      </div>
-      
       <div class="field">
         <label>Reporting E-Mail <span style="color:var(--gold)">*</span></label>
-        <input type="email" id="email" placeholder="mail@dein-unternehmen.de" oninput="validateStep2()">
+        <input type="email" id="email" placeholder="mail@dein-unternehmen.de" autocomplete="email" inputmode="email" oninput="validateStep2()">
         <div class="field-underline"></div>
         <div class="field-note">An diese Adresse senden wir deine täglichen Performance-Reports.</div>
       </div>
-
+      <div class="field">
+        <label>Telefonnummer <span style="color:var(--gold)">*</span></label>
+        <input type="tel" id="phone" placeholder="0170 1234567" autocomplete="tel" inputmode="tel" oninput="validateStep2()">
+        <div class="field-underline"></div>
+        <div class="field-note">Für allgemeine Rückfragen zu deinem Account.</div>
+      </div>
       <div class="field">
         <label>WhatsApp Nummer <span style="color:var(--text-dim)">(Optional)</span></label>
-        <input type="tel" id="whatsapp" placeholder="+49 170 1234567" oninput="validateStep2()">
+        <input type="tel" id="whatsapp" placeholder="+49 170 1234567" autocomplete="tel" inputmode="tel" oninput="validateStep2()" onblur="formatWhatsapp()">
         <div class="field-underline"></div>
-        <div class="field-note">Nur benötigt, falls du dich gleich für den <strong>Premium Plan (Maison)</strong> mit WhatsApp-Direktsteuerung entscheidest.</div>
+        <div class="field-note">Nur für den <strong>Premium Plan (Maison)</strong> mit WhatsApp-Direktsteuerung.</div>
       </div>
-
-      <div style="background:var(--gold-dim); border:1px solid var(--border); padding:14px; margin:16px 0; border-radius:2px;">
-        <div style="font-size:9px; text-transform:uppercase; letter-spacing:0.15em; color:var(--gold); margin-bottom:4px;">
-          <span style="animation: livePulse 1.5s infinite">&#10022;</span> Zero Touch Intelligence
-        </div>
-        <div style="font-size:11px; color:var(--text-muted); font-style:italic">
-          Beste Keywords werden vollautomatisch aus der Search Console extrahiert. Ads Customer ID & Budget ID wurden bereits beim Login übernommen. Keine manuelle Eingabe nötig.
-        </div>
+      <div style="background:var(--gold-dim);border:1px solid var(--border);padding:14px;margin:16px 0;border-radius:2px">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--gold);margin-bottom:4px">&#10022; Zero Touch Intelligence</div>
+        <div style="font-size:11px;color:var(--text-muted);font-style:italic">Keywords werden vollautomatisch aus der Search Console extrahiert. Ads Customer ID &amp; Budget ID wurden beim Login übernommen.</div>
       </div>
-
       <div style="background:var(--surface2);border:1px solid var(--border);padding:14px;margin:16px 0;border-radius:2px">
-        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.15em;color:var(--text-dim);margin-bottom:8px">Verknüpfte Google Konten</div>
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-          <span style="color:var(--success);font-size:14px">&#10003;</span>
-          <span style="font-size:12px;color:var(--text-muted)">Search Console: <span id="sc-status" style="color:var(--text)">Aktiv</span></span>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="color:var(--success);font-size:14px">&#10003;</span>
-          <span style="font-size:12px;color:var(--text-muted)">Google Ads: <span id="ads-status-text" style="color:var(--text)">Verbunden</span></span>
-        </div>
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:var(--text-dim);margin-bottom:8px">Verknüpfte Google Konten</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><span style="color:var(--success);font-size:14px">&#10003;</span><span style="font-size:12px;color:var(--text-muted)">Search Console: <span style="color:var(--text)">Aktiv</span></span></div>
+        <div style="display:flex;align-items:center;gap:10px"><span style="color:var(--success);font-size:14px">&#10003;</span><span style="font-size:12px;color:var(--text-muted)">Google Ads: <span style="color:var(--text)">Verbunden</span></span></div>
       </div>
-
-      <button class="btn-primary" id="btn-step2-next" onclick="goToStep(3)" disabled>
-        <span>Pläne wählen</span>
-      </button>
-      <button class="btn-back" onclick="goToStep(1)">&larr; Zurück</button>
+      <button class="btn-primary" id="btn-step2-next" onclick="goToStep(3)" disabled><span id="s2-next-label">Pläne wählen</span></button>
+      <button class="btn-back" onclick="goToStep(1,true)">&larr; Zurück</button>
     </div>
 
+    <!-- STEP 3 -->
     <div id="step-3" class="step-panel">
-      <div class="step-title">Plan & Budget</div>
-
-      <div id="plan-classic" class="plan-card" onclick="selectPlan('classic',29,49)">
-        <div class="plan-row">
-          <span class="plan-name">Atelier</span>
-          <span class="plan-price">29&euro; <small>/mtl.</small></span>
-        </div>
-        <div class="plan-desc">Ads Agent Optimierung & E-Mail Reports · Setup einmalig 49&euro;</div>
+      <div class="step-title" id="s3-title">Plan &amp; Budget</div>
+      <div id="plan-classic" class="plan-card" onclick="selectPlan('classic',29,49,event)">
+        <div class="plan-row"><span class="plan-name">Atelier</span><span class="plan-price">29&euro; <small>/mtl.</small></span></div>
+        <div class="plan-desc">Ads Agent Optimierung &amp; E-Mail Reports · Setup einmalig 49&euro;</div>
       </div>
-
-      <div id="plan-premium" class="plan-card" onclick="selectPlan('premium',59,79)">
+      <div id="plan-premium" class="plan-card" onclick="selectPlan('premium',59,79,event)">
         <div class="plan-row">
-          <span class="plan-name">&#10022; Maison <span class="plan-badge">Empfohlen</span></span>
+          <span class="plan-name">&#10022; Maison <span class="plan-badge" id="recommended-badge" style="display:none">Empfohlen</span></span>
           <span class="plan-price" style="color:var(--gold)">59&euro; <small>/mtl.</small></span>
         </div>
         <div class="plan-desc">WhatsApp-Direktsteuerung + Echtzeit-Alerts · Setup einmalig 79&euro;</div>
         <div class="wa-preview" id="wa-preview" style="display:none">
-          <div class="wa-header">
-            <div class="wa-avatar">&#129302;</div>
-            <div><div class="wa-name">AiWakeel Agent</div><div class="wa-online">&#9679; Online</div></div>
-          </div>
-          <div class="wa-typing"><div class="wa-dot"></div><div class="wa-dot"></div><div class="wa-dot"></div></div>
-          <div class="wa-bubble" id="wa-bubble">
-            &#10022; Heute Top-Keyword: <strong>„Immobilien Dubai kaufen"</strong><br>
-            CPC: 1.24&euro; · Potenzial: 840 Klicks<br>
-            Kampagne läuft seit 3h 12m.
-            <div class="wa-time">Jetzt · &#10003;&#10003;</div>
-          </div>
+          <div class="wa-header"><div class="wa-avatar">&#129302;</div><div><div class="wa-name">AiWakeel Agent</div><div class="wa-online">&#9679; Online</div></div></div>
+          <div class="wa-typing" id="wa-typing"><div class="wa-dot"></div><div class="wa-dot"></div><div class="wa-dot"></div></div>
+          <div class="wa-bubble" id="wa-bubble"></div>
         </div>
       </div>
-
-      <div style="font-size:10px;margin:22px 0 12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em">Google Ads Budget</div>
-
+      <div style="font-size:10px;margin:22px 0 12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em">Google Ads Budget</div>
       <div class="budget-hero">
         <div class="budget-amount" id="budget-display">300&euro;</div>
         <div class="budget-period">pro Monat</div>
         <div class="budget-reach">Geschätzte Reichweite: <strong id="budget-reach">~1.500 Klicks</strong></div>
         <div class="slider-wrap">
-          <input type="range" id="budget-slider" min="100" max="3000" step="50" value="300" oninput="updateBudget(this.value)">
+          <input type="range" id="budget-slider" min="100" max="3000" step="50" value="300" aria-label="Google Ads Monatsbudget in Euro" oninput="updateBudget(this.value)">
         </div>
         <div class="slider-marks"><span>100&euro;</span><span>750&euro;</span><span>1.500&euro;</span><span>2.500&euro;</span><span>3.000&euro;</span></div>
       </div>
-
-      <button class="btn-primary" id="btn-step3-next" onclick="goToStep(4)" disabled>
-        <span>Zusammenfassung</span>
-      </button>
-      <button class="btn-back" onclick="goToStep(2)">&larr; Zurück</button>
+      <button class="btn-primary" id="btn-step3-next" onclick="goToStep(4)" disabled><span id="s3-next-label">Zusammenfassung</span></button>
+      <button class="btn-back" onclick="goToStep(2,true)">&larr; Zurück</button>
     </div>
 
+    <!-- STEP 4 -->
     <div id="step-4" class="step-panel">
-      <div class="step-title">Bestätigung</div>
-
-      <div class="summary-row">
-        <span class="summary-label">Domain</span>
-        <span id="sum-domain" class="summary-value" style="font-size:14px"></span>
-      </div>
-      <div class="summary-row">
-        <span class="summary-label">Branche</span>
-        <span id="sum-industry" class="summary-value" style="font-size:14px"></span>
-      </div>
-      <div class="summary-row">
-        <span class="summary-label">Plan</span>
-        <span id="sum-plan" class="summary-value" style="font-size:14px"></span>
-      </div>
-      <div class="summary-row">
-        <span class="summary-label">Einmaliges Setup</span>
-        <span id="sum-setup" class="summary-value"></span>
-      </div>
-      <div class="summary-row">
-        <span class="summary-label">Ads Agent Service</span>
-        <span id="sum-fee" class="summary-value"></span>
-      </div>
-      <div class="summary-row">
-        <span class="summary-label">Geplantes Ads-Budget</span>
-        <span id="sum-budget" class="summary-value"></span>
-      </div>
-
+      <div class="step-title" id="s4-title">Bestätigung</div>
+      <div class="summary-row"><span class="summary-label" id="sum-domain-label">Domain</span><span id="sum-domain" class="summary-value" style="font-size:14px"></span></div>
+      <div class="summary-row"><span class="summary-label" id="sum-industry-label">Branche</span><span id="sum-industry" class="summary-value" style="font-size:14px"></span></div>
+      <div class="summary-row"><span class="summary-label" id="sum-plan-label">Plan</span><span id="sum-plan" class="summary-value" style="font-size:14px"></span></div>
+      <div class="summary-row"><span class="summary-label" id="sum-setup-label">Einmaliges Setup</span><span id="sum-setup" class="summary-value"></span></div>
+      <div class="summary-row"><span class="summary-label" id="sum-fee-label">Ads Agent Service</span><span id="sum-fee" class="summary-value"></span></div>
+      <div class="summary-row"><span class="summary-label" id="sum-budget-label">Geplantes Ads-Budget</span><span id="sum-budget" class="summary-value"></span></div>
       <div style="margin:20px 0;display:flex;gap:10px;font-size:11px;color:var(--text-muted)">
-        <input type="checkbox" id="check-legal" onchange="validateFinal()" style="accent-color:var(--gold);margin-top:2px;flex-shrink:0">
-        <span>Ich akzeptiere die <a href="javascript:showLegal('agb')" style="color:var(--gold)">AGB</a>, <a href="javascript:showLegal('privacy')" style="color:var(--gold)">Datenschutz</a> und <a href="javascript:showLegal('widerruf')" style="color:var(--gold)">Widerruf</a>.</span>
+        <input type="checkbox" id="check-legal" onchange="validateFinal()" style="accent-color:var(--gold);margin-top:2px;flex-shrink:0" aria-label="AGB akzeptieren">
+        <span>Ich akzeptiere die <a href="javascript:void(0)" onclick="showLegal('agb')" style="color:var(--gold)">AGB</a>, <a href="javascript:void(0)" onclick="showLegal('privacy')" style="color:var(--gold)">Datenschutz</a> und <a href="javascript:void(0)" onclick="showLegal('widerruf')" style="color:var(--gold)">Widerruf</a>.</span>
       </div>
-
       <div class="slide-to-activate" id="slider-activate" style="display:none">
         <div class="slide-bg" id="slide-bg"></div>
         <div class="slide-track-text" id="slide-text">&larr; Ziehen zum Aktivieren &rarr;</div>
         <div class="slide-activated-text" id="slide-done">&#10022; Agent wird gestartet</div>
         <div class="slide-thumb" id="slide-thumb">&rarr;</div>
       </div>
-
-      <div class="stripe-badge">
-        <span>&#128274; Gesichert durch</span>
-        <span class="stripe-logo">stripe</span>
-      </div>
+      <div class="stripe-badge"><span>&#128274; Gesichert durch</span><span class="stripe-logo">stripe</span></div>
       <div class="trust-badges" style="margin-top:8px">
         <div class="trust-badge"><span class="trust-badge-icon">&#128737;</span>DSGVO</div>
         <div class="trust-badge"><span class="trust-badge-icon">&#127465;&#127466;</span>Made in Germany</div>
         <div class="trust-badge"><span class="trust-badge-icon">&#8617;</span>Jederzeit kündbar</div>
       </div>
-      <button class="btn-back" onclick="goToStep(3)">&larr; Zurück</button>
+      <button class="btn-back" onclick="goToStep(3,true)">&larr; Zurück</button>
     </div>
 
+    <!-- STEP 5 -->
     <div id="step-5" class="step-panel" style="text-align:center;padding:8px 0">
       <div style="font-size:42px;margin-bottom:14px;animation:livePulse 2s ease infinite">&#10022;</div>
-      <div class="step-title">Agent aktiv</div>
-      <p style="font-size:12px;color:var(--text-muted);line-height:1.7;margin-bottom:20px">
-        Dein Agent ist vollständig konfiguriert. Search Console wird analysiert, Google Ads Budget wird täglich optimiert.
-      </p>
-      <div id="step5-whatsapp" style="display:none">
-        <p style="font-size:11px;color:var(--text-muted);margin-bottom:14px">Du erhältst in Kürze eine WhatsApp Nachricht vom Agenten.</p>
-      </div>
-      <div id="step5-classic" style="display:none">
-        <p style="font-size:11px;color:var(--text-muted);margin-top:14px">&#128231; Dein erster Report kommt per E-Mail innerhalb von 24 Stunden.</p>
-      </div>
-      <p style="font-size:11px;color:var(--text-muted);margin-top:20px">
-        Agenten verwalten & pausieren im <a href="dashboard.html" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,168,76,0.3)">Kunden-Dashboard &rarr;</a>
-      </p>
+      <div class="step-title" id="s5-title">Agent aktiv</div>
+      <p style="font-size:12px;color:var(--text-muted);line-height:1.7;margin-bottom:20px" id="s5-desc">Dein Agent ist vollständig konfiguriert. Search Console wird analysiert, Google Ads Budget täglich optimiert.</p>
+      <div id="step5-whatsapp" style="display:none"><p style="font-size:11px;color:var(--text-muted);margin-bottom:14px">Du erhältst in Kürze eine WhatsApp Nachricht vom Agenten.</p></div>
+      <div id="step5-classic" style="display:none"><p style="font-size:11px;color:var(--text-muted);margin-top:14px">&#128231; Dein erster Report kommt per E-Mail innerhalb von 24 Stunden.</p></div>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:20px">Agenten verwalten &amp; pausieren im <a href="dashboard.html" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,168,76,.3)">Kunden-Dashboard &rarr;</a></p>
     </div>
   </div>
 
-  <div class="info-title">So funktioniert dein Agent</div>
-  <div class="info-ornament"><span>&#10022;</span></div>
-  <div class="how-steps">
-    <div class="how-step"><div class="how-icon">&#128269;</div><div class="how-label">Search Console</div><div class="how-desc">Analysiert echte Suchdaten & findet Potenziale</div></div>
+  <div class="info-title reveal" id="how-title">So funktioniert dein Agent</div>
+  <div class="info-ornament reveal"><span>&#10022;</span></div>
+  <div class="how-steps reveal">
+    <div class="how-step"><div class="how-icon">&#128269;</div><div class="how-label">Search Console</div><div class="how-desc">Analysiert Suchdaten &amp; findet Potenziale</div></div>
     <div class="how-arrow">&rarr;</div>
     <div class="how-step"><div class="how-icon">&#129302;</div><div class="how-label">KI-Analyse</div><div class="how-desc">Wählt das stärkste Keyword mit maximalem ROI</div></div>
     <div class="how-arrow">&rarr;</div>
-    <div class="how-step"><div class="how-icon">&#128227;</div><div class="how-label">Google Ads</div><div class="how-desc">Bucht & optimiert vollautomatisch</div></div>
+    <div class="how-step"><div class="how-icon">&#128227;</div><div class="how-label">Google Ads</div><div class="how-desc">Bucht &amp; optimiert vollautomatisch</div></div>
   </div>
 
-  <div class="info-title">Exklusive Vorteile</div>
-  <div class="info-ornament"><span>&#10022;</span></div>
+  <div class="info-title reveal" id="compare-title">Warum AiWakeel?</div>
+  <div class="info-ornament reveal"><span>&#10022;</span></div>
+  <div class="compare-wrap reveal">
+    <table class="compare-table">
+      <thead><tr><th></th><th class="col-ai-head">AiWakeel</th><th>Agentur</th><th>Selbst</th></tr></thead>
+      <tbody>
+        <tr><td>Monatliche Kosten</td><td class="col-ai"><span class="compare-price">29–59&euro;</span></td><td><span class="compare-price" style="color:var(--text-muted)">1.500–4.000&euro;</span></td><td><span class="compare-price" style="color:var(--text-muted)">0&euro;</span></td></tr>
+        <tr><td>Tägliche Optimierung</td><td><span class="check-yes">&#10003;</span></td><td><span class="check-partial">Wöchentlich</span></td><td><span class="check-no">&#10007;</span></td></tr>
+        <tr><td>24/7 aktiv</td><td><span class="check-yes">&#10003;</span></td><td><span class="check-no">&#10007;</span></td><td><span class="check-no">&#10007;</span></td></tr>
+        <tr><td>Search Console Integration</td><td><span class="check-yes">&#10003;</span></td><td><span class="check-partial">Aufpreis</span></td><td><span class="check-partial">Manuell</span></td></tr>
+        <tr><td>WhatsApp-Steuerung</td><td><span class="check-yes">&#10003;</span></td><td><span class="check-no">&#10007;</span></td><td><span class="check-no">&#10007;</span></td></tr>
+        <tr><td>Setup-Zeit</td><td class="col-ai" style="font-size:11px">5 Minuten</td><td style="font-size:11px;color:var(--text-dim)">2–4 Wochen</td><td style="font-size:11px;color:var(--text-dim)">Stunden</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-title reveal">Exklusive Vorteile</div>
+  <div class="info-ornament reveal"><span>&#10022;</span></div>
   <div class="benefit-list">
-    <div class="benefit-item"><div class="benefit-icon">&#10022;</div><div class="benefit-text"><h4>Zero Touch Setup</h4><p>Ein Google Login - der Agent übernimmt Search Console, Ads und Kampagnenerstellung vollautomatisch.</p></div></div>
-    <div class="benefit-item"><div class="benefit-icon">&#10022;</div><div class="benefit-text"><h4>Maximale Reichweite</h4><p>Dein Agent identifiziert ungenutzte Keyword-Potenziale und dominiert die Google-Suche.</p></div></div>
-    <div class="benefit-item"><div class="benefit-icon">&#10022;</div><div class="benefit-text"><h4>Echtzeit-Optimierung</h4><p>Algorithmen passen Gebote sekündlich an, um Streuverluste zu eliminieren.</p></div></div>
-    <div class="benefit-item"><div class="benefit-icon">&#10022;</div><div class="benefit-text"><h4>Volle Kontrolle</h4><p>Agenten jederzeit über das Kunden-Dashboard pausieren oder stoppen.</p></div></div>
+    <div class="benefit-item reveal reveal-delay-1"><div class="benefit-icon">&#10022;</div><div class="benefit-text"><h4>Zero Touch Setup</h4><p>Ein Google Login – der Agent übernimmt Search Console, Ads und Kampagnenerstellung vollautomatisch.</p></div></div>
+    <div class="benefit-item reveal reveal-delay-2"><div class="benefit-icon">&#10022;</div><div class="benefit-text"><h4>Maximale Reichweite</h4><p>Dein Agent identifiziert ungenutzte Keyword-Potenziale und dominiert die Google-Suche.</p></div></div>
+    <div class="benefit-item reveal reveal-delay-1"><div class="benefit-icon">&#10022;</div><div class="benefit-text"><h4>Echtzeit-Optimierung</h4><p>Algorithmen passen Gebote sekündlich an, um Streuverluste zu eliminieren.</p></div></div>
+    <div class="benefit-item reveal reveal-delay-2"><div class="benefit-icon">&#10022;</div><div class="benefit-text"><h4>Volle Kontrolle</h4><p>Agenten jederzeit über das Kunden-Dashboard pausieren oder stoppen.</p></div></div>
   </div>
 
-  <div class="info-title">Häufige Fragen</div>
-  <div class="info-ornament"><span>&#10022;</span></div>
+  <div class="info-title reveal" id="faq">Häufige Fragen</div>
+  <div class="info-ornament reveal"><span>&#10022;</span></div>
   <div style="margin-bottom:56px">
-    <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Wie funktioniert das Zero Touch Setup? <span class="faq-icon">+</span></div><div class="faq-answer">Sie melden sich mit Google an. Der Agent erkennt automatisch Ihre Search Console Domains, Google Ads Konten und Budgets. Fehlende Kampagnen werden automatisch erstellt - ohne manuelle Eingabe.</div></div>
-    <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Wie kündige ich das Abo? <span class="faq-icon">+</span></div><div class="faq-answer">Jederzeit mit einem Klick über das Stripe-Kundenportal zum Ende des Abrechnungszeitraums kündigen.</div></div>
-    <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Kann ich den Agenten pausieren? <span class="faq-icon">+</span></div><div class="faq-answer">Ja. Im Kunden-Dashboard können Sie den Agenten jederzeit pausieren oder wieder aktivieren - ohne Kündigung.</div></div>
-    <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Wer zahlt das Google Ads Budget? <span class="faq-icon">+</span></div><div class="faq-answer">Ihr Werbebudget wird direkt von Google abgebucht. Unsere Gebühr deckt ausschließlich die intelligente Steuerung.</div></div>
-    <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Sind meine Daten sicher? <span class="faq-icon">+</span></div><div class="faq-answer">Ja. Hosting auf deutschen Servern, DSGVO-konform, nur offizielle Google-APIs - keine Passwörter gespeichert.</div></div>
-    <div class="faq-item"><div class="faq-question" onclick="toggleFaq(this)">Wie funktioniert die WhatsApp-Steuerung? <span class="faq-icon">+</span></div><div class="faq-answer">Im Premium-Plan stellt der Agent proaktive Updates per WhatsApp zu und nimmt Befehle wie "Budget erhöhen" oder "Kampagne pausieren" direkt entgegen.</div></div>
+    <div class="faq-item reveal"><div class="faq-question" onclick="toggleFaq(this)">Wie funktioniert das Zero Touch Setup? <span class="faq-icon">+</span></div><div class="faq-answer">Sie melden sich mit Google an. Der Agent erkennt automatisch Ihre Search Console Domains, Google Ads Konten und Budgets. Fehlende Kampagnen werden automatisch erstellt.</div></div>
+    <div class="faq-item reveal"><div class="faq-question" onclick="toggleFaq(this)">Wie kündige ich das Abo? <span class="faq-icon">+</span></div><div class="faq-answer">Jederzeit mit einem Klick über das Stripe-Kundenportal zum Ende des Abrechnungszeitraums.</div></div>
+    <div class="faq-item reveal"><div class="faq-question" onclick="toggleFaq(this)">Kann ich den Agenten pausieren? <span class="faq-icon">+</span></div><div class="faq-answer">Ja. Im Kunden-Dashboard können Sie den Agenten jederzeit pausieren oder wieder aktivieren – ohne Kündigung.</div></div>
+    <div class="faq-item reveal"><div class="faq-question" onclick="toggleFaq(this)">Wer zahlt das Google Ads Budget? <span class="faq-icon">+</span></div><div class="faq-answer">Ihr Werbebudget wird direkt von Google abgebucht. Unsere Gebühr deckt ausschließlich die intelligente Steuerung.</div></div>
+    <div class="faq-item reveal"><div class="faq-question" onclick="toggleFaq(this)">Sind meine Daten sicher? <span class="faq-icon">+</span></div><div class="faq-answer">Ja. Hosting auf deutschen Servern, DSGVO-konform, nur offizielle Google-APIs – keine Passwörter gespeichert.</div></div>
+    <div class="faq-item reveal"><div class="faq-question" onclick="toggleFaq(this)">Wie funktioniert die WhatsApp-Steuerung? <span class="faq-icon">+</span></div><div class="faq-answer">Im Premium-Plan stellt der Agent proaktive Updates per WhatsApp zu und nimmt Befehle wie „Budget erhöhen" direkt entgegen.</div></div>
   </div>
 
   <div class="testimonials-wrap">
-    <div class="testi-header">Ergebnisse sprechen.</div>
-    <div class="testi-subhead">Echte Kunden · Verifizierte Resultate</div>
-    <div class="testi-filters">
+    <div class="testi-header reveal">Ergebnisse sprechen.</div>
+    <div class="testi-subhead reveal">Echte Kunden · Verifizierte Resultate</div>
+    <div class="testi-filters reveal">
       <button class="testi-filter active" onclick="filterTesti('alle',this)">Alle</button>
       <button class="testi-filter" onclick="filterTesti('immobilien',this)">Immobilien</button>
       <button class="testi-filter" onclick="filterTesti('beauty',this)">Beauty</button>
     </div>
     <div class="testi-track" id="testi-track">
-      <div class="testi-card" data-cat="immobilien"><div class="testi-quote-mark">"</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Der Agent identifizierte in 48h ein Keyword das wir seit Jahren übersehen haben. Cost-per-Lead sank um 61%."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar">KA</div><div><div class="testi-name">Khalid Al-Rashidi</div><div class="testi-role">Immobilienmakler · Dubai</div></div><div class="testi-metric"><span class="testi-metric-num">-61%</span><span class="testi-metric-label">Cost-per-Lead</span></div></div></div>
-      <div class="testi-card" data-cat="beauty"><div class="testi-quote-mark">"</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Drei Kliniken, ein Agent - verwaltet alles gleichzeitig und meldet täglich per WhatsApp. Wie ein echter Mitarbeiter."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar">SN</div><div><div class="testi-name">Dr. Soraya Nasseri</div><div class="testi-role">Geschäftsführerin · Beauty Clinic GmbH</div></div><div class="testi-metric"><span class="testi-metric-num">3x</span><span class="testi-metric-label">Mehr Anfragen</span></div></div></div>
-      <div class="testi-card" data-cat="immobilien"><div class="testi-quote-mark">"</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Streuverluste eliminiert, Budget optimiert - 40% mehr Umsatz bei gleichem Einsatz."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar">MH</div><div><div class="testi-name">Marcus Hoffmann</div><div class="testi-role">Unternehmer · München</div></div><div class="testi-metric"><span class="testi-metric-num">+40%</span><span class="testi-metric-label">Mehr Umsatz</span></div></div></div>
-      <div class="testi-card" data-cat="beauty"><div class="testi-quote-mark">"</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„AiWakeel versteht beide Märkte - DACH und Gulf. Sichtbarkeit verdoppelt in 3 Wochen."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar">LI</div><div><div class="testi-name">Layla Ibrahim</div><div class="testi-role">Inhaberin · Al-Nour Trading GmbH</div></div><div class="testi-metric"><span class="testi-metric-num">x2</span><span class="testi-metric-label">Sichtbarkeit</span></div></div></div>
+      <div class="testi-card" data-cat="immobilien"><div class="testi-quote-mark">"</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Der Agent identifizierte in 48h ein Keyword das wir seit Jahren übersehen haben. Cost-per-Lead sank um 61%."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar av-gold">KA</div><div><div class="testi-name">Khalid Al-Rashidi</div><div class="testi-role">Immobilienmakler · Dubai</div></div><div class="testi-metric"><span class="testi-metric-num">-61%</span><span class="testi-metric-label">Cost-per-Lead</span></div></div></div>
+      <div class="testi-card" data-cat="beauty"><div class="testi-quote-mark">"</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Drei Kliniken, ein Agent – verwaltet alles gleichzeitig und meldet täglich per WhatsApp. Wie ein echter Mitarbeiter."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar av-teal">SN</div><div><div class="testi-name">Dr. Soraya Nasseri</div><div class="testi-role">Geschäftsführerin · Beauty Clinic GmbH</div></div><div class="testi-metric"><span class="testi-metric-num">3x</span><span class="testi-metric-label">Mehr Anfragen</span></div></div></div>
+      <div class="testi-card" data-cat="immobilien"><div class="testi-quote-mark">"</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Streuverluste eliminiert, Budget optimiert – 40% mehr Umsatz bei gleichem Einsatz."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar av-slate">MH</div><div><div class="testi-name">Marcus Hoffmann</div><div class="testi-role">Unternehmer · München</div></div><div class="testi-metric"><span class="testi-metric-num">+40%</span><span class="testi-metric-label">Mehr Umsatz</span></div></div></div>
+      <div class="testi-card" data-cat="beauty"><div class="testi-quote-mark">"</div><div class="testi-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„AiWakeel versteht beide Märkte – DACH und Gulf. Sichtbarkeit verdoppelt in 3 Wochen."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar av-rose">LI</div><div><div class="testi-name">Layla Ibrahim</div><div class="testi-role">Inhaberin · Al-Nour Trading GmbH</div></div><div class="testi-metric"><span class="testi-metric-num">x2</span><span class="testi-metric-label">Sichtbarkeit</span></div></div></div>
     </div>
     <div class="testi-dots" id="testi-dots"></div>
   </div>
 
   <footer class="footer">
+    <div class="footer-fade"></div>
     <div class="footer-login"><a href="login.html">&rarr; Kunden-Login · Dashboard</a></div>
     <div class="footer-links">
-      <a href="javascript:showLegal('impressum')">Impressum</a>
-      <a href="javascript:showLegal('privacy')">Datenschutz</a>
-      <a href="javascript:showLegal('agb')">AGB</a>
-      <a href="javascript:showLegal('widerruf')">Widerruf</a>
-      <a href="javascript:showLegal('cookies')">Cookies</a>
+      <a href="javascript:void(0)" onclick="showLegal('impressum')">Impressum</a>
+      <a href="javascript:void(0)" onclick="showLegal('privacy')">Datenschutz</a>
+      <a href="javascript:void(0)" onclick="showLegal('agb')">AGB</a>
+      <a href="javascript:void(0)" onclick="showLegal('widerruf')">Widerruf</a>
+      <a href="javascript:void(0)" onclick="showLegal('cookies')">Cookies</a>
+      <a href="#faq">FAQ</a>
     </div>
     <span class="footer-copy">&copy; 2026 AIWAKEEL · Intelligent Management</span>
     <span class="footer-location">Dubai · Frankfurt</span>
@@ -603,364 +712,370 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
 </div>
 
 <script>
-// =========================================================
-// KONFIGURATION
-// =========================================================
-const CONFIG = {
-  N8N_OAUTH_START: 'https://n8n.aiwakeel.ai/webhook/oauth-start',
-  N8N_OAUTH_CALLBACK: 'https://n8n.aiwakeel.ai/webhook/oauth-callback',
-  N8N_LAUNCH: 'https://n8n.aiwakeel.ai/webhook/aiwakeel-ads',
-  PB_URL: 'https://ads.aiwakeel.ai',
-  REDIRECT_URI: 'https://n8n.aiwakeel.ai/webhook/oauth-callback'
-};
+const CONFIG={N8N_OAUTH_START:'https://n8n.aiwakeel.ai/webhook/oauth-start',N8N_LAUNCH:'https://n8n.aiwakeel.ai/webhook/aiwakeel-ads',REDIRECT_URI:'https://n8n.aiwakeel.ai/webhook/oauth-callback'};
+const SAFE_FIELDS=['domain','industry','phone','whatsapp','budget','plan','monthlyFee','setupFee','currentStep','email','userId','ads_customer_id','ads_budget_id','google_ads_connected','oauth_state'];
+let state=Object.assign({domain:'',industry:'',phone:'',whatsapp:'',budget:300,plan:'',monthlyFee:0,setupFee:0,currentStep:1,email:'',userId:'',ads_customer_id:'',ads_budget_id:'',google_ads_connected:false,oauth_state:''},loadState());
+function loadState(){try{const r=sessionStorage.getItem('awState');if(!r)return{};const p=JSON.parse(r);const s={};SAFE_FIELDS.forEach(k=>{if(p[k]!==undefined)s[k]=p[k]});return s;}catch{return{}}}
+let _sTimer;function saveState(){clearTimeout(_sTimer);_sTimer=setTimeout(()=>{const s={};SAFE_FIELDS.forEach(k=>{if(state[k]!==undefined)s[k]=state[k]});try{sessionStorage.setItem('awState',JSON.stringify(s))}catch{}},250)}
+async function fetchWithTimeout(url,opts,ms=10000){const c=new AbortController();const id=setTimeout(()=>c.abort(),ms);try{const r=await fetch(url,{...opts,signal:c.signal});clearTimeout(id);return r}catch(e){clearTimeout(id);throw e}}
 
-const pb = new PocketBase(CONFIG.PB_URL);
-
-let state = JSON.parse(sessionStorage.getItem('awState') || JSON.stringify({
-  domain: '',
-  industry: '',
-  phone: '',
-  whatsapp: '',
-  budget: 300,
-  plan: '',
-  monthlyFee: 0,
-  setupFee: 0,
-  currentStep: 1,
-  email: '',
-  userId: '',
-  ads_customer_id: '',
-  ads_budget_id: '',
-  google_ads_connected: false
-}));
-
-// =========================================================
-// INITIALISIERUNG
-// =========================================================
-window.onload = () => {
-  if (!localStorage.getItem('cookieConsent')) {
-    document.getElementById('cookie-popup-overlay').style.display = 'flex';
-  }
-  startLiveCounter();
-  updateBudget(state.budget || 300);
-  buildDots();
-  startTestiTimer();
-  initSlide();
-  
-  // N8N REDIRECT PRÜFUNG (Ersetzt den alten Fetch-Call)
-  checkUrlParams();
-
-  if (state.currentStep > 1) {
-    goToStep(state.currentStep, true);
-    if (state.ads_customer_id) showAutoData();
-  }
-  document.addEventListener('mousemove', e => {
-    const g = document.getElementById('cursor-glow');
-    if (g) { g.style.left = e.clientX + 'px'; g.style.top = e.clientY + 'px'; }
-  });
-};
-
-function cookieDecision(a) {
-  localStorage.setItem('cookieConsent', a ? 'accepted' : 'declined');
-  document.getElementById('cookie-popup-overlay').style.display = 'none';
+// INTRO
+function playIntro(){
+  if(sessionStorage.getItem('introSeen')){document.getElementById('intro-overlay').remove();document.body.classList.add('ready');return}
+  document.body.classList.add('ready');
+  setTimeout(()=>{const o=document.getElementById('intro-overlay');if(o){o.classList.add('fade-out');setTimeout(()=>o.remove(),700)}sessionStorage.setItem('introSeen','1')},1600)
 }
 
-function saveState() {
-  sessionStorage.setItem('awState', JSON.stringify(state));
-}
+// INIT
+document.addEventListener('DOMContentLoaded',()=>{
+  const p=new URLSearchParams(window.location.search);
+  if(p.get('status')||p.get('payment'))document.getElementById('oauth-loading').classList.add('show');
+  if(!localStorage.getItem('cookieConsent'))document.getElementById('cookie-popup-overlay').style.display='flex';
+  playIntro();
+  updateBudget(state.budget||300);
+  buildDots();startTestiTimer();initSlide();
+  initScrollReveal();initKeyboardNav();initTestiSwipe();initScrollDimming();initOfflineDetection();startLiveCounter();
+  checkUrlParams();checkStripeReturn();
+  if(state.currentStep>1)restoreStep();
+  if(sessionStorage.getItem('awCompleted')==='1'){sessionStorage.removeItem('awState');sessionStorage.removeItem('awCompleted')}
+  setTimeout(initExitIntent,3000);
+  document.addEventListener('mousemove',e=>{const g=document.getElementById('cursor-glow');if(g){g.style.left=e.clientX+'px';g.style.top=e.clientY+'px'}});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)clearInterval(tTimer);else resetT()});
+});
 
-// =========================================================
-// STEP 1: GOOGLE OAUTH - Zero Touch
-// =========================================================
-async function startGoogleOAuth() {
-  const btn = document.getElementById('btn-google');
-  const status = document.getElementById('status-google');
-  btn.classList.add('processing');
-  btn.disabled = true;
-  status.innerHTML = '<span class="spinner"></span>';
-  showStatus('oauth-status', 'Verbinde mit Google...', 'processing');
-  try {
-    const tempId = state.userId || 'user_' + Math.random().toString(36).substring(2, 11);
-    state.userId = tempId;
-    const response = await fetch(CONFIG.N8N_OAUTH_START, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: state.email || 'agent@aiwakeel.ai', userId: tempId, redirectUri: CONFIG.REDIRECT_URI })
-    });
-    const data = await response.json();
-    if (data.authUrl) {
-      state.oauth_state = data.state;
-      saveState();
-      window.location.href = data.authUrl; // Umleitung zu Google
-    }
-  } catch (err) {
-    showStatus('oauth-status', 'Verbindung fehlgeschlagen', 'error');
-    btn.classList.remove('processing');
-    btn.disabled = false;
-  }
-}
-
-// NEUE FUNKTION: Verarbeitet den Redirect, der von n8n zurückkommt
-function checkUrlParams() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const status = urlParams.get('status');
-  const adsId = urlParams.get('ads_id');
-  const budgetId = urlParams.get('budget_id');
-  const gToken = urlParams.get('g_token'); // <--- NEU
-
-  if (status === 'success') {
-    if (adsId) state.ads_customer_id = adsId;
-    if (budgetId) state.ads_budget_id = budgetId;
-       if (gToken) state.google_access_token = gToken; // <--- NEU
-    state.google_ads_connected = true;
-    saveState();
-
-    const btn = document.getElementById('btn-google');
-    const statusLabel = document.getElementById('status-google');
-    btn.classList.remove('processing');
-    btn.classList.add('connected');
-    statusLabel.textContent = '✓ Verbunden';
-    document.getElementById('btn-step1-next').disabled = false;
-    
-    showAutoData();
-    showSuccess();
-    
-    // URL bereinigen, damit man beim Neuladen der Seite nicht nochmal getriggert wird
-    window.history.replaceState({}, document.title, window.location.pathname);
-  }
-}
-
-function showAutoData() {
-  document.getElementById('auto-data-preview').style.display = 'block';
-  document.getElementById('auto-customer-id').value = state.ads_customer_id;
-  document.getElementById('auto-budget-id').value = state.ads_budget_id || 'Wird erstellt';
-}
-
-function showSuccess() {
-  const o = document.getElementById('success-overlay');
-  o.classList.add('show');
-  setTimeout(() => { o.classList.remove('show'); }, 2400);
-}
-
-// =========================================================
-// STEP 2: Logic
-// =========================================================
-function validateStep2() {
-  const dom = document.getElementById('domain').value.trim();
-  const ind = document.getElementById('industry').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const wa = document.getElementById('whatsapp').value.trim();
-  const email = document.getElementById('email').value.trim(); // NEU
-  
-  // E-Mail muss ein @ enthalten
-  const ok = dom.includes('.') && dom.length > 3 && ind.length > 2 && phone.length > 5 && email.includes('@');
-  
-  state.domain = dom;
-  state.industry = ind;
-  state.phone = phone;
-  state.whatsapp = wa;
-  state.email = email; // NEU
-  saveState();
-  
-  document.getElementById('btn-step2-next').disabled = !ok;
-}
-
-function cleanDomain() {
-  const i = document.getElementById('domain');
-  i.value = i.value.trim().replace(/^https?:\/\//, '').replace(/\/$/, '');
+function restoreStep(){
+  goToStep(state.currentStep,false,true);
+  if(state.ads_customer_id)showAutoData();
+  if(state.plan)selectPlan(state.plan,state.monthlyFee,state.setupFee);
+  ['domain','industry','email','phone','whatsapp'].forEach(id=>{if(state[id])document.getElementById(id).value=state[id]});
   validateStep2();
 }
 
-// =========================================================
-// STEP 3: Plan & Budget
-// =========================================================
-function updateBudget(val) {
-  state.budget = parseInt(val);
-  saveState();
-  document.getElementById('budget-display').textContent = val + '€';
-  document.getElementById('budget-reach').textContent = '~' + Math.round(val * 5).toLocaleString() + ' Klicks';
-  const sl = document.getElementById('budget-slider');
-  sl.value = val;
-  sl.style.backgroundSize = ((val - 100) / 2900 * 100) + '% 100%';
-  checkS3();
+// SCROLL REVEAL
+function initScrollReveal(){
+  if(!('IntersectionObserver' in window)){document.querySelectorAll('.reveal').forEach(el=>el.classList.add('revealed'));return}
+  const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');obs.unobserve(e.target)}})},{threshold:.1,rootMargin:'0px 0px -30px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 }
 
-function selectPlan(id, fee, setup) {
-  state.plan = id;
-  state.monthlyFee = fee;
-  state.setupFee = setup;
-  saveState();
-  document.getElementById('plan-classic').classList.toggle('selected', id === 'classic');
-  document.getElementById('plan-premium').classList.toggle('selected', id === 'premium');
-  document.getElementById('wa-preview').style.display = id === 'premium' ? 'block' : 'none';
-  checkS3();
+// RIPPLE
+function createRipple(e,el){
+  const r=document.createElement('span');r.className='ripple-el';
+  const rect=el.getBoundingClientRect();const size=Math.max(rect.width,rect.height);
+  r.style.width=r.style.height=size+'px';
+  const cx=(e.clientX||rect.left+rect.width/2)-rect.left;
+  const cy=(e.clientY||rect.top+rect.height/2)-rect.top;
+  r.style.left=(cx-size/2)+'px';r.style.top=(cy-size/2)+'px';
+  el.appendChild(r);setTimeout(()=>r.remove(),700);
 }
 
-function checkS3() { document.getElementById('btn-step3-next').disabled = !state.plan; }
-
-// =========================================================
-// STEP 4: Launch
-// =========================================================
-function validateFinal() { document.getElementById('slider-activate').style.display = document.getElementById('check-legal').checked ? 'block' : 'none'; }
-
-function initSlide() {
-  const thumb = document.getElementById('slide-thumb'), track = document.getElementById('slider-activate');
-  let drag = false, startX = 0, cur = 0;
-  const tw = () => track.offsetWidth - thumb.offsetWidth - 8;
-
-  const move = x => {
-    cur = Math.max(0, Math.min(x - startX, tw()));
-    thumb.style.left = (4 + cur) + 'px';
-    document.getElementById('slide-bg').style.width = (cur / tw() * 100) + '%';
-    if (cur / tw() >= 0.95) complete();
+// BUDGET ANIMATION
+let _bAnim,_bFrom=300;
+function animateBudget(to){
+  const from=_bFrom;_bFrom=to;cancelAnimationFrame(_bAnim);
+  const start=performance.now(),dur=260;
+  const step=ts=>{
+    const p=Math.min((ts-start)/dur,1),ease=1-Math.pow(1-p,3);
+    const v=Math.round((from+(to-from)*ease)/50)*50;
+    document.getElementById('budget-display').textContent=v+'€';
+    document.getElementById('budget-reach').textContent='~'+Math.round(v*5).toLocaleString('de-DE')+' Klicks';
+    if(p<1)_bAnim=requestAnimationFrame(step);
   };
+  _bAnim=requestAnimationFrame(step);
+}
 
-  const complete = () => { if(!drag) return; drag = false; launch(); };
-
-  // Maus-Events (PC)
-  thumb.addEventListener('mousedown', e => { drag = true; startX = e.clientX; thumb.style.transition = 'none'; });
-  
-  // Touch-Events (Handy/Tablet) - DAS FEHLTE
-  thumb.addEventListener('touchstart', e => { 
-    drag = true; 
-    startX = e.touches[0].clientX; 
-    thumb.style.transition = 'none';
-    e.preventDefault(); // Verhindert das Scrollen der Seite beim Ziehen
-  }, {passive: false});
-
-  document.addEventListener('mousemove', e => { if (drag) move(e.clientX); });
-  document.addEventListener('touchmove', e => { 
-    if (drag) {
-      move(e.touches[0].clientX);
-      e.preventDefault(); // Ganz wichtig für mobile!
+// KEYBOARD NAV
+function initKeyboardNav(){
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){document.getElementById('legal-modal').style.display='none';const ei=document.getElementById('exit-intent');if(ei)ei.classList.remove('show')}
+    if(e.key==='Enter'&&!e.repeat){
+      const n=state.currentStep;
+      if(n===1&&!document.getElementById('btn-step1-next').disabled)goToStep(2);
+      else if(n===2&&!document.getElementById('btn-step2-next').disabled)goToStep(3);
+      else if(n===3&&!document.getElementById('btn-step3-next').disabled)goToStep(4);
     }
-  }, {passive: false});
-
-  const stopDrag = () => { 
-    if (drag) { 
-      drag = false; 
-      thumb.style.transition = 'left 0.3s ease';
-      thumb.style.left = '4px'; 
-      document.getElementById('slide-bg').style.width = '0%'; 
-    } 
-  };
-  
-  document.addEventListener('mouseup', stopDrag);
-  document.addEventListener('touchend', stopDrag);
+  });
 }
 
-
-async function launch() {
-  try {
-    const response = await fetch(CONFIG.N8N_LAUNCH, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...state, agent_status: 'active', onboarding_completed: true })
-    });
-    const data = await response.json();
-    if (data.url || data.checkoutUrl) window.location.href = data.url || data.checkoutUrl;
-    else goToStep(5);
-  } catch (e) { alert("Fehler beim Starten"); }
+// TESTI SWIPE
+function initTestiSwipe(){
+  const track=document.getElementById('testi-track');
+  let sx=0,dragging=false;
+  track.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;dragging=true},{passive:true});
+  track.addEventListener('touchend',e=>{
+    if(!dragging)return;
+    const dx=e.changedTouches[0].clientX-sx;
+    if(Math.abs(dx)>50){const vis=[...track.querySelectorAll('.testi-card:not(.hidden)')];tIdx=dx<0?Math.min(tIdx+1,vis.length-1):Math.max(tIdx-1,0);scrollT(tIdx);resetT()}
+    dragging=false;
+  },{passive:true});
 }
 
-// =========================================================
-// NAV & UI
-// =========================================================
-function goToStep(n) {
-  state.currentStep = n; saveState();
-  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('step-' + n).classList.add('active');
-  if (n === 4) {
-    document.getElementById('sum-domain').textContent = state.domain;
-    document.getElementById('sum-industry').textContent = state.industry;
-    document.getElementById('sum-plan').textContent = state.plan;
-    document.getElementById('sum-setup').textContent = state.setupFee + '€';
-    document.getElementById('sum-fee').textContent = state.monthlyFee + '€';
-    document.getElementById('sum-budget').textContent = state.budget + '€';
+// STRIPE RETURN
+function checkStripeReturn(){
+  document.getElementById('oauth-loading').classList.remove('show');
+  const p=new URLSearchParams(window.location.search);
+  const pay=p.get('payment');
+  if(pay==='success'){goToStep(5,false,true);window.history.replaceState({},document.title,window.location.pathname)}
+  else if(pay==='cancelled'){showToast('Zahlung abgebrochen – du kannst es jederzeit erneut versuchen.','info');window.history.replaceState({},document.title,window.location.pathname)}
+}
+
+// WA TYPEWRITER
+function typewriterWA(){
+  const typing=document.getElementById('wa-typing');const bubble=document.getElementById('wa-bubble');
+  typing.style.display='flex';bubble.innerHTML='';
+  const text='✦ Heute Top-Keyword: „Immobilien Dubai kaufen"\nCPC: 1.24€ · Potenzial: 840 Klicks\nKampagne läuft seit 3h 12m.';
+  setTimeout(()=>{
+    typing.style.display='none';let i=0;
+    const iv=setInterval(()=>{
+      if(i>=text.length){clearInterval(iv);bubble.innerHTML=bubble.innerHTML.replace('<span class="wa-cursor">|</span>','')+'<div class="wa-time">Jetzt · ✓✓</div>';return}
+      bubble.innerHTML=text.slice(0,i+1).replace(/\n/g,'<br>')+'<span class="wa-cursor">|</span>';i++;
+    },22);
+  },1200);
+}
+
+// STEP LABEL
+let currentLang='de';
+function updateStepLabel(n){
+  const el=document.getElementById('step-label');if(!el)return;
+  const labels={de:n=>`Schritt ${n} von 4`,ar:n=>`الخطوة ${n} من 4`};
+  el.textContent=n<=4?labels[currentLang](n):'';
+}
+
+// SCROLL DIMMING
+function initScrollDimming(){
+  const h=document.getElementById('page-header');if(!h)return;
+  let ticking=false;
+  window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(()=>{const pct=Math.min(window.scrollY/160,1);h.style.filter=pct>0?`brightness(${1-pct*.25})`:'';ticking=false});ticking=true}},{passive:true});
+}
+
+// CONFETTI
+function step5Celebration(){
+  const c=document.getElementById('celebration-container');if(!c)return;
+  const cols=['#C9A84C','#E8C97A','#A8893A','#F0EDE8','#FFD700'];
+  for(let i=0;i<55;i++){setTimeout(()=>{
+    const p=document.createElement('div');p.className='confetti-piece';
+    p.style.cssText=`left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*cols.length)]};animation-duration:${1.6+Math.random()*2}s;animation-delay:${Math.random()*.4}s;width:${4+Math.random()*6}px;height:${4+Math.random()*6}px;border-radius:${Math.random()>.5?'50%':'2px'}`;
+    c.appendChild(p);setTimeout(()=>p.remove(),3800);
+  },i*35)}
+  haptic([80,50,80]);
+}
+
+// PLAUSIBLE LIVE COUNTER
+function startLiveCounter(){
+  const curve=[7,8,7,9,8,7,10,9,8,9,7,8,6,8,9,10,8,7];let idx=0;
+  setInterval(()=>{const el=document.getElementById('live-num');if(el){el.textContent=curve[idx%curve.length];idx++}},8000);
+}
+
+// COOKIE
+function cookieDecision(accepted){
+  localStorage.setItem('cookieConsent',accepted?'accepted':'declined');
+  document.getElementById('cookie-popup-overlay').style.display='none';
+  if(accepted){
+    document.documentElement.style.setProperty('--font-serif',"'Cormorant Garamond',Georgia,serif");
+    document.documentElement.style.setProperty('--font-sans',"'DM Sans',system-ui,sans-serif");
+    if(!document.getElementById('gfonts-link')){const fl=document.createElement('link');fl.id='gfonts-link';fl.rel='stylesheet';fl.href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap';document.head.appendChild(fl)}
+    document.getElementById('badge-fonts').textContent='Aktiviert';document.getElementById('badge-fonts').className='badge-required';
+    document.getElementById('badge-oauth').textContent='Aktiviert';document.getElementById('badge-oauth').className='badge-required';
   }
-  if (n === 5) {
-    if (state.plan === 'premium') document.getElementById('step5-whatsapp').style.display = 'block';
-    else document.getElementById('step5-classic').style.display = 'block';
+}
+
+// OFFLINE
+function initOfflineDetection(){
+  const b=document.getElementById('offline-banner');if(!b)return;
+  const u=()=>b.classList.toggle('show',!navigator.onLine);
+  window.addEventListener('online',u,{passive:true});window.addEventListener('offline',u,{passive:true});u();
+}
+
+// OAUTH (with rate limit guard)
+let _oauthLock=false;
+async function startGoogleOAuth(){
+  if(_oauthLock)return;
+  if(localStorage.getItem('cookieConsent')!=='accepted'){document.getElementById('cookie-popup-overlay').style.display='flex';return}
+  _oauthLock=true;
+  const btn=document.getElementById('btn-google');const sl=document.getElementById('status-google');
+  btn.classList.add('processing');btn.disabled=true;sl.innerHTML='<span class="spinner"></span>';
+  showStatus('oauth-status','Verbinde mit Google …','processing');
+  try{
+    const tid=state.userId||(typeof crypto!=='undefined'&&crypto.randomUUID?crypto.randomUUID():'u_'+Date.now().toString(36));
+    state.userId=tid;
+    const res=await fetchWithTimeout(CONFIG.N8N_OAUTH_START,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:tid,redirectUri:CONFIG.REDIRECT_URI})});
+    const data=await res.json();
+    if(data.authUrl){state.oauth_state=data.state||'';saveState();window.location.href=data.authUrl}
+    else throw new Error('No authUrl');
+  }catch(err){
+    const msg=err.name==='AbortError'?'Verbindung überschritten (10s)':'Verbindung fehlgeschlagen';
+    showStatus('oauth-status',msg,'error');showToast(msg,'error');
+    btn.classList.remove('processing');btn.disabled=false;sl.textContent='Connect →';_oauthLock=false;
   }
 }
 
-function showStatus(id, m, t) { const b = document.getElementById(id); b.textContent = m; b.className = 'status-box show ' + t; }
-function startLiveCounter() { setInterval(() => { let n = document.getElementById('live-num'); n.textContent = Math.max(3, Math.min(20, parseInt(n.textContent) + (Math.random() < 0.5 ? 1 : -1))); }, 7000); }
-function toggleFaq(e) { e.parentElement.classList.toggle('active'); }
+function checkUrlParams(){
+  document.getElementById('oauth-loading').classList.remove('show');
+  const p=new URLSearchParams(window.location.search);
+  if(p.get('status')!=='success')return;
+  const rs=p.get('state');
+  if(state.oauth_state&&rs&&rs!==state.oauth_state){showToast('⚠ Sicherheitsfehler: OAuth-State ungültig','error');window.history.replaceState({},document.title,window.location.pathname);return}
+  if(p.get('ads_id'))state.ads_customer_id=p.get('ads_id');
+  if(p.get('budget_id'))state.ads_budget_id=p.get('budget_id');
+  state.google_ads_connected=true;state.oauth_state='';saveState();
+  const btn=document.getElementById('btn-google');
+  btn.classList.remove('processing');btn.classList.add('connected');btn.disabled=true;
+  document.getElementById('status-google').textContent='✓ Verbunden';
+  document.getElementById('btn-step1-next').disabled=false;
+  showAutoData();showSuccess();
+  window.history.replaceState({},document.title,window.location.pathname);
+}
 
-// --- REPARIERTE LEGAL/MODAL FUNKTION ---
+function showAutoData(){document.getElementById('auto-data-preview').style.display='block';document.getElementById('auto-customer-id').value=state.ads_customer_id||'';document.getElementById('auto-budget-id').value=state.ads_budget_id||'Wird erstellt'}
+
+function showSuccess(){
+  const c=document.getElementById('particles');c.innerHTML='';
+  for(let i=0;i<16;i++){const p=document.createElement('div');p.className='particle';const a=(i/16)*Math.PI*2;const d=55+Math.random()*50;p.style.setProperty('--tx',Math.round(Math.cos(a)*d)+'px');p.style.setProperty('--ty',Math.round(Math.sin(a)*d)+'px');p.style.setProperty('--delay',(Math.random()*.2).toFixed(2)+'s');c.appendChild(p)}
+  const o=document.getElementById('success-overlay');o.classList.add('show');haptic(60);
+  setTimeout(()=>o.classList.remove('show'),2700);
+}
+
+// STEP 2
+function validateStep2(){
+  const dom=document.getElementById('domain').value.trim();
+  const ind=document.getElementById('industry').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const wa=document.getElementById('whatsapp').value.trim();
+  const emailOk=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const domOk=dom.includes('.')&&dom.length>3;
+  const ok=domOk&&ind.length>2&&phone.length>5&&emailOk;
+  Object.assign(state,{domain:dom,industry:ind,phone,email,whatsapp:wa});saveState();
+  const ch=document.getElementById('domain-check');
+  if(dom.length>3){ch.className='domain-check '+(domOk?'domain-ok':'domain-err');ch.textContent=domOk?'✓ Gültige Domain':'✗ Domain ungültig'}else ch.textContent='';
+  document.getElementById('btn-step2-next').disabled=!ok;
+}
+function cleanDomain(){const i=document.getElementById('domain');i.value=i.value.trim().replace(/^https?:\/\//,'').replace(/\/$/,'');validateStep2()}
+function formatWhatsapp(){const el=document.getElementById('whatsapp');let v=el.value.trim().replace(/[^\d+]/g,'');if(!v)return;if(v.startsWith('00'))v='+'+v.slice(2);else if(v.startsWith('0'))v='+49'+v.slice(1);else if(!v.startsWith('+'))v='+49'+v;el.value=v;validateStep2()}
+
+// STEP 3
+function updateBudget(val){
+  const n=parseInt(val);animateBudget(n);state.budget=n;saveState();
+  const sl=document.getElementById('budget-slider');sl.value=val;sl.style.backgroundSize=((n-100)/2900*100).toFixed(2)+'% 100%';
+}
+function selectPlan(id,fee,setup,event){
+  state.plan=id;state.monthlyFee=fee;state.setupFee=setup;saveState();
+  document.getElementById('plan-classic').classList.toggle('selected',id==='classic');
+  document.getElementById('plan-premium').classList.toggle('selected',id==='premium');
+  if(event)createRipple(event,id==='classic'?document.getElementById('plan-classic'):document.getElementById('plan-premium'));
+  const wa=document.getElementById('wa-preview');
+  if(id==='premium'){wa.style.display='block';typewriterWA()}else wa.style.display='none';
+  document.getElementById('btn-step3-next').disabled=false;haptic(30);
+}
+
+// STEP 4
+function validateFinal(){document.getElementById('slider-activate').style.display=document.getElementById('check-legal').checked?'block':'none'}
+
+let _launching=false;
+async function launch(){
+  if(_launching)return;_launching=true;
+  document.getElementById('slide-done').classList.add('show');document.getElementById('slide-text').classList.add('hidden');haptic([60,40,100]);
+  try{
+    const res=await fetchWithTimeout(CONFIG.N8N_LAUNCH,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:state.userId,domain:state.domain,industry:state.industry,phone:state.phone,email:state.email,whatsapp:state.whatsapp,budget:state.budget,plan:state.plan,monthlyFee:state.monthlyFee,setupFee:state.setupFee,ads_customer_id:state.ads_customer_id,ads_budget_id:state.ads_budget_id,agent_status:'active',onboarding_completed:true})},15000);
+    const data=await res.json();
+    const url=data.url||data.checkoutUrl;
+    if(url&&url.startsWith('https://'))window.location.href=url;else goToStep(5);
+  }catch(err){
+    _launching=false;document.getElementById('slide-done').classList.remove('show');document.getElementById('slide-text').classList.remove('hidden');
+    showToast(err.name==='AbortError'?'Zeitüberschreitung – bitte erneut versuchen':'Verbindungsfehler – bitte erneut versuchen','error');
+  }
+}
+
+// SLIDE
+function initSlide(){
+  const thumb=document.getElementById('slide-thumb');const track=document.getElementById('slider-activate');
+  let drag=false,tPos=0,dStartX=0;
+  const tw=()=>track.offsetWidth-64;
+  const move=cx=>{tPos=Math.max(0,Math.min(cx-dStartX,tw()));thumb.style.left=(4+tPos)+'px';const pct=tPos/tw();document.getElementById('slide-bg').style.width=(pct*100)+'%';document.getElementById('slide-text').classList.toggle('hidden',pct>.08);if(pct>=.95)complete()};
+  const reset=()=>{drag=false;tPos=0;thumb.style.transition='left .3s ease';thumb.style.left='4px';document.getElementById('slide-bg').style.width='0%';document.getElementById('slide-text').classList.remove('hidden');cleanup()};
+  const complete=()=>{drag=false;cleanup();launch()};
+  const onMove=e=>{if(drag)move(e.clientX)};const onUp=()=>{if(drag)reset()};
+  const onTM=e=>{if(!drag)return;e.preventDefault();move(e.touches[0].clientX)};
+  const cleanup=()=>{document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);document.removeEventListener('touchmove',onTM);document.removeEventListener('touchend',onUp)};
+  thumb.addEventListener('mousedown',e=>{drag=true;thumb.style.transition='none';dStartX=e.clientX-tPos;document.addEventListener('mousemove',onMove);document.addEventListener('mouseup',onUp)});
+  thumb.addEventListener('touchstart',e=>{drag=true;thumb.style.transition='none';dStartX=e.touches[0].clientX-tPos;document.addEventListener('touchmove',onTM,{passive:false});document.addEventListener('touchend',onUp);e.preventDefault()},{passive:false});
+}
+
+// NAV
+function goToStep(n,isBack=false,skipScroll=false){
+  if(n>1&&!state.google_ads_connected){showToast('Bitte zuerst Google verbinden','error');return}
+  if(n>2&&(!state.domain||!state.email||!state.industry))return;
+  if(n>3&&!state.plan)return;
+  state.currentStep=n;saveState();
+  document.querySelectorAll('.step-panel').forEach(p=>{p.classList.remove('active','going-back')});
+  const panel=document.getElementById('step-'+n);panel.classList.add('active');
+  if(isBack)panel.classList.add('going-back');
+  panel.addEventListener('animationend',()=>panel.classList.remove('going-back'),{once:true});
+  for(let i=1;i<=4;i++){const d=document.getElementById('dot-'+i);const l=document.getElementById('line-'+i);d.className='step-dot'+(i<n?' done':i===n?' active':'');d.textContent=i<n?'✓':['I','II','III','IV'][i-1];if(l)l.className='step-line'+(i<n?' done':'')}
+  updateStepLabel(n);
+  if(n>=3)document.getElementById('recommended-badge').style.display='inline';
+  if(n===4){
+    document.getElementById('sum-domain').textContent=state.domain;document.getElementById('sum-industry').textContent=state.industry;
+    document.getElementById('sum-plan').textContent=state.plan==='premium'?'Maison':'Atelier';
+    document.getElementById('sum-setup').textContent=state.setupFee+'€';document.getElementById('sum-fee').textContent=state.monthlyFee+'€ / mtl.';document.getElementById('sum-budget').textContent=state.budget+'€ / mtl.';
+    document.getElementById('check-legal').checked=false;document.getElementById('slider-activate').style.display='none';_launching=false;
+  }
+  if(n===5){document.getElementById('step5-whatsapp').style.display=state.plan==='premium'?'block':'none';document.getElementById('step5-classic').style.display=state.plan==='classic'?'block':'none';step5Celebration();sessionStorage.setItem('awCompleted','1');sessionStorage.removeItem('awState')}
+  if(!skipScroll)window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// TOAST
+function showToast(msg,type='error'){
+  const t=document.getElementById('toast');if(!t)return;
+  t.textContent=msg;t.className='show '+type;
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),4500);
+}
+
+// HAPTIC
+function haptic(p=50){try{if(navigator.vibrate)navigator.vibrate(p)}catch{}}
+
+// EXIT INTENT
+function initExitIntent(){
+  if(sessionStorage.getItem('exitShown')||state.currentStep>=5)return;
+  let shown=false;
+  const show=()=>{if(shown)return;shown=true;sessionStorage.setItem('exitShown','1');document.getElementById('exit-intent').classList.add('show')};
+  document.documentElement.addEventListener('mouseleave',e=>{if(e.clientY<5)show()});
+  let mt=setTimeout(show,80000);
+  document.addEventListener('touchstart',()=>{clearTimeout(mt);mt=setTimeout(show,80000)},{passive:true});
+}
+function closeExitIntent(){document.getElementById('exit-intent').classList.remove('show')}
+
+// I18N
+const i18n={
+  de:{lcLabel:'Agenten gerade aktiv',logoSub:'Intelligent Ad Management',s1Title:'Zero Touch Setup',s1Desc:'Ein Klick. Dein Agent übernimmt Search Console, Google Ads und erstellt automatisch Kampagnen.',s1BtnLabel:'Google Account verbinden',s1AutoLabel:'Automatisch erkannt',s1NextLabel:'Weiter zur Konfiguration',s2Title:'Konfiguration',s2Desc:'Dein Agent scannt bereits deine Search Console. Bestätige Branche und Kontakt.',s2NextLabel:'Pläne wählen',s3Title:'Plan & Budget',s3NextLabel:'Zusammenfassung',s4Title:'Bestätigung',sumDomain:'Domain',sumIndustry:'Branche',sumPlan:'Plan',sumSetup:'Einmaliges Setup',sumFee:'Ads Agent Service',sumBudget:'Geplantes Ads-Budget',s5Title:'Agent aktiv',s5Desc:'Dein Agent ist vollständig konfiguriert. Search Console wird analysiert, Google Ads Budget täglich optimiert.',howTitle:'So funktioniert dein Agent',compareTitle:'Warum AiWakeel?',connected:'Verbunden',linked:'Google Account erfolgreich verknüpft',stepLabel:n=>`Schritt ${n} von 4`},
+  ar:{lcLabel:'وكيل نشط الآن',logoSub:'إدارة الإعلانات الذكية',s1Title:'إعداد تلقائي',s1Desc:'نقرة واحدة. يتولى وكيلك Search Console وGoogle Ads وإنشاء الحملات تلقائياً.',s1BtnLabel:'ربط حساب Google',s1AutoLabel:'تم الاكتشاف تلقائياً',s1NextLabel:'الإعدادات التالية',s2Title:'الإعدادات',s2Desc:'وكيلك يفحص Search Console. أكّد مجال عملك وبياناتك.',s2NextLabel:'اختيار الخطة',s3Title:'الخطة والميزانية',s3NextLabel:'ملخص',s4Title:'التأكيد',sumDomain:'النطاق',sumIndustry:'المجال',sumPlan:'الخطة',sumSetup:'إعداد لمرة واحدة',sumFee:'خدمة الوكيل',sumBudget:'ميزانية الإعلانات',s5Title:'الوكيل نشط',s5Desc:'وكيلك مُعدّ بالكامل. يتم تحليل Search Console وتحسين ميزانية Google Ads يومياً.',howTitle:'كيف يعمل وكيلك',compareTitle:'لماذا AiWakeel؟',connected:'تم الربط',linked:'تم ربط حساب Google بنجاح',stepLabel:n=>`الخطوة ${n} من 4`}
+};
+function setLang(lang){
+  currentLang=lang;const t=i18n[lang];const html=document.documentElement;
+  html.lang=lang;html.dir=lang==='ar'?'rtl':'ltr';
+  document.getElementById('lang-de').classList.toggle('active',lang==='de');
+  document.getElementById('lang-ar').classList.toggle('active',lang==='ar');
+  const map={lcLabel:'lc-label',logoSub:'logo-sub',s1Title:'s1-title',s1Desc:'s1-desc',s1BtnLabel:'s1-btn-label',s1AutoLabel:'s1-auto-label',s1NextLabel:'s1-next-label',s2Title:'s2-title',s2Desc:'s2-desc',s2NextLabel:'s2-next-label',s3Title:'s3-title',s3NextLabel:'s3-next-label',s4Title:'s4-title',sumDomain:'sum-domain-label',sumIndustry:'sum-industry-label',sumPlan:'sum-plan-label',sumSetup:'sum-setup-label',sumFee:'sum-fee-label',sumBudget:'sum-budget-label',s5Title:'s5-title',s5Desc:'s5-desc',howTitle:'how-title',compareTitle:'compare-title',connected:'s-connected',linked:'s-linked'};
+  Object.entries(map).forEach(([k,id])=>{const el=document.getElementById(id);if(el)el.textContent=t[k]});
+  updateStepLabel(state.currentStep);
+}
+
+// HELPERS
+function showStatus(id,msg,type){const b=document.getElementById(id);if(!b)return;b.textContent=msg;b.className='status-box show '+type}
+function toggleFaq(el){el.parentElement.classList.toggle('active')}
 function showLegal(type){
-  const c={
-    impressum:'<h2 style="color:var(--gold);margin-bottom:12px;font-family:\'Cormorant Garamond\',serif;font-size:24px;font-weight:300;">Impressum</h2><p>AiWakeel Advertising Systems. Inhaber: [Dein Name]. Gemäß § 19 UStG keine MwSt. Standorte: Dubai & Frankfurt.</p>',
-    privacy:'<h2 style="color:var(--gold);margin-bottom:12px;font-family:\'Cormorant Garamond\',serif;font-size:24px;font-weight:300;">Datenschutz</h2><p>Daten werden verschlüsselt auf deutschen Servern verarbeitet. Nur Google OAuth, kein Tracking.</p>',
-    agb:'<h2 style="color:var(--gold);margin-bottom:12px;font-family:\'Cormorant Garamond\',serif;font-size:24px;font-weight:300;">AGB</h2><p>Monatlich kündbare Dienstleistung. Vertrag kommt mit erster Zahlung zustande.</p>',
-    widerruf:'<h2 style="color:var(--gold);margin-bottom:12px;font-family:\'Cormorant Garamond\',serif;font-size:24px;font-weight:300;">Widerruf</h2><p>Widerrufsrecht binnen 14 Tagen, sofern Dienstleistung noch nicht vollständig erbracht.</p>',
-    cookies:'<h2 style="color:var(--gold);margin-bottom:12px;font-family:\'Cormorant Garamond\',serif;font-size:24px;font-weight:300;">Cookies</h2><p>Technisch notwendig: Stripe (Zahlung), Google OAuth (Verbindung), Consent (Ihre Entscheidung).</p>'
-  };
-  document.getElementById('modal-text').innerHTML=c[type];
-  document.getElementById('legal-modal').style.display='block';
+  const c={impressum:'<h2 style="color:var(--gold);margin-bottom:12px;font-family:var(--font-serif);font-size:24px;font-weight:300">Impressum</h2><p>AiWakeel Advertising Systems. Inhaber: [Name]. §19 UStG. Dubai &amp; Frankfurt.</p>',privacy:'<h2 style="color:var(--gold);margin-bottom:12px;font-family:var(--font-serif);font-size:24px;font-weight:300">Datenschutz</h2><p>Daten verschlüsselt auf IONOS Frankfurt. Nur Google OAuth, kein Tracking.</p>',agb:'<h2 style="color:var(--gold);margin-bottom:12px;font-family:var(--font-serif);font-size:24px;font-weight:300">AGB</h2><p>Monatlich kündbare Dienstleistung. Vertrag kommt mit erster Zahlung zustande.</p>',widerruf:'<h2 style="color:var(--gold);margin-bottom:12px;font-family:var(--font-serif);font-size:24px;font-weight:300">Widerruf</h2><p>Widerrufsrecht binnen 14 Tagen, sofern Dienstleistung noch nicht vollständig erbracht.</p>',cookies:'<h2 style="color:var(--gold);margin-bottom:12px;font-family:var(--font-serif);font-size:24px;font-weight:300">Cookies</h2><p>Technisch notwendig: Session (6h), Consent (12 Monate). Optional: Google Fonts – IP-Übermittlung, keine eigenen Cookies.</p>'};
+  document.getElementById('modal-text').innerHTML=c[type]||'';document.getElementById('legal-modal').style.display='block';
 }
+function closeModal(e){if(!e||e.target.classList.contains('modal'))document.getElementById('legal-modal').style.display='none'}
 
-function closeModal(e){
-  if(!e||e.target.className==='modal') {
-    document.getElementById('legal-modal').style.display='none';
-  }
-}
-
-// --- REPARIERTE TESTIMONIAL SLIDER FUNKTIONEN ---
+// TESTIMONIALS
 let tIdx=0,tTimer;
-function buildDots(){
-  const track=document.getElementById('testi-track');
-  const dots=document.getElementById('testi-dots');
-  dots.innerHTML='';
-  [...track.querySelectorAll('.testi-card:not(.hidden)')].forEach((_,i)=>{
-    const d=document.createElement('div');
-    d.className='testi-dot'+(i===0?' active':'');
-    d.onclick=()=>scrollT(i);
-    dots.appendChild(d);
-  });
-}
-
-function filterTesti(cat,btn){
-  document.querySelectorAll('.testi-filter').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.testi-card').forEach(c=>c.classList.toggle('hidden',cat!=='alle'&&c.dataset.cat!==cat));
-  tIdx=0;
-  document.getElementById('testi-track').scrollLeft=0;
-  buildDots();
-  resetT();
-}
-
-function scrollT(idx){
-  const track=document.getElementById('testi-track');
-  const v=[...track.querySelectorAll('.testi-card:not(.hidden)')];
-  if(!v[idx])return;
-  track.scrollLeft=v[idx].offsetLeft;
-  tIdx=idx;
-  document.querySelectorAll('.testi-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
-}
-
-function startTestiTimer(){
-  buildDots();
-  resetT();
-  document.getElementById('testi-track').addEventListener('scroll',()=>{
-    const t=document.getElementById('testi-track');
-    const v=[...t.querySelectorAll('.testi-card:not(.hidden)')];
-    const idx=v.findIndex(c=>c.offsetLeft>=t.scrollLeft-10);
-    if(idx>=0){
-      tIdx=idx;
-      document.querySelectorAll('.testi-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
-    }
-  });
-}
-
-function resetT(){
-  clearInterval(tTimer);
-  tTimer=setInterval(()=>{
-    const v=[...document.querySelectorAll('.testi-card:not(.hidden)')];
-    tIdx=(tIdx+1)%v.length;
-    scrollT(tIdx);
-  },4500);
-}
+function buildDots(){const track=document.getElementById('testi-track');const dots=document.getElementById('testi-dots');dots.innerHTML='';[...track.querySelectorAll('.testi-card:not(.hidden)')].forEach((_,i)=>{const d=document.createElement('div');d.className='testi-dot'+(i===0?' active':'');d.onclick=()=>{scrollT(i);resetT()};dots.appendChild(d)})}
+function filterTesti(cat,btn){document.querySelectorAll('.testi-filter').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.testi-card').forEach(c=>c.classList.toggle('hidden',cat!=='alle'&&c.dataset.cat!==cat));tIdx=0;const t=document.getElementById('testi-track');t.style.scrollBehavior='auto';t.scrollLeft=0;requestAnimationFrame(()=>{t.style.scrollBehavior=''});buildDots();resetT()}
+function scrollT(idx){const t=document.getElementById('testi-track');const v=[...t.querySelectorAll('.testi-card:not(.hidden)')];if(!v[idx])return;t.scrollTo({left:v[idx].offsetLeft,behavior:'smooth'});tIdx=idx;document.querySelectorAll('.testi-dot').forEach((d,i)=>d.classList.toggle('active',i===idx))}
+function startTestiTimer(){resetT();document.getElementById('testi-track').addEventListener('scroll',()=>{const t=document.getElementById('testi-track');const v=[...t.querySelectorAll('.testi-card:not(.hidden)')];const i=v.findIndex(c=>c.offsetLeft>=t.scrollLeft-10);if(i>=0&&i!==tIdx){tIdx=i;document.querySelectorAll('.testi-dot').forEach((d,j)=>d.classList.toggle('active',j===i))}},{passive:true})}
+function resetT(){clearInterval(tTimer);tTimer=setInterval(()=>{const v=[...document.querySelectorAll('.testi-card:not(.hidden)')];if(!v.length)return;tIdx=(tIdx+1)%v.length;scrollT(tIdx)},4500)}
 </script>
 </body>
 </html>
