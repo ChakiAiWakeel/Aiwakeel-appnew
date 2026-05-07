@@ -705,10 +705,12 @@ function checkUrlParams() {
   const status = urlParams.get('status');
   const adsId = urlParams.get('ads_id');
   const budgetId = urlParams.get('budget_id');
+  const gToken = urlParams.get('g_token'); // <--- NEU
 
   if (status === 'success') {
     if (adsId) state.ads_customer_id = adsId;
     if (budgetId) state.ads_budget_id = budgetId;
+       if (gToken) state.google_access_token = gToken; // <--- NEU
     state.google_ads_connected = true;
     saveState();
 
