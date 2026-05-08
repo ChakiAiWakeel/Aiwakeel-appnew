@@ -1497,25 +1497,53 @@ async function startGoogleOAuth() {
     sl.textContent = 'Connect →'; _oauthLock = false;
   }
 }
-
-function checkUrlParams() {
+async function checkUrlParams() {
   document.getElementById('oauth-loading').classList.remove('show');
   const p = new URLSearchParams(window.location.search);
-  if (p.get('status') !== 'success') return;
+
+  // 1. Prüfe, ob n8n sagt, dass der User bereits existiert
+  const status = p.get('status');
+  if (status === 'exists') {
+    // Hier passiert die magische Weiterleitung, die wir besprochen haben
+    showToast('Konto bereits vorhanden. Leite zum Login weiter...', 'info');
+    setTimeout(() => {
+      window.location.href = 'https://app.aiwakeel.ai/login.html';
+    }, 2000);
+    return; // Stop den restlichen Onboarding-Prozess
+  }
+
+  // 2. Normaler Onboarding-Flow (wenn User neu ist)
+  if (status !== 'success') return;
+  
   if (state.oauth_state && p.get('state') && p.get('state') !== state.oauth_state) {
     showToast('⚠ Sicherheitsfehler: OAuth-State ungültig', 'error');
-    window.history.replaceState({}, document.title, window.location.pathname); return;
+    window.history.replaceState({}, document.title, window.location.pathname); 
+    return;
   }
+
+  // IDs speichern
   if (p.get('ads_id')) state.ads_customer_id = p.get('ads_id');
   if (p.get('budget_id')) state.ads_budget_id = p.get('budget_id');
-  state.google_ads_connected = true; state.oauth_state = ''; saveState();
+  
+  state.google_ads_connected = true; 
+  state.oauth_state = ''; 
+  saveState();
+
+  // UI aktualisieren
   const btn = document.getElementById('btn-google');
-  btn.classList.remove('processing'); btn.classList.add('connected'); btn.disabled = true;
+  btn.classList.remove('processing'); 
+  btn.classList.add('connected'); 
+  btn.disabled = true;
   document.getElementById('status-google').textContent = '✓ Verbunden';
   document.getElementById('btn-step1-next').disabled = false;
-  showAutoData(); showSuccess();
+
+  showAutoData(); 
+  showSuccess();
+  
+  // URL im Browser "sauber machen"
   window.history.replaceState({}, document.title, window.location.pathname);
 }
+
 
 function showAutoData() {
   document.getElementById('auto-data-preview').style.display = 'block';
