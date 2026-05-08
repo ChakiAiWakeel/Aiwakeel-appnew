@@ -20,10 +20,20 @@
 <title>AiWakeel Setup – Zero Touch Automation</title>
 
 <script>
-/* Cookie-gated font loader */
+/* CSS-Variablen immer setzen (kein Netzwerk-Request) – nur Font-Dateien sind consent-abhängig */
+document.documentElement.style.setProperty('--font-serif',"'Cormorant Garamond',Georgia,'Times New Roman',serif");
+document.documentElement.style.setProperty('--font-sans',"'DM Sans',system-ui,-apple-system,sans-serif");
 (function(){
-  var c=localStorage.getItem('cookieConsent');
-  if(c){try{var d=JSON.parse(c);if(d.accepted&&Date.now()<d.expires){document.documentElement.style.setProperty('--font-serif',"'Cormorant Garamond',Georgia,serif");document.documentElement.style.setProperty('--font-sans',"'DM Sans',system-ui,sans-serif");var pc=document.createElement('link');pc.rel='preconnect';pc.href='https://fonts.googleapis.com';document.head.appendChild(pc);var pc2=document.createElement('link');pc2.rel='preconnect';pc2.href='https://fonts.gstatic.com';pc2.crossOrigin='anonymous';document.head.appendChild(pc2);var fl=document.createElement('link');fl.rel='stylesheet';fl.href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap';document.head.appendChild(fl)}}catch(e){}}
+  try{
+    var d=JSON.parse(localStorage.getItem('cookieConsent')||'{}');
+    if(d.accepted&&Date.now()<d.expires){
+      var pc=document.createElement('link');pc.rel='preconnect';pc.href='https://fonts.googleapis.com';document.head.appendChild(pc);
+      var pc2=document.createElement('link');pc2.rel='preconnect';pc2.href='https://fonts.gstatic.com';pc2.crossOrigin='anonymous';document.head.appendChild(pc2);
+      var fl=document.createElement('link');fl.rel='stylesheet';
+      fl.href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap';
+      document.head.appendChild(fl);
+    }
+  }catch(e){}
 })();
 </script>
 
@@ -1098,8 +1108,7 @@ function cookieDecision(accepted) {
   document.getElementById('cookie-popup-overlay').style.display = 'none';
 
   if (accepted) {
-    document.documentElement.style.setProperty('--font-serif', "'Cormorant Garamond',Georgia,serif");
-    document.documentElement.style.setProperty('--font-sans', "'DM Sans',system-ui,sans-serif");
+    // Variablen bereits beim Seitenstart gesetzt – nur Font-Dateien nachladen
     if (!document.getElementById('gfonts-link')) {
       const fl = document.createElement('link'); fl.id = 'gfonts-link'; fl.rel = 'stylesheet';
       fl.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap';
