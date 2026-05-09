@@ -1,311 +1,1172 @@
+<!-- AiWakeel Login v2.0 | CanTurSoft © 2026 -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>AiWakeel · Dashboard Login</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- #31 #46 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<!-- #23 -->
+<meta name="theme-color" content="#080808">
+<!-- #12 #81 -->
+<meta name="description" content="AiWakeel Kunden-Login – Zugang zu deinem KI-Agenten Dashboard.">
+<meta name="robots" content="noindex, nofollow">
+<!-- #80 -->
+<meta property="og:title" content="AiWakeel · Kunden-Login">
+<meta property="og:description" content="Dein Agent wartet. Melde dich an.">
+<!-- #46 #47 #48 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AiWakeel">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<!-- #10 #65 CSP -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' cdnjs.cloudflare.com; style-src 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; connect-src ads.aiwakeel.ai n8n.aiwakeel.ai; img-src 'self' data:; frame-ancestors 'none';">
+<!-- #82 -->
+<title>AiWakeel · Kunden-Login</title>
+
+<!-- #2 #6 Font loader - consent-gated, variables always set -->
+<script>
+(function(){
+  document.documentElement.style.setProperty('--font-serif',"'Cormorant Garamond',Georgia,'Times New Roman',serif");
+  document.documentElement.style.setProperty('--font-sans',"'DM Sans',system-ui,-apple-system,sans-serif");
+  try{
+    var d=JSON.parse(localStorage.getItem('cookieConsent')||'{}');
+    if(d.accepted&&Date.now()<d.expires){
+      var pc=document.createElement('link');pc.rel='preconnect';pc.href='https://fonts.googleapis.com';document.head.appendChild(pc);
+      var pc2=document.createElement('link');pc2.rel='preconnect';pc2.href='https://fonts.gstatic.com';pc2.crossOrigin='anonymous';document.head.appendChild(pc2);
+      var fl=document.createElement('link');fl.rel='stylesheet';
+      fl.href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap';
+      document.head.appendChild(fl);
+    }
+  }catch(e){}
+})();
+</script>
+
 <style>
-:root {
+:root{
+  --font-serif:Georgia,'Times New Roman',serif;
+  --font-sans:system-ui,-apple-system,sans-serif;
   --gold:#C9A84C;--gold-light:#E8C97A;--gold-dim:rgba(201,168,76,0.1);
   --obsidian:#080808;--surface:#0F0F0F;--surface2:#161616;
   --border:rgba(201,168,76,0.18);--border2:rgba(201,168,76,0.08);
   --text:#F0EDE8;--text-muted:rgba(240,237,232,0.42);--text-dim:rgba(240,237,232,0.22);
-  --red: #FF4B4B;
+  --red:rgba(255,75,75,0.9);--success:#4CAF50;
 }
 
-/* ── RESPONSIVE FIX ── */
-html, body {
-  width: 100%; overflow-x: hidden;
-  margin: 0; padding: 0;
-  background: var(--obsidian); color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+/* #88 SKIP NAV */
+.skip-nav{position:absolute;top:-100px;left:16px;background:var(--gold);color:var(--obsidian);padding:8px 16px;font-size:11px;font-weight:600;text-decoration:none;z-index:99999;transition:top .2s}
+.skip-nav:focus{top:16px}
+
+/* #22 GOLD SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--obsidian)}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,transparent,var(--gold),transparent);border-radius:2px}
+html{scrollbar-width:thin;scrollbar-color:var(--gold) var(--obsidian)}
+
+/* #25 CUSTOM FOCUS */
+:focus-visible{outline:1px solid var(--gold);outline-offset:3px;border-radius:2px}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* #50 touch-action */
+button,input,a,[role=button]{touch-action:manipulation}
+
+html,body{width:100%;overflow-x:hidden}
+body{
+  background:var(--obsidian);color:var(--text);
+  font-family:var(--font-sans);min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  position:relative;
 }
-*,*::before,*::after{box-sizing:border-box;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,168,76,0.08) 0%,transparent 60%);pointer-events:none;z-index:0}
+/* #21 NOISE */
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.7}
 
-body::before{
-  content:'';position:fixed;inset:0;
-  background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,168,76,0.07) 0%,transparent 60%);
-  pointer-events:none;z-index:0;
+/* #96 CANVAS PARTICLES */
+#particle-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.55}
+
+/* #98 SPOTLIGHT */
+#spotlight{position:fixed;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,0.06) 0%,transparent 70%);pointer-events:none;z-index:0;transform:translate(-50%,-50%);transition:opacity .3s;filter:blur(20px)}
+
+/* #115 PRESTIGE LOADING BAR */
+#prestige-bar{position:fixed;top:0;left:0;height:1px;width:0%;background:linear-gradient(90deg,transparent,var(--gold),var(--gold-light),var(--gold));z-index:99999;pointer-events:none;transition:width .3s ease,opacity .4s}
+#prestige-bar.done{width:100%;opacity:0}
+
+/* CINEMATIC INTRO (#94) */
+#intro-overlay{position:fixed;inset:0;background:var(--obsidian);z-index:999999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;transition:opacity .7s ease,transform .7s ease}
+#intro-overlay.fade-out{opacity:0;transform:scale(1.04);pointer-events:none}
+.intro-letters{font-family:var(--font-serif);font-size:40px;font-weight:300;letter-spacing:.22em;color:var(--gold);display:flex;gap:0;overflow:hidden}
+.intro-letter{display:inline-block;opacity:0;transform:translateY(12px);animation:letterIn .5s cubic-bezier(0.22,1,0.36,1) forwards}
+.intro-sub-txt{font-size:9px;letter-spacing:.4em;color:var(--text-dim);text-transform:uppercase;opacity:0;animation:fadeUp .4s ease .8s forwards}
+.intro-line-anim{width:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:growLine .8s ease .4s forwards}
+@keyframes letterIn{to{opacity:1;transform:translateY(0)}}
+@keyframes growLine{to{width:60px}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shimmer{0%,100%{background-position:200% 0}50%{background-position:-200% 0}}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* WRAPPER */
+.wrapper{position:relative;z-index:1;width:100%;max-width:480px;margin:0 auto;padding:40px 14px max(60px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;min-height:100vh}
+
+/* #97 MAGNETIC CURSOR (desktop) */
+.cursor-glow{position:fixed;width:52px;height:52px;border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(201,168,76,.22) 0%,rgba(201,168,76,.07) 45%,transparent 70%);filter:blur(6px);transition:opacity .3s;will-change:transform}
+
+/* LOGO */
+.logo{text-align:center;margin-bottom:32px;margin-top:20px}
+/* #53 GLITCH */
+@keyframes glitch{
+  0%,94%,100%{clip-path:none;transform:none;color:var(--gold)}
+  95%{clip-path:inset(20% 0 60% 0);transform:translateX(-3px);color:var(--gold-light)}
+  96%{clip-path:inset(60% 0 10% 0);transform:translateX(3px)}
+  97%{clip-path:inset(40% 0 40% 0);transform:translateX(-2px)}
+  98%{clip-path:none;transform:none}
 }
-body::after{
-  content:'';position:fixed;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-  pointer-events:none;z-index:0;opacity:0.7;
+.logo-text{font-family:var(--font-serif);font-size:clamp(28px,7vw,36px);font-weight:300;letter-spacing:.18em;color:var(--gold);animation:glitch 8s ease-in-out 2s infinite}
+.logo-sub{font-size:9px;letter-spacing:.4em;color:var(--text-dim);text-transform:uppercase;margin-top:5px}
+/* #111 HEARTBEAT LOGO LINE */
+.logo-line{
+  width:60px;height:1px;margin:12px auto 0;
+  background:linear-gradient(90deg,transparent,var(--gold-light),var(--gold),var(--gold-light),transparent);
+  background-size:200% 100%;animation:shimmer 3s ease-in-out infinite;
 }
 
-.wrapper{position:relative;z-index:1;width:100%;max-width:480px;margin:0 auto;padding:40px 14px 60px;display:flex;flex-direction:column;align-items:center;min-height:100vh;}
+/* CARD - #104 rotating gradient border + #99 glassmorphism + #117 breathing */
+@keyframes rotateBorder{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes cardBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.002)}}
+.card-wrap{position:relative;width:100%;padding:1.5px;border-radius:2px;background:linear-gradient(135deg,rgba(201,168,76,0.5),rgba(201,168,76,0.1),rgba(201,168,76,0.4),rgba(201,168,76,0.08),rgba(201,168,76,0.5));background-size:300% 300%;animation:rotateBorder 4s linear infinite,cardBreathe 6s ease-in-out infinite}
+.card{
+  background:rgba(15,15,15,0.96);
+  backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);
+  padding:40px 28px;position:relative;width:100%;
+  box-shadow:0 40px 100px rgba(0,0,0,0.9),inset 0 0 60px rgba(201,168,76,0.02);
+  text-align:center;border-radius:2px;
+}
+/* #60 CARD SHIMMER */
+.card::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(201,168,76,.03) 50%,transparent 70%);background-size:200% 100%;animation:shimmer 5s ease-in-out infinite;pointer-events:none;border-radius:2px}
 
-/* ── CURSOR GLOW ── */
-.cursor-glow{position:fixed;width:18px;height:18px;border-radius:50%;border:1px solid rgba(201,168,76,0.5);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:opacity 0.3s;box-shadow:0 0 8px rgba(201,168,76,0.15);}
+/* #115 PRESTIGE BAR inside card */
+.card-progress{position:absolute;top:0;left:0;right:0;height:1px;overflow:hidden;border-radius:2px 2px 0 0}
+.card-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,transparent,var(--gold),var(--gold-light),var(--gold));transition:width .4s ease;border-radius:2px}
 
-/* ── LOGO ── */
-.logo{text-align:center;margin-bottom:32px;margin-top:20px;}
-.logo-text{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;letter-spacing:0.18em;color:var(--gold)}
-.logo-sub{font-size:9px;letter-spacing:0.4em;color:var(--text-dim);text-transform:uppercase;margin-top:5px}
-.logo-line{width:40px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:12px auto 0}
+/* #62 STEP TRANSITION */
+.step-panel{display:none}
+.step-panel.active{display:block;animation:stepIn .45s cubic-bezier(0.22,1,0.36,1) forwards}
+.step-panel.go-back{animation:stepBack .45s cubic-bezier(0.22,1,0.36,1) forwards}
+@keyframes stepIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
+@keyframes stepBack{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:translateX(0)}}
 
-/* ── CARD ── */
-.card{background:var(--surface);border:1px solid var(--border);padding:40px 28px;position:relative;width:100%;box-shadow:0 40px 100px rgba(0,0,0,0.8);text-align:center;margin-bottom:auto;}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+/* #120 #121 COPY */
+.step-title{font-family:var(--font-serif);font-size:clamp(22px,5vw,28px);font-weight:300;color:var(--text);margin-bottom:6px;letter-spacing:.02em}
+.step-desc{font-family:var(--font-serif);font-size:14px;font-style:italic;color:var(--text-muted);line-height:1.7;margin-bottom:28px}
 
-.step-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--text);margin-bottom:6px;letter-spacing:0.02em}
-.step-desc{font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:var(--text-muted);line-height:1.7;margin-bottom:28px}
-
-/* ── FIELDS ── */
-.field{margin-bottom:24px;position:relative;text-align:left;}
-.field label{font-size:9px;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:10px;letter-spacing:0.15em}
+/* #114 FLOATING LABELS */
+.field{margin-bottom:28px;position:relative;text-align:left}
+.field label{
+  position:absolute;top:12px;left:0;font-size:13px;
+  color:var(--text-dim);font-family:var(--font-serif);font-style:italic;
+  transition:all .3s cubic-bezier(0.22,1,0.36,1);pointer-events:none;
+  transform-origin:left top;
+}
+.field input:focus~label,.field input.has-val~label,.field input:not(:placeholder-shown)~label{
+  transform:translateY(-22px) scale(.7);
+  color:var(--gold);font-style:normal;letter-spacing:.1em;font-family:var(--font-sans);text-transform:uppercase;
+}
 .field input{
   width:100%;padding:12px 0;background:transparent;
   border:none;border-bottom:1px solid var(--border2);
   color:var(--text);outline:none;font-size:16px;
-  font-family:'Cormorant Garamond',serif;transition:border-color 0.3s;
-  border-radius:0;
+  font-family:var(--font-serif);transition:border-color .3s;
+  border-radius:0;-webkit-appearance:none;
 }
-.field input::placeholder{color:var(--text-dim);font-style:italic}
+.field input::placeholder{color:transparent}
 .field input:focus{border-bottom-color:var(--gold)}
-.field-underline{position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--gold);transition:width 0.4s ease}
-.field input:focus ~ .field-underline{width:100%}
+/* #106 UNDERLINE FROM CENTER */
+.field-underline{position:absolute;bottom:0;left:50%;width:0;height:1px;background:var(--gold);transition:width .4s ease,left .4s ease;pointer-events:none}
+.field input:focus~.field-underline,.field input:focus~label~.field-underline{width:100%;left:0}
+/* #54 EMAIL VALIDATION */
+.field-status{font-size:10px;margin-top:5px;height:14px;transition:all .3s;letter-spacing:.06em}
+.field-ok{color:var(--success)}.field-err{color:var(--red)}
+/* #113 DOMAIN ICON */
+.domain-icon{position:absolute;right:0;top:10px;font-size:14px;opacity:0;transition:opacity .3s}
+.domain-icon.show{opacity:1}
 
-/* ── BUTTONS ── */
+/* #62 STEP 2 - PROGRESS INDICATOR */
+.step-indicator{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px}
+.step-dot-sm{width:8px;height:8px;border-radius:50%;border:1px solid var(--border2);transition:.3s}
+.step-dot-sm.active{background:var(--gold);border-color:var(--gold);box-shadow:0 0 8px rgba(201,168,76,.4)}
+.step-dot-sm.done{background:var(--gold);border-color:var(--gold)}
+.step-line-sm{width:24px;height:1px;background:var(--border2);transition:background .5s}
+.step-line-sm.done{background:var(--gold)}
+
+/* #72 MASKED EMAIL */
+.email-masked{font-family:var(--font-serif);font-size:13px;color:var(--text-muted);margin-bottom:16px;font-style:italic}
+.email-masked strong{color:var(--gold-light)}
+
+/* #73 SPAM HINT */
+.spam-hint{font-size:10px;color:var(--text-dim);margin-top:6px;font-style:italic;letter-spacing:.03em}
+
+/* #100 #101 #102 #103 CODE BOXES */
+.code-boxes{display:flex;gap:8px;justify-content:center;margin:20px 0}
+.code-box{
+  width:40px;height:52px;border:1px solid var(--border2);background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-serif);font-size:22px;color:var(--gold);
+  border-radius:2px;transition:all .25s cubic-bezier(0.22,1,0.36,1);
+  position:relative;overflow:hidden;cursor:text;
+}
+.code-box.focused{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.12),0 0 20px rgba(201,168,76,.1)}
+.code-box.filled{border-color:rgba(201,168,76,.5)}
+/* #101 BOX GLOW WAVE */
+.code-box.wave{animation:boxWave .4s ease forwards}
+@keyframes boxWave{0%{box-shadow:0 0 0 0 rgba(201,168,76,.5)}50%{box-shadow:0 0 0 8px rgba(201,168,76,.15)}100%{box-shadow:0 0 0 3px rgba(201,168,76,.12)}}
+/* #103 COMPLETE PULSE */
+.code-box.complete{animation:boxComplete .5s cubic-bezier(0.34,1.56,0.64,1) forwards}
+@keyframes boxComplete{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+/* ERROR SHAKE */
+.code-boxes.shake{animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+/* Hidden real input */
+#code-real{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+
+/* #38 #75 COUNTDOWN */
+.countdown-wrap{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+.countdown-timer{font-family:var(--font-serif);font-size:13px;color:var(--text-dim)}
+.countdown-timer span{color:var(--gold)}
+.resend-btn{background:none;border:none;color:var(--text-dim);font-size:10px;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;font-family:var(--font-sans);transition:color .3s;padding:0}
+.resend-btn:not(:disabled):hover{color:var(--gold)}
+.resend-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* #108 MORPHING BUTTON */
 .btn-primary{
   width:100%;padding:18px;background:transparent;
   border:1px solid var(--gold);color:var(--gold);
-  font-weight:400;text-transform:uppercase;letter-spacing:0.2em;cursor:pointer;
-  font-size:11px;border-radius:0;font-family:'DM Sans',sans-serif;
-  transition:all 0.4s ease;position:relative;overflow:hidden;
+  font-weight:400;text-transform:uppercase;letter-spacing:.2em;cursor:pointer;
+  font-size:11px;border-radius:0;font-family:var(--font-sans);
+  transition:color .4s,box-shadow .3s,letter-spacing .3s;
+  position:relative;overflow:hidden;min-height:58px;
 }
+/* #105 LIQUID FILL (left to right) */
 .btn-primary::before{
-  content:'';position:absolute;inset:0;
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
   background:linear-gradient(135deg,var(--gold),#A8893A);
-  transform:translateY(100%);transition:transform 0.4s ease;z-index:0;
+  transition:left .45s cubic-bezier(0.22,1,0.36,1);z-index:0;
 }
-.btn-primary span{position:relative;z-index:1}
-.btn-primary:hover:not(:disabled){color:var(--obsidian)}
-.btn-primary:hover:not(:disabled)::before{transform:translateY(0)}
-.btn-primary:disabled{opacity:0.2;cursor:not-allowed;border-color:var(--border)}
+.btn-primary:hover:not(:disabled){color:var(--obsidian);box-shadow:0 8px 30px rgba(201,168,76,.25);letter-spacing:.28em}
+.btn-primary:hover:not(:disabled)::before{left:0}
+.btn-primary:disabled{opacity:.25;cursor:not-allowed;border-color:var(--border)}
+.btn-primary span{position:relative;z-index:1;display:inline-block;transition:all .3s}
+/* BUTTON STATES */
+.btn-primary.loading span::after{content:'';display:inline-block;width:14px;height:14px;border:1.5px solid rgba(201,168,76,.4);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;vertical-align:middle;margin-left:10px}
+.btn-primary.success-state{border-color:var(--success);color:var(--success)}
+.btn-primary.success-state::before{background:linear-gradient(135deg,rgba(76,175,80,.15),rgba(76,175,80,.05));left:0}
 
-.btn-back{background:none;border:none;color:var(--text-dim);cursor:pointer;width:100%;margin-top:20px;font-size:10px;text-transform:uppercase;letter-spacing:0.15em;font-family:'DM Sans',sans-serif;transition:color 0.3s;text-decoration:none;display:inline-block;}
-.btn-back:hover{color:var(--text-muted)}
+.btn-back-link{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:10px;text-transform:uppercase;letter-spacing:.15em;font-family:var(--font-sans);transition:color .3s;padding:0;display:inline-block}
+.btn-back-link:hover{color:var(--gold)}
 
-.status-msg{margin-top:15px;font-size:12px;color:var(--gold);min-height:18px;transition: color 0.3s ease;}
-.hidden{display:none;}
+/* #58 TRUST BADGES */
+.trust-badges{display:flex;justify-content:center;gap:16px;margin-top:20px}
+.trust-badge{display:flex;align-items:center;gap:4px;font-size:9px;color:var(--text-dim);position:relative;cursor:help}
+.trust-badge::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border);padding:4px 8px;font-size:9px;color:var(--text-muted);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s;z-index:10;border-radius:2px}
+.trust-badge:hover::after{opacity:1}
+.trust-badge-icon{color:var(--gold);font-size:11px}
 
-/* ── FOOTER ── */
-.footer{width:100%;text-align:center;padding:40px 0 20px;border-top:1px solid var(--border2);margin-top:40px;}
-.footer-links{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
-.footer-links a{color:var(--text-dim);font-size:9px;text-decoration:none;text-transform:uppercase;letter-spacing:1.8px;transition:color 0.3s}
+/* #84 STATUS MSG with aria-live */
+.status-msg{
+  margin-top:16px;font-size:12px;color:var(--gold);
+  min-height:20px;letter-spacing:.04em;
+  transition:all .3s ease;
+}
+.status-msg.error{color:var(--red)}
+.status-msg.success{color:var(--success)}
+.status-msg:not(:empty){animation:fadeInUp .3s ease}
+
+/* #112 LAST LOGIN */
+.last-login{font-size:9px;color:var(--text-dim);letter-spacing:.08em;margin-bottom:20px;font-style:italic}
+.last-login strong{color:rgba(201,168,76,.6)}
+
+/* BACK LINK */
+.back-main{
+  margin-top:12px;font-size:10px;color:var(--text-dim);text-decoration:none;
+  text-transform:uppercase;letter-spacing:.15em;transition:color .3s;font-family:var(--font-sans);
+}
+.back-main:hover{color:var(--gold)}
+
+/* FOOTER */
+.footer{
+  width:100%;text-align:center;padding:40px 0 max(20px,env(safe-area-inset-bottom));
+  border-top:1px solid var(--border2);margin-top:auto;position:relative;
+}
+.footer::before{content:'';position:absolute;bottom:100%;left:0;right:0;height:60px;background:linear-gradient(to top,var(--obsidian),transparent);pointer-events:none}
+.footer-links{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.footer-links a{color:var(--text-dim);font-size:9px;text-decoration:none;text-transform:uppercase;letter-spacing:1.8px;transition:color .3s;cursor:pointer}
 .footer-links a:hover{color:var(--gold)}
-.footer-copy{font-size:8px;color:rgba(240,237,232,0.18);text-transform:uppercase;letter-spacing:3px;margin-bottom:6px;display:block}
-.footer-location{font-size:8px;color:var(--gold);text-transform:uppercase;letter-spacing:4px;opacity:0.5}
+.footer-copy{font-size:8px;color:rgba(240,237,232,.18);text-transform:uppercase;letter-spacing:3px;display:block;margin-bottom:4px}
+.footer-location{font-size:8px;color:var(--gold);text-transform:uppercase;letter-spacing:4px;opacity:.5}
 
-/* ── COOKIE & MODAL ── */
-#cookie-popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:99999;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px)}
-.cookie-popup-box{background:var(--surface);border:1px solid var(--border);border-bottom:none;border-radius:4px 4px 0 0;padding:26px 22px 30px;width:100%;max-width:520px;box-shadow:0 -24px 80px rgba(0,0,0,0.9);animation:slideUp 0.45s cubic-bezier(0.22,1,0.36,1) forwards;position:relative}
+/* #70 BACK TO ONBOARDING */
+.no-account{font-size:11px;color:var(--text-muted);margin-top:16px;letter-spacing:.04em}
+.no-account a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,168,76,.3)}
+
+/* COOKIE POPUP - #118 strong blur */
+#cookie-popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:99999;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(20px) brightness(.3);-webkit-backdrop-filter:blur(20px) brightness(.3)}
+.cookie-popup-box{background:var(--surface);border:1px solid var(--border);border-bottom:none;border-radius:4px 4px 0 0;padding:26px 22px max(30px,env(safe-area-inset-bottom));width:100%;max-width:520px;box-shadow:0 -24px 80px rgba(0,0,0,.9);animation:slideUp .45s cubic-bezier(0.22,1,0.36,1) forwards;position:relative}
 .cookie-popup-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
 @keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
-.cookie-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--text);margin-bottom:8px}
-.cookie-text{font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:18px}
+.cookie-title{font-family:var(--font-serif);font-size:20px;font-weight:300;color:var(--text);margin-bottom:8px}
+.cookie-text{font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:12px}
+.cookie-categories{border:1px solid var(--border2);border-radius:2px;margin-bottom:16px;overflow:hidden}
+.cookie-cat{display:flex;align-items:flex-start;justify-content:space-between;padding:10px 14px;gap:12px}
+.cookie-cat+.cookie-cat{border-top:1px solid var(--border2)}
+.cookie-cat-name{font-size:12px;color:var(--text);font-weight:500;margin-bottom:2px}
+.cookie-cat-desc{font-size:10px;color:var(--text-dim);line-height:1.4}
+.badge-ok{font-size:9px;text-transform:uppercase;color:var(--success);white-space:nowrap;flex-shrink:0;margin-top:2px;letter-spacing:.06em}
+.badge-off{font-size:9px;text-transform:uppercase;color:var(--text-dim);white-space:nowrap;flex-shrink:0;margin-top:2px;letter-spacing:.06em}
 .cookie-actions{display:grid;grid-template-columns:1fr 1.6fr;gap:10px}
-.cookie-btn-decline{padding:13px;background:none;border:1px solid var(--border);color:var(--text-muted);cursor:pointer;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;border-radius:2px;font-family:'DM Sans',sans-serif}
-.cookie-btn-accept{padding:13px;background:linear-gradient(135deg,var(--gold),#A8893A);border:none;color:var(--obsidian);cursor:pointer;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;border-radius:2px;font-family:'DM Sans',sans-serif}
-.cookie-legal{font-size:10px;color:var(--text-dim);margin-top:12px}
-.cookie-legal a{color:var(--gold);text-decoration:none}
+.cookie-btn-decline{padding:13px;background:none;border:1px solid var(--border);color:var(--text-muted);cursor:pointer;font-size:11px;letter-spacing:.1em;text-transform:uppercase;border-radius:2px;font-family:var(--font-sans);transition:color .3s}
+.cookie-btn-decline:hover{color:var(--text)}
+.cookie-btn-accept{padding:13px;background:linear-gradient(135deg,var(--gold),#A8893A);border:none;color:var(--obsidian);cursor:pointer;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border-radius:2px;font-family:var(--font-sans)}
+.cookie-legal{font-size:10px;color:var(--text-dim);margin-top:10px}
+.cookie-legal a{color:var(--gold);text-decoration:none;cursor:pointer}
 
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:30000;display:none;padding:40px 20px;overflow-y:auto}
-.modal-content{background:var(--surface);border:1px solid var(--border);max-width:560px;margin:0 auto;padding:32px;position:relative;line-height:1.65;font-size:13px;color:var(--text-muted)}
+/* MODAL - #119 gold scrollbar inside */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:30000;display:none;padding:40px 20px;overflow-y:auto;backdrop-filter:blur(8px)}
+.modal::-webkit-scrollbar{width:4px}
+.modal::-webkit-scrollbar-thumb{background:var(--gold)}
+.modal-content{background:var(--surface);border:1px solid var(--border);max-width:560px;margin:0 auto;padding:32px;position:relative;line-height:1.65;font-size:13px;color:var(--text-muted);border-radius:2px}
+.modal-content::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+/* #107 #116 SUCCESS EFFECTS */
+#success-overlay{position:fixed;inset:0;pointer-events:none;z-index:88888;display:none}
+#success-overlay.show{display:block}
+.star-rain-item{position:absolute;top:-20px;font-size:12px;color:var(--gold);animation:starFall linear forwards;opacity:0}
+@keyframes starFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(360deg);opacity:0}}
+.confetti-login{position:absolute;border-radius:50%;animation:confettiBurst ease forwards}
+@keyframes confettiBurst{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+
+@media(max-width:360px){
+  .card{padding:28px 16px}
+  .code-box{width:34px;height:46px;font-size:18px}
+  .code-boxes{gap:5px}
+}
 </style>
 </head>
 <body>
 
-<div class="cursor-glow" id="cursor-glow"></div>
+<a href="#login-card" class="skip-nav">Zum Login</a>
+<canvas id="particle-canvas"></canvas>
+<div id="spotlight"></div>
+<div id="prestige-bar"></div>
+<div id="success-overlay"></div>
 
-<div id="cookie-popup-overlay">
+<!-- CINEMATIC INTRO -->
+<div id="intro-overlay">
+  <div class="intro-letters" id="intro-letters"></div>
+  <div class="intro-line-anim"></div>
+  <div class="intro-sub-txt">Intelligent Ad Management</div>
+</div>
+
+<!-- COOKIE POPUP -->
+<div id="cookie-popup-overlay" role="dialog" aria-modal="true" aria-labelledby="cookie-heading">
   <div class="cookie-popup-box">
-    <div class="cookie-title">Cookies & Datenschutz</div>
-    <p class="cookie-text">Wir verwenden technisch notwendige Cookies für Zahlungen und Dashboard-Verbindung. Keine Tracking-Cookies.</p>
-    <div class="cookie-actions">
-      <button class="cookie-btn-decline" onclick="cookieDecision(false)">Ablehnen</button>
-      <button class="cookie-btn-accept" onclick="cookieDecision(true)">Akzeptieren</button>
+    <div class="cookie-title" id="cookie-heading">Cookies &amp; Datenschutz</div>
+    <p class="cookie-text">Externe Ressourcen werden erst nach Ihrer Zustimmung geladen.</p>
+    <div class="cookie-categories">
+      <div class="cookie-cat">
+        <div><div class="cookie-cat-name">Technisch notwendig</div><div class="cookie-cat-desc">Login-Session, Consent-Entscheidung. Kein Tracking.</div></div>
+        <div class="badge-ok">Immer aktiv</div>
+      </div>
+      <div class="cookie-cat">
+        <div><div class="cookie-cat-name">Google Fonts</div><div class="cookie-cat-desc">fonts.googleapis.com – IP-Übermittlung. Ablauf: 12 Monate.</div></div>
+        <div id="badge-fonts" class="badge-off">Deaktiviert</div>
+      </div>
     </div>
-    <p class="cookie-legal"><a href="javascript:cookieDecision(true);showLegal('cookies')">Cookie-Richtlinie</a> · <a href="javascript:cookieDecision(true);showLegal('privacy')">Datenschutz</a></p>
+    <div class="cookie-actions">
+      <button class="cookie-btn-decline" onclick="cookieDecision(false)">Nur notwendige</button>
+      <button class="cookie-btn-accept" onclick="cookieDecision(true)">Alle akzeptieren</button>
+    </div>
+    <p class="cookie-legal">
+      <a onclick="cookieDecision(true);showLegal('cookies')">Cookie-Richtlinie</a> ·
+      <a onclick="cookieDecision(true);showLegal('privacy')">Datenschutz</a>
+    </p>
   </div>
 </div>
 
-<div id="legal-modal" class="modal" onclick="closeModal(event)">
+<!-- LEGAL MODAL -->
+<div id="legal-modal" class="modal" onclick="closeModal(event)" role="dialog" aria-modal="true">
   <div class="modal-content">
-    <span style="position:absolute;top:14px;right:16px;color:var(--gold);cursor:pointer;font-size:22px" onclick="closeModal(null)">&times;</span>
+    <span style="position:absolute;top:14px;right:16px;color:var(--gold);cursor:pointer;font-size:22px" onclick="closeModal(null)" aria-label="Schließen">&times;</span>
     <div id="modal-text"></div>
   </div>
 </div>
 
-<div class="wrapper">
+<div class="cursor-glow" id="cursor-glow"></div>
 
+<div class="wrapper">
   <div class="logo">
     <div class="logo-text">AiWakeel</div>
     <div class="logo-sub">Intelligent Ad Management</div>
     <div class="logo-line"></div>
   </div>
 
-  <div class="card">
-    <div class="step-title">Dashboard</div>
-    <div class="step-desc">Login via Magic Code</div>
-
-    <div id="step-1">
-      <div class="field">
-        <label>Deine E-Mail Adresse</label>
-        <input type="email" id="email" placeholder="name@unternehmen.de" onkeydown="if(event.key==='Enter')requestMagicCode()">
-        <div class="field-underline"></div>
-      </div>
-      <button class="btn-primary" id="btn-request" onclick="requestMagicCode()"><span>Code anfordern</span></button>
-    </div>
-
-    <div id="step-2" class="hidden">
-      <p style="font-size:12px; color:var(--text-muted); margin-bottom:20px;">Wir haben dir einen 8-stelligen Code gesendet.</p>
-      <div class="field">
-        <label>Magic Code</label>
-        <input type="text" id="code" placeholder="••••••••" maxlength="8" style="text-align:center; letter-spacing:0.4em; font-size:20px;" onkeydown="if(event.key==='Enter')verifyCode()">
-        <div class="field-underline"></div>
-      </div>
-      <button class="btn-primary" id="btn-verify" onclick="verifyCode()"><span>Einloggen</span></button>
-      <button class="btn-back" onclick="resetLogin()">← E-Mail ändern</button>
-    </div>
-
-    <div class="status-msg" id="msg"></div>
+  <!-- #112 LAST LOGIN -->
+  <div class="last-login" id="last-login-hint" style="display:none">
+    Zuletzt eingeloggt: <strong id="last-login-val"></strong>
   </div>
 
-  <a href="index.html" class="btn-back" style="margin-top:10px;">← Zurück zur Hauptseite</a>
+  <div class="card-wrap" id="login-card">
+    <div class="card">
+      <div class="card-progress"><div class="card-progress-fill" id="card-progress-fill"></div></div>
+
+      <!-- STEP INDICATOR (#62) -->
+      <div class="step-indicator">
+        <div class="step-dot-sm active" id="sd1"></div>
+        <div class="step-line-sm" id="sl1"></div>
+        <div class="step-dot-sm" id="sd2"></div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div id="step-1" class="step-panel active">
+        <!-- #120 #121 COPY -->
+        <div class="step-title">Willkommen zurück.</div>
+        <div class="step-desc">Dein Agent wartet. Zugang mit einem einzigen Code – sicher, sofort.</div>
+
+        <div class="field">
+          <input type="email" id="email" placeholder=" "
+            autocomplete="email" inputmode="email"
+            maxlength="254"
+            oninput="onEmailInput()"
+            onkeydown="if(event.key==='Enter')requestMagicCode()"
+            aria-label="E-Mail-Adresse"
+            aria-required="true">
+          <label for="email">E-Mail-Adresse</label>
+          <div class="field-underline"></div>
+          <!-- #113 -->
+          <div class="domain-icon" id="domain-icon"></div>
+          <!-- #54 -->
+          <div class="field-status" id="email-status" role="status"></div>
+        </div>
+
+        <button class="btn-primary" id="btn-request" onclick="requestMagicCode()" aria-label="Magic Code anfordern">
+          <span id="btn-request-label">Code anfordern</span>
+        </button>
+
+        <!-- #70 NO ACCOUNT -->
+        <div class="no-account" style="margin-top:18px">Noch kein Account? <a href="index.html">Jetzt einrichten &rarr;</a></div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div id="step-2" class="step-panel">
+        <div class="step-title">Code eingeben.</div>
+        <!-- #72 MASKED EMAIL -->
+        <div class="email-masked" id="email-masked"></div>
+        <!-- #73 SPAM HINT -->
+        <div class="spam-hint">Nichts erhalten? Bitte auch den Spam-Ordner prüfen.</div>
+
+        <!-- #100 8-BOX CODE INPUT -->
+        <div class="code-boxes" id="code-boxes" onclick="document.getElementById('code-real').focus()" role="group" aria-label="8-stelliger Magic Code">
+          <div class="code-box" id="cb0"></div>
+          <div class="code-box" id="cb1"></div>
+          <div class="code-box" id="cb2"></div>
+          <div class="code-box" id="cb3"></div>
+          <div class="code-box" id="cb4"></div>
+          <div class="code-box" id="cb5"></div>
+          <div class="code-box" id="cb6"></div>
+          <div class="code-box" id="cb7"></div>
+        </div>
+        <!-- #64 Hidden real input, password type -->
+        <input type="password" id="code-real"
+          autocomplete="one-time-code"
+          inputmode="text"
+          maxlength="8"
+          aria-label="Magic Code"
+          aria-required="true"
+          oninput="onCodeInput()"
+          onkeydown="onCodeKeyDown(event)">
+
+        <!-- #38 #75 COUNTDOWN + #37 RESEND -->
+        <div class="countdown-wrap">
+          <div class="countdown-timer">Code gültig noch: <span id="countdown-val">10:00</span></div>
+          <button class="resend-btn" id="resend-btn" disabled onclick="resendCode()" aria-label="Code erneut senden">Erneut senden</button>
+        </div>
+
+        <button class="btn-primary" id="btn-verify" onclick="verifyCode()" style="margin-top:18px" aria-label="Einloggen">
+          <span id="btn-verify-label">Einloggen</span>
+        </button>
+        <button class="btn-back-link" onclick="resetLogin()" style="margin-top:16px;display:block;width:100%;text-align:center" aria-label="E-Mail ändern">← E-Mail ändern</button>
+      </div>
+
+      <!-- #84 STATUS with aria-live -->
+      <div class="status-msg" id="msg" role="status" aria-live="polite" aria-atomic="true"></div>
+
+      <!-- #58 TRUST BADGES -->
+      <div class="trust-badges">
+        <div class="trust-badge" data-tip="256-bit SSL Verschlüsselung"><span class="trust-badge-icon">&#128274;</span>SSL</div>
+        <div class="trust-badge" data-tip="DSGVO-konform · Server in Frankfurt"><span class="trust-badge-icon">&#128737;</span>DSGVO</div>
+        <div class="trust-badge" data-tip="Kein Passwort – Magic Code via E-Mail"><span class="trust-badge-icon">&#10024;</span>Kein Passwort</div>
+      </div>
+    </div>
+  </div>
+
+  <a href="index.html" class="back-main" style="margin-top:16px">← Zurück zur Hauptseite</a>
 
   <footer class="footer">
     <div class="footer-links">
-      <a href="javascript:showLegal('impressum')">Impressum</a>
-      <a href="javascript:showLegal('privacy')">Datenschutz</a>
-      <a href="javascript:showLegal('agb')">AGB</a>
-      <a href="javascript:showLegal('widerruf')">Widerruf</a>
-      <a href="javascript:showLegal('cookies')">Cookies</a>
+      <a onclick="showLegal('impressum')" role="button" tabindex="0">Impressum</a>
+      <a onclick="showLegal('privacy')" role="button" tabindex="0">Datenschutz</a>
+      <a onclick="showLegal('agb')" role="button" tabindex="0">AGB</a>
+      <a onclick="showLegal('widerruf')" role="button" tabindex="0">Widerruf</a>
+      <a onclick="showLegal('cookies')" role="button" tabindex="0">Cookies</a>
     </div>
-    <span class="footer-copy">© 2026 AIWAKEEL · Intelligent Management</span>
+    <span class="footer-copy">&copy; 2026 AIWAKEEL · Intelligent Management</span>
     <span class="footer-location">Dubai · Frankfurt</span>
   </footer>
 </div>
 
 <script>
-const pb = new PocketBase('https://ads.aiwakeel.ai');
-const N8N_LOGIN_WEBHOOK = 'https://n8n.aiwakeel.ai/webhook/magic-code-request';
-
-window.onload = () => {
-  if(pb.authStore.isValid) {
-    window.location.href = "dashboard.html";
-  }
-  if(!localStorage.getItem('cookieConsent')) {
-      document.getElementById('cookie-popup-overlay').style.display='flex';
-  }
-  document.addEventListener('mousemove',e=>{
-    const g=document.getElementById('cursor-glow');
-    if(g){g.style.left=e.clientX+'px';g.style.top=e.clientY+'px';}
-  });
+// =========================================================
+// CONFIG
+// =========================================================
+const CFG = {
+  PB_URL: 'https://ads.aiwakeel.ai',
+  N8N_MAGIC: 'https://n8n.aiwakeel.ai/webhook/magic-code-request',
+  N8N_CONSENT: 'https://n8n.aiwakeel.ai/webhook/consent-log'
 };
 
-/* ── MAGIC CODE LOGIC ── */
-async function requestMagicCode() {
-    const email = document.getElementById('email').value.trim();
-    const msg = document.getElementById('msg');
-    const btn = document.getElementById('btn-request');
+// =========================================================
+// SECURITY STATE
+// =========================================================
+let attemptCount = 0;
+const MAX_ATTEMPTS = 10;
+let requestCount = 0;
+const MAX_REQUESTS = 3;
+let pb;
+let countdownTimer, countdownSecs = 600;
+let currentEmail = '';
 
-    if(!email) { msg.textContent = "Bitte E-Mail eingeben."; return; }
-
-    msg.textContent = "Verifiziere Account...";
-    msg.style.color = "var(--text-muted)";
-    btn.disabled = true;
-    
-    try {
-        const response = await fetch(N8N_LOGIN_WEBHOOK, { 
-            method:'POST', 
-            headers:{'Content-Type':'application/json'}, 
-            body:JSON.stringify({email: email}) 
-        });
-        
-        // Prüfung auf den 404 Fehler (E-Mail nicht gefunden)
-        if(response.status === 404) {
-            msg.style.color = "var(--red)";
-            msg.textContent = "E-Mail nicht im System hinterlegt.";
-            btn.disabled = false;
-            return;
-        }
-
-        if(!response.ok) throw new Error();
-
-        // Wenn 200 OK -> Schritt 2
-        document.getElementById('step-1').classList.add('hidden');
-        document.getElementById('step-2').classList.remove('hidden');
-        msg.textContent = "";
-        
-    } catch(err) {
-        msg.style.color = "var(--red)";
-        msg.textContent = "Dienst aktuell nicht erreichbar.";
-    } finally {
-        btn.disabled = false;
-    }
+// =========================================================
+// FETCH WITH TIMEOUT (#35 #36)
+// =========================================================
+async function fetchTimeout(url, opts, ms = 10000) {
+  const ctrl = new AbortController();
+  const id = setTimeout(() => ctrl.abort(), ms);
+  try { const r = await fetch(url, {...opts, signal: ctrl.signal}); clearTimeout(id); return r; }
+  catch(e) { clearTimeout(id); throw e; }
 }
 
-async function verifyCode() {
-    const email = document.getElementById('email').value.trim();
-    const code = document.getElementById('code').value.trim();
-    const msg = document.getElementById('msg');
-    const btn = document.getElementById('btn-verify');
+// =========================================================
+// INIT (#34 DOMContentLoaded)
+// =========================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Wait for PocketBase
+  const iv = setInterval(() => {
+    if (typeof PocketBase !== 'undefined') { clearInterval(iv); initLogin(); }
+  }, 40);
+  setTimeout(() => clearInterval(iv), 6000);
 
-    if(!code) { msg.textContent = "Bitte Code eingeben."; return; }
+  initParticles();
+  initSpotlight();
+  initCursor();
+  initCinematicIntro();
+  checkCookieConsent();
+  loadLastLogin();
+  initScrollProgress();
+  initKeyboardGlobal();
+});
 
-    msg.textContent = "Prüfe...";
-    msg.style.color = "var(--text-muted)";
-    btn.disabled = true;
-
+// =========================================================
+// POCKETBASE INIT + AUTH CHECK (#11)
+// =========================================================
+async function initLogin() {
+  pb = new PocketBase(CFG.PB_URL);
+  if (pb.authStore.isValid) {
     try {
-        await pb.collection('users').authWithPassword(email, code);
-        
-        if(pb.authStore.isValid) {
-            msg.style.color = "#4CAF50";
-            msg.textContent = "Erfolgreich! Leite weiter...";
-            setTimeout(() => { window.location.href = "dashboard.html"; }, 800);
-        }
+      // Verify token server-side
+      await pb.collection('users').authRefresh();
+      // #16 Replace history + fade
+      window.history.replaceState(null, '', window.location.pathname);
+      document.body.style.opacity = '0';
+      document.body.style.transition = 'opacity .4s ease';
+      setTimeout(() => window.location.replace('dashboard.html'), 400);
     } catch(e) {
-        msg.style.color = "var(--red)";
-        msg.textContent = "Ungültiger Code. Bitte erneut versuchen.";
-        pb.authStore.clear();
-    } finally {
-        btn.disabled = false;
+      pb.authStore.clear();
     }
+  }
 }
 
-function resetLogin() {
-    document.getElementById('step-2').classList.add('hidden');
-    document.getElementById('step-1').classList.remove('hidden');
-    document.getElementById('code').value = '';
-    document.getElementById('msg').textContent = '';
+// =========================================================
+// #94 CINEMATIC LETTER-BY-LETTER INTRO
+// =========================================================
+function initCinematicIntro() {
+  if (sessionStorage.getItem('loginIntroSeen')) {
+    document.body.classList.add('ready');
+    document.getElementById('intro-overlay').remove();
+    return;
+  }
+  const text = 'AiWakeel';
+  const container = document.getElementById('intro-letters');
+  text.split('').forEach((ch, i) => {
+    const span = document.createElement('span');
+    span.className = 'intro-letter';
+    span.textContent = ch;
+    span.style.animationDelay = (0.1 + i * 0.07) + 's';
+    container.appendChild(span);
+  });
+  document.body.style.opacity = '1';
+  setTimeout(() => {
+    const o = document.getElementById('intro-overlay');
+    if (o) { o.classList.add('fade-out'); setTimeout(() => o.remove(), 700); }
+    sessionStorage.setItem('loginIntroSeen', '1');
+  }, 1800);
 }
 
-/* ── RECHTLICHES ── */
-function cookieDecision(a){
-    localStorage.setItem('cookieConsent',a?'accepted':'declined');
-    document.getElementById('cookie-popup-overlay').style.display='none';
-}
-function showLegal(type){
-  const c={
-      impressum:'<h2>Impressum</h2><p>AiWakeel Advertising Systems. Inhaber: [Dein Name]. Gemäß § 19 UStG keine MwSt. Standorte: Dubai & Frankfurt.</p>',
-      privacy:'<h2>Datenschutz</h2><p>Daten werden verschlüsselt auf deutschen Servern verarbeitet. Nur Google OAuth, kein Tracking.</p>',
-      agb:'<h2>AGB</h2><p>Monatlich kündbare Dienstleistung. Vertrag kommt mit erster Zahlung zustande.</p>',
-      widerruf:'<h2>Widerruf</h2><p>Widerrufsrecht binnen 14 Tagen, sofern Dienstleistung noch nicht vollständig erbracht.</p>',
-      cookies:'<h2>Cookies</h2><p>Technisch notwendig: Stripe (Zahlung), Login-Sessions, Consent (Ihre Entscheidung).</p>'
+// =========================================================
+// #52 CANVAS PARTICLES
+// =========================================================
+function initParticles() {
+  const canvas = document.getElementById('particle-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, pts = [];
+  const resize = () => { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; };
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+  for (let i = 0; i < 5; i++) pts.push({ x: Math.random() * 1200, y: Math.random() * 1200, r: .8 + Math.random() * 1.4, vx: (Math.random() - .5) * .15, vy: (Math.random() - .5) * .15, o: .06 + Math.random() * .1 });
+  const draw = () => {
+    ctx.clearRect(0, 0, W, H);
+    pts.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      ctx.beginPath(); ctx.arc(p.x % W, p.y % H, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(201,168,76,${p.o})`; ctx.fill();
+    });
+    requestAnimationFrame(draw);
   };
-  document.getElementById('modal-text').innerHTML=c[type];
-  document.getElementById('legal-modal').style.display='block';
+  draw();
 }
-function closeModal(e){
-    if(!e||e.target.className==='modal') document.getElementById('legal-modal').style.display='none';
+
+// =========================================================
+// #98 SPOTLIGHT
+// =========================================================
+function initSpotlight() {
+  const spot = document.getElementById('spotlight');
+  if (!spot) return;
+  document.addEventListener('mousemove', e => {
+    spot.style.left = e.clientX + 'px';
+    spot.style.top = e.clientY + 'px';
+  }, { passive: true });
+}
+
+// =========================================================
+// #97 MAGNETIC CURSOR + CURSOR GLOW
+// =========================================================
+function initCursor() {
+  const g = document.getElementById('cursor-glow');
+  if (!g) return;
+  document.addEventListener('mousemove', e => {
+    g.style.left = e.clientX + 'px';
+    g.style.top = e.clientY + 'px';
+  }, { passive: true });
+  // Magnetic pull on buttons
+  document.querySelectorAll('.btn-primary').forEach(btn => {
+    btn.addEventListener('mousemove', e => {
+      const r = btn.getBoundingClientRect();
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      const dx = (e.clientX - cx) * .12, dy = (e.clientY - cy) * .12;
+      btn.style.transform = `translate(${dx}px,${dy}px)`;
+    });
+    btn.addEventListener('mouseleave', () => btn.style.transform = '');
+  });
+}
+
+// =========================================================
+// #112 LAST LOGIN HINT
+// =========================================================
+function loadLastLogin() {
+  try {
+    const ll = localStorage.getItem('awLastLogin');
+    if (ll) {
+      const d = new Date(parseInt(ll));
+      const fmt = d.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
+      document.getElementById('last-login-val').textContent = fmt + ' Uhr';
+      document.getElementById('last-login-hint').style.display = 'block';
+    }
+  } catch(e) {}
+}
+
+// =========================================================
+// #7 #8 COOKIE CONSENT with expiry & timestamp
+// =========================================================
+function checkCookieConsent() {
+  try {
+    const d = JSON.parse(localStorage.getItem('cookieConsent') || '{}');
+    if (typeof d === 'string' || !d.accepted || Date.now() > d.expires) {
+      localStorage.removeItem('cookieConsent');
+      document.getElementById('cookie-popup-overlay').style.display = 'flex';
+    }
+  } catch { document.getElementById('cookie-popup-overlay').style.display = 'flex'; }
+}
+
+function cookieDecision(accepted) {
+  const consent = { accepted, timestamp: Date.now(), expires: Date.now() + 365 * 24 * 60 * 60 * 1000 };
+  localStorage.setItem('cookieConsent', JSON.stringify(consent));
+  document.getElementById('cookie-popup-overlay').style.display = 'none';
+  if (accepted) {
+    document.getElementById('badge-fonts').textContent = 'Aktiviert';
+    document.getElementById('badge-fonts').className = 'badge-ok';
+    if (!document.getElementById('gfonts')) {
+      const fl = document.createElement('link'); fl.id = 'gfonts'; fl.rel = 'stylesheet';
+      fl.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap';
+      document.head.appendChild(fl);
+    }
+    // #11 log consent
+    fetch(CFG.N8N_CONSENT, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ accepted, timestamp: consent.timestamp, page: 'login' }) }).catch(() => {});
+  }
+}
+
+// =========================================================
+// #54 #113 EMAIL INPUT
+// =========================================================
+const DOMAIN_ICONS = { 'gmail.com': '📧', 'icloud.com': '🍎', 'outlook.com': '📩', 'hotmail.com': '📩', 'yahoo.com': '📬', 'me.com': '🍎', 'googlemail.com': '📧' };
+
+function onEmailInput() {
+  const val = document.getElementById('email').value.trim();
+  const status = document.getElementById('email-status');
+  const icon = document.getElementById('domain-icon');
+  // #43 clear error on type
+  if (document.getElementById('msg').classList.contains('error')) setMsg('');
+
+  if (val.length > 3) {
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    status.textContent = valid ? '✓ Gültige E-Mail' : '';
+    status.className = 'field-status ' + (valid ? 'field-ok' : '');
+    // #113
+    const domain = val.split('@')[1] || '';
+    const di = DOMAIN_ICONS[domain.toLowerCase()];
+    icon.textContent = di || '';
+    icon.classList.toggle('show', !!di);
+  } else {
+    status.textContent = ''; icon.classList.remove('show');
+  }
+}
+
+// =========================================================
+// #4 #5 RATE-LIMITED MAGIC CODE REQUEST
+// =========================================================
+async function requestMagicCode() {
+  if (requestCount >= MAX_REQUESTS) {
+    setMsg('Zu viele Anfragen. Bitte warte einige Minuten.', 'error'); return;
+  }
+  const email = document.getElementById('email').value.trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    setMsg('Bitte eine gültige E-Mail-Adresse eingeben.', 'error'); return;
+  }
+  currentEmail = email;
+  requestCount++;
+
+  // #108 Morphing button
+  const btn = document.getElementById('btn-request');
+  btn.disabled = true; btn.classList.add('loading');
+  document.getElementById('btn-request-label').textContent = 'Code wird gesendet';
+  // #115 prestige bar
+  startPrestigeBar();
+  setMsg('');
+
+  try {
+    const res = await fetchTimeout(CFG.N8N_MAGIC, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    if (res.status === 404) { setMsg('Diese E-Mail ist uns nicht bekannt. Hast du dich über aiwakeel.ai registriert?', 'error'); return; }
+    if (res.status === 429) { setMsg('Zu viele Anfragen. Bitte versuche es in 30 Sekunden erneut.', 'error'); return; }
+    if (!res.ok) throw new Error('not_ok');
+
+    // #78 SUCCESS STATE step 1
+    btn.classList.remove('loading'); btn.classList.add('success-state');
+    document.getElementById('btn-request-label').textContent = '✓ Code gesendet';
+    setTimeout(() => goToStep2(), 600);
+  } catch(e) {
+    const msg = e.name === 'AbortError' ? 'Verbindung überschritten – bitte erneut versuchen.' : 'Dienst aktuell nicht erreichbar. Bitte in 30 Sekunden erneut versuchen.';
+    setMsg(msg, 'error');
+  } finally {
+    btn.classList.remove('loading');
+    setTimeout(() => { btn.disabled = false; btn.classList.remove('success-state'); document.getElementById('btn-request-label').textContent = 'Code anfordern'; }, 2000);
+    donePrestigeBar();
+  }
+}
+
+// =========================================================
+// GO TO STEP 2
+// =========================================================
+function goToStep2() {
+  // Update indicators
+  document.getElementById('sd1').className = 'step-dot-sm done';
+  document.getElementById('sl1').className = 'step-line-sm done';
+  document.getElementById('sd2').className = 'step-dot-sm active';
+  // Card progress
+  document.getElementById('card-progress-fill').style.width = '50%';
+  // #72 masked email
+  const parts = currentEmail.split('@');
+  const masked = parts[0].slice(0, 2) + '••••@' + parts[1];
+  document.getElementById('email-masked').innerHTML = `Code gesendet an <strong>${masked}</strong>`;
+  // Transition
+  document.getElementById('step-1').className = 'step-panel';
+  const s2 = document.getElementById('step-2');
+  s2.className = 'step-panel active';
+  setMsg('');
+  // Start countdown
+  startCountdown();
+  // Focus hidden input
+  setTimeout(() => { document.getElementById('code-real').focus(); updateBoxes(''); }, 100);
+}
+
+// =========================================================
+// #100 #101 #102 #103 CODE BOXES
+// =========================================================
+function onCodeInput() {
+  // #69 filter alphanumeric only
+  const raw = document.getElementById('code-real').value.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 8);
+  document.getElementById('code-real').value = raw;
+  updateBoxes(raw);
+  // #43 clear error
+  if (document.getElementById('msg').classList.contains('error')) setMsg('');
+  // #76 auto-submit on 8 chars
+  if (raw.length === 8) {
+    // #103 complete pulse on all boxes
+    for (let i = 0; i < 8; i++) { const b = document.getElementById('cb' + i); b.classList.add('complete'); setTimeout(() => b.classList.remove('complete'), 500); }
+    setTimeout(() => verifyCode(), 400);
+  }
+}
+
+function onCodeKeyDown(e) {
+  if (e.key === 'Backspace') setTimeout(() => updateBoxes(document.getElementById('code-real').value), 0);
+  if (e.key === 'Enter') verifyCode();
+}
+
+function updateBoxes(val) {
+  for (let i = 0; i < 8; i++) {
+    const box = document.getElementById('cb' + i);
+    box.textContent = val[i] ? '•' : '';
+    box.classList.toggle('filled', !!val[i]);
+    box.classList.toggle('focused', i === val.length && val.length < 8);
+    // #101 wave on new char
+    if (val[i] && !box.dataset.prev) { box.classList.add('wave'); setTimeout(() => box.classList.remove('wave'), 400); }
+    box.dataset.prev = val[i] || '';
+  }
+}
+
+// #40 PASTE HANDLER
+document.addEventListener('paste', e => {
+  const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 8);
+  if (document.getElementById('step-2').classList.contains('active') && pasted.length >= 6) {
+    e.preventDefault();
+    document.getElementById('code-real').value = pasted;
+    onCodeInput();
+  }
+});
+
+// =========================================================
+// #5 #67 RATE-LIMITED VERIFY WITH ATTEMPT COUNTER
+// =========================================================
+async function verifyCode() {
+  if (attemptCount >= MAX_ATTEMPTS) {
+    setMsg('Zu viele Fehlversuche. Bitte fordere einen neuen Code an.', 'error');
+    document.getElementById('code-boxes').classList.add('shake');
+    setTimeout(() => document.getElementById('code-boxes').classList.remove('shake'), 400);
+    return;
+  }
+  const code = document.getElementById('code-real').value.trim();
+  if (!code || code.length < 8) { setMsg('Bitte alle 8 Zeichen eingeben.', 'error'); return; }
+  if (!pb) return;
+
+  const btn = document.getElementById('btn-verify');
+  btn.disabled = true; btn.classList.add('loading');
+  document.getElementById('btn-verify-label').textContent = 'Prüfe Code';
+  setMsg('');
+  startPrestigeBar();
+
+  try {
+    // #3 using proper auth (Magic Code sent as one-time password)
+    await pb.collection('users').authWithPassword(currentEmail, code);
+    if (pb.authStore.isValid) {
+      attemptCount = 0;
+      clearInterval(countdownTimer);
+      // #112 Store last login
+      localStorage.setItem('awLastLogin', Date.now().toString());
+      // #66 Clear session data
+      sessionStorage.clear();
+      // #108 success button
+      btn.classList.remove('loading'); btn.classList.add('success-state');
+      // #123 PERSONALIZED SUCCESS
+      const user = pb.authStore.model;
+      let name = user.name ? user.name.split(' ')[0] : (user.email?.split('@')[0] || '');
+      name = name.charAt(0).toUpperCase() + name.slice(1);
+      document.getElementById('btn-verify-label').textContent = '✓ Zugang gewährt';
+      // #116 #107 STAR RAIN + PARTICLE EXPLOSION
+      triggerSuccessEffects();
+      setMsg(`✦ Willkommen zurück, ${name}. Dein Agent ist bereit.`, 'success');
+      // #16 Replace history, then redirect
+      window.history.replaceState(null, '', window.location.pathname);
+      setTimeout(() => {
+        document.body.style.opacity = '0';
+        document.body.style.transition = 'opacity .5s ease';
+        setTimeout(() => window.location.replace('dashboard.html'), 500);
+      }, 1400);
+    }
+  } catch(e) {
+    attemptCount++;
+    pb.authStore.clear();
+    const remaining = MAX_ATTEMPTS - attemptCount;
+    const msg = remaining > 0
+      ? `Ungültiger oder abgelaufener Code. Noch ${remaining} Versuche.`
+      : 'Maximale Versuche erreicht. Bitte neuen Code anfordern.';
+    setMsg(msg, 'error');
+    // Shake boxes
+    document.getElementById('code-boxes').classList.add('shake');
+    setTimeout(() => document.getElementById('code-boxes').classList.remove('shake'), 400);
+    // Clear boxes
+    document.getElementById('code-real').value = '';
+    updateBoxes('');
+  } finally {
+    btn.classList.remove('loading');
+    if (btn.classList.contains('success-state')) {
+      // keep success state
+    } else {
+      btn.disabled = false;
+      document.getElementById('btn-verify-label').textContent = 'Einloggen';
+    }
+    donePrestigeBar();
+  }
+}
+
+// =========================================================
+// #37 RESEND CODE
+// =========================================================
+async function resendCode() {
+  if (requestCount >= MAX_REQUESTS) { setMsg('Maximale Anfragen erreicht. Bitte warte.', 'error'); return; }
+  document.getElementById('resend-btn').disabled = true;
+  await requestMagicCode();
+  if (document.getElementById('step-1').classList.contains('active')) goToStep2();
+}
+
+// =========================================================
+// RESET
+// =========================================================
+function resetLogin() {
+  clearInterval(countdownTimer);
+  document.getElementById('sd1').className = 'step-dot-sm active';
+  document.getElementById('sl1').className = 'step-line-sm';
+  document.getElementById('sd2').className = 'step-dot-sm';
+  document.getElementById('card-progress-fill').style.width = '0%';
+  document.getElementById('step-2').className = 'step-panel go-back';
+  setTimeout(() => { document.getElementById('step-2').className = 'step-panel'; }, 450);
+  document.getElementById('step-1').className = 'step-panel active';
+  document.getElementById('code-real').value = '';
+  updateBoxes('');
+  setMsg('');
+  requestCount = 0; attemptCount = 0;
+}
+
+// =========================================================
+// #38 #75 COUNTDOWN TIMER
+// =========================================================
+function startCountdown() {
+  clearInterval(countdownTimer);
+  countdownSecs = 600; // 10 min
+  const resend = document.getElementById('resend-btn');
+  resend.disabled = true;
+
+  countdownTimer = setInterval(() => {
+    countdownSecs--;
+    const m = String(Math.floor(countdownSecs / 60)).padStart(2, '0');
+    const s = String(countdownSecs % 60).padStart(2, '0');
+    const el = document.getElementById('countdown-val');
+    if (el) el.textContent = `${m}:${s}`;
+    if (countdownSecs <= 0) {
+      clearInterval(countdownTimer);
+      if (el) el.textContent = '00:00';
+      resend.disabled = false;
+      setMsg('Code abgelaufen. Bitte neuen Code anfordern.', 'error');
+    }
+    // Enable resend after 60s
+    if (countdownSecs === 540) resend.disabled = false;
+  }, 1000);
+}
+
+// =========================================================
+// #115 PRESTIGE BAR
+// =========================================================
+let prestigeAnim;
+function startPrestigeBar() {
+  const bar = document.getElementById('prestige-bar');
+  bar.style.opacity = '1'; bar.style.width = '0%'; bar.classList.remove('done');
+  let w = 0;
+  clearInterval(prestigeAnim);
+  prestigeAnim = setInterval(() => { w = Math.min(w + 1.5, 85); bar.style.width = w + '%'; }, 80);
+}
+function donePrestigeBar() {
+  clearInterval(prestigeAnim);
+  const bar = document.getElementById('prestige-bar');
+  bar.style.width = '100%';
+  setTimeout(() => bar.classList.add('done'), 300);
+}
+
+// =========================================================
+// #116 STAR RAIN + #107 PARTICLE EXPLOSION
+// =========================================================
+function triggerSuccessEffects() {
+  const overlay = document.getElementById('success-overlay');
+  overlay.classList.add('show');
+  // Stars
+  for (let i = 0; i < 18; i++) {
+    setTimeout(() => {
+      const s = document.createElement('div');
+      s.className = 'star-rain-item';
+      s.textContent = '✦';
+      s.style.left = Math.random() * 100 + 'vw';
+      s.style.animationDuration = (1.2 + Math.random() * 1.4) + 's';
+      s.style.animationDelay = (Math.random() * 0.4) + 's';
+      s.style.fontSize = (10 + Math.random() * 12) + 'px';
+      overlay.appendChild(s);
+      setTimeout(() => s.remove(), 2500);
+    }, i * 50);
+  }
+  // Particle burst from center
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-login';
+    const angle = (i / 20) * Math.PI * 2;
+    const dist = 60 + Math.random() * 80;
+    p.style.cssText = `position:absolute;top:50%;left:50%;width:${3+Math.random()*5}px;height:${3+Math.random()*5}px;background:#C9A84C;border-radius:50%;animation:confettiBurst .9s ease forwards;animation-delay:${Math.random()*.2}s`;
+    p.style.setProperty('--tx', Math.round(Math.cos(angle) * dist) + 'px');
+    p.style.setProperty('--ty', Math.round(Math.sin(angle) * dist) + 'px');
+    overlay.appendChild(p);
+    setTimeout(() => p.remove(), 1500);
+  }
+  setTimeout(() => overlay.classList.remove('show'), 2500);
+  // Haptic
+  try { if (navigator.vibrate) navigator.vibrate([80, 50, 100]); } catch {}
+}
+
+// =========================================================
+// SCROLL PROGRESS (#19)
+// =========================================================
+function initScrollProgress() {
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+    document.getElementById('prestige-bar').style.width = Math.min(pct, 100) + '%';
+  }, { passive: true });
+}
+
+// =========================================================
+// STATUS MESSAGE
+// =========================================================
+function setMsg(text, type = '') {
+  const el = document.getElementById('msg');
+  el.textContent = text;
+  el.className = 'status-msg' + (type ? ' ' + type : '');
+}
+
+// =========================================================
+// #45 KEYBOARD GLOBAL
+// =========================================================
+function initKeyboardGlobal() {
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeModal(null); }
+  });
+  // #89 footer links keyboard
+  document.querySelectorAll('.footer-links a,[role=button]').forEach(a => {
+    a.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); a.click(); } });
+  });
+  // #91 scroll into view on input focus
+  document.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('focus', () => setTimeout(() => inp.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300), { passive: true });
+  });
+}
+
+// =========================================================
+// LEGAL TEXTS (#13 full DSGVO)
+// =========================================================
+function showLegal(type) {
+  const s = (t,b) => `<h2 style="color:var(--gold);margin-bottom:18px;font-family:var(--font-serif);font-size:22px;font-weight:300;letter-spacing:.04em">${t}</h2>${b}`;
+  const h3 = t => `<h3 style="color:var(--text);font-family:var(--font-serif);font-size:15px;font-weight:400;margin:16px 0 7px">${t}</h3>`;
+  const p = t => `<p style="margin-bottom:10px;line-height:1.75;font-size:12px;color:rgba(240,237,232,0.5)">${t}</p>`;
+  const c = {
+    impressum: s('Impressum', `
+      ${h3('Angaben gemäß § 5 TMG')}
+      ${p('<strong style="color:var(--text)">Canatay Cakmak</strong><br>CanTurSoft (Kleingewerbe)<br>Dompfaffenweg 51a · 50829 Köln · Deutschland')}
+      ${h3('Kontakt')}
+      ${p('Telefon: +49 172 7419318<br>E-Mail: kontakt@aiwakeel.ai<br>Website: aiwakeel.ai')}
+      ${h3('Steuerliche Angaben')}
+      ${p('Kleingewerbe gemäß § 19 UStG – keine Umsatzsteuer ausgewiesen.')}
+      ${h3('Verantwortlich gemäß § 55 Abs. 2 RStV')}
+      ${p('Canatay Cakmak, Dompfaffenweg 51a, 50829 Köln')}
+    `),
+    privacy: s('Datenschutzerklärung', `
+      ${h3('1. Verantwortlicher')}
+      ${p('Canatay Cakmak · CanTurSoft · Dompfaffenweg 51a · 50829 Köln · kontakt@aiwakeel.ai · +49 172 7419318')}
+      ${h3('2. Hosting')}
+      ${p('IONOS SE, Elgendorfer Str. 57, 56410 Montabaur. Rechenzentrum Frankfurt. AVV nach Art. 28 DSGVO liegt vor.')}
+      ${h3('3. Login-Verfahren (Magic Code)')}
+      ${p('Beim Login wird Ihre E-Mail-Adresse an unseren n8n-Server (selbst gehostet, Frankfurt) übermittelt. Ein einmaliger Code wird generiert und per E-Mail zugestellt. Wir speichern keine dauerhaften Passwörter. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.')}
+      ${h3('4. PocketBase (Authentifizierung)')}
+      ${p('Selbst gehostete PocketBase-Instanz auf IONOS-Server Frankfurt. Gespeicherte Daten: E-Mail-Adresse, Session-Token. Speicherdauer: Session-Token bis Abmeldung. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.')}
+      ${h3('5. Google Fonts (nur mit Einwilligung)')}
+      ${p('Google Ireland Limited, Dublin 4. IP-Übermittlung beim Laden. Keine eigenen Cookies. Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO. Widerruf jederzeit über Cookie-Button.')}
+      ${h3('6. Ihre Rechte')}
+      ${p('Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung (Art. 18), Datenübertragbarkeit (Art. 20), Widerspruch (Art. 21). Kontakt: kontakt@aiwakeel.ai')}
+      ${h3('7. Beschwerderecht')}
+      ${p('LDI NRW, Kavalleriestr. 2–4, 40213 Düsseldorf, <a href="https://www.ldi.nrw.de" style="color:var(--gold)">www.ldi.nrw.de</a>')}
+    `),
+    agb: s('AGB', `
+      ${h3('§ 1 Geltungsbereich')}
+      ${p('Diese AGB gelten für alle Verträge zwischen Canatay Cakmak · CanTurSoft und Kunden über die Nutzung von AiWakeel (aiwakeel.ai).')}
+      ${h3('§ 2 Leistung')}
+      ${p('KI-gestützte Google Ads Automatisierung als SaaS. Verfügbarkeitsziel 99% / Monat.')}
+      ${h3('§ 3 Preise')}
+      ${p('Atelier: 29€/mtl. + 49€ Setup. Maison: 59€/mtl. + 79€ Setup. Gemäß § 19 UStG keine MwSt.')}
+      ${h3('§ 4 Kündigung')}
+      ${p('Monatlich kündbar über Stripe-Kundenportal oder per E-Mail an kontakt@aiwakeel.ai.')}
+      ${h3('§ 5 Haftung')}
+      ${p('Unbeschränkt bei Vorsatz/grober Fahrlässigkeit. Bei leichter Fahrlässigkeit max. 3 Monatsgebühren. Keine Garantie für spezifische Kampagnenergebnisse.')}
+      ${h3('§ 6 Recht & Gerichtsstand')}
+      ${p('Deutsches Recht. Gerichtsstand Köln für Kaufleute.')}
+    `),
+    widerruf: s('Widerrufsbelehrung', `
+      ${h3('Widerrufsrecht')}
+      ${p('Sie haben das Recht, binnen 14 Tagen ohne Angabe von Gründen den Vertrag zu widerrufen.')}
+      ${h3('Kontakt für Widerruf')}
+      ${p('Canatay Cakmak · CanTurSoft · Dompfaffenweg 51a · 50829 Köln · kontakt@aiwakeel.ai · +49 172 7419318')}
+      ${h3('⚠ Erlöschen des Widerrufsrechts')}
+      ${p('<strong style="color:var(--gold)">Gemäß § 356 Abs. 5 BGB</strong> erlischt das Widerrufsrecht mit vollständiger Erbringung der Dienstleistung, wenn Sie der Ausführung ausdrücklich zugestimmt haben und Ihre Kenntnis über den Verlust des Widerrufsrechts bestätigt haben.')}
+      ${h3('Folgen des Widerrufs')}
+      ${p('Rückzahlung innerhalb von 14 Tagen auf gleichem Zahlungsweg.')}
+    `),
+    cookies: s('Cookie-Richtlinie', `
+      ${h3('1. Technisch notwendig')}
+      ${p('<strong style="color:var(--text)">localStorage (Consent):</strong> Speichert Ihre Cookie-Entscheidung mit Zeitstempel. Ablauf: 12 Monate. Rechtsgrundlage: Art. 6 Abs. 1 lit. c DSGVO.<br><br><strong style="color:var(--text)">sessionStorage:</strong> Temporäre Login-Daten für die aktuelle Sitzung. Gelöscht bei Tab-Schließung. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.')}
+      ${h3('2. Optional (nur mit Einwilligung)')}
+      ${p('<strong style="color:var(--text)">Google Fonts:</strong> Google Ireland Limited, Dublin 4. IP-Übermittlung. Keine Cookies. Widerruf jederzeit über Cookie-Button unten rechts.')}
+      ${h3('3. Keine Werbe-Cookies')}
+      ${p('Kein Tracking, keine Analyse, keine Werbenetzwerke.')}
+      ${h3('4. Widerruf')}
+      ${p('Einwilligung jederzeit widerrufbar über: „🍪 Cookies"-Button (falls vorhanden) oder Löschen des localStorage-Eintrags „cookieConsent".')}
+      ${h3('5. Kontakt')}
+      ${p('kontakt@aiwakeel.ai · Canatay Cakmak, CanTurSoft, Dompfaffenweg 51a, 50829 Köln')}
+    `)}
+  ;
+  if (!c[type]) return;
+  document.getElementById('modal-text').innerHTML = c[type];
+  document.getElementById('legal-modal').style.display = 'block';
+}
+
+function closeModal(e) {
+  if (!e || e.target.classList.contains('modal')) document.getElementById('legal-modal').style.display = 'none';
 }
 </script>
 
+<!-- #1 Deferred PocketBase -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js" defer></script>
 </body>
 </html>
