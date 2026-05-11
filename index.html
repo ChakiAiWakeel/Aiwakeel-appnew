@@ -1073,19 +1073,25 @@ function dismissSavedBanner() {
   if (b) b.classList.remove('show');
 }
 
-function restoreStep() {
-  goToStep(state.currentStep, false, true);
-  if (state.ads_customer_id) showAutoData();
-  if (state.plan) selectPlan(state.plan, state.monthlyFee, state.setupFee);
-  ['domain','industry','email','phone','whatsapp'].forEach(id => {
-    if (state[id]) { const el = document.getElementById(id); if (el) el.value = state[id]; }
-  });
+// ... (vorheriger Code: saveState, loadState etc.)
 
-  // NEU: Holt die Domains aus der Search Console via n8n
+function restoreStep() {
+    goToStep(state.currentStep, false, true);
+    if (state.ads_customer_id) showAutoData();
+    if (state.plan) selectPlan(state.plan, state.monthlyFee, state.setupFee);
+    ['domain','industry','email','phone','whatsapp'].forEach(id => {
+        if (state[id]) { const el = document.getElementById(id); if (el) el.value = state[id]; }
+    });
+    validateStep2();
+}
+
+
 async function fetchUserDomains(userId) {
     const select = document.getElementById('domain');
     const status = document.getElementById('domain-check');
     if (!userId) return;
+
+    console.log("Lade Domains für User:", userId); // Debug-Log
 
     try {
         const response = await fetch('https://n8n.aiwakeel.ai/webhook/get-user-domains', {
@@ -1105,15 +1111,13 @@ async function fetchUserDomains(userId) {
 
         sites.forEach(site => {
             let opt = document.createElement('option');
-            opt.value = site.siteUrl; // z.B. sc-domain:beispiel.de
+            opt.value = site.siteUrl; 
             opt.textContent = site.siteUrl.replace('sc-domain:', '').replace('https://','').replace('http://','');
             opt.style.background = "var(--surface)";
             select.appendChild(opt);
         });
         
-        // Falls bereits eine Domain im State war (z.B. beim Zurückgehen), diese auswählen
         if (state.domain) select.value = state.domain;
-        
         status.innerHTML = '<span style="color:var(--gold)">✓ Verifizierte Domains geladen</span>';
     } catch (e) {
         console.error("Domain-Fetch Fehler:", e);
