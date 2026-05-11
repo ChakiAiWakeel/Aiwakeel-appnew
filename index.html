@@ -1100,8 +1100,13 @@ async function fetchUserDomains(userId) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId: userId })
         });
-        const sites = await response.json();
         
+        let sites = await response.json();
+        
+        // NEU: Diese beiden Zeilen "entpacken" die Daten von n8n korrekt
+        if (sites.siteEntry) sites = sites.siteEntry;
+        if (Array.isArray(sites) && Array.isArray(sites[0])) sites = sites[0];
+
         select.innerHTML = '<option value="" style="background:var(--surface)">Bitte wählen...</option>';
         
         if (!sites || sites.length === 0) {
@@ -1111,11 +1116,13 @@ async function fetchUserDomains(userId) {
         }
 
         sites.forEach(site => {
-            let opt = document.createElement('option');
-            opt.value = site.siteUrl; 
-            opt.textContent = site.siteUrl.replace('sc-domain:', '').replace('https://','').replace('http://','');
-            opt.style.background = "var(--surface)";
-            select.appendChild(opt);
+            if (site.siteUrl) { // Sicherheitscheck
+                let opt = document.createElement('option');
+                opt.value = site.siteUrl; 
+                opt.textContent = site.siteUrl.replace('sc-domain:', '').replace('https://','').replace('http://','');
+                opt.style.background = "var(--surface)";
+                select.appendChild(opt);
+            }
         });
         
         if (state.domain) select.value = state.domain;
