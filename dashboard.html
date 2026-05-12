@@ -954,9 +954,8 @@ function setRange(days, btn) {
 async function loadHistory(user) {
   try {
     // ✅ FIX: user.id statt user für Relation-Filter
-    const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 10, {
-      filter: `user.id = "${user.id}"`,
-      sort: '-created'
+const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 10, {
+  sort: '-created'
     });
     const list = document.getElementById('history-list');
     if (!records.items.length) {
