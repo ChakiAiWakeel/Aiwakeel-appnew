@@ -715,15 +715,14 @@ document.addEventListener('DOMContentLoaded', () => {
 async function initApp() {
   pb = new PocketBase(CFG.PB_URL);
 
-  // #1 #11 Auth check with null-guard
+  // 1. Auth check
   if (!pb.authStore.model || !pb.authStore.isValid) {
-    // #3 fade out before redirect
     document.documentElement.style.opacity = '0';
     setTimeout(() => { window.location.href = 'login.html'; }, 300);
     return;
   }
 
-  // #2 Verify token server-side
+  // 2. Verify token server-side
   try {
     await pb.collection(CFG.COLLECTION_USERS).authRefresh();
   } catch(e) {
@@ -733,16 +732,11 @@ async function initApp() {
   }
 
   const user = pb.authStore.model;
-  
-async function initApp() {
-  pb = new PocketBase(CFG.PB_URL);
-  // ... (bestehender Auth Check) ...
 
-  const user = pb.authStore.model;
-
-  // NEU: Prüfung auf Zahlungsproblem
+  // --- NEU: PRÜFUNG AUF ZAHLUNGSPROBLEM ---
   if (user && user.payment_error === true) {
-      document.getElementById('payment-warning-banner').style.display = 'block';
+      const banner = document.getElementById('payment-warning-banner');
+      if (banner) banner.style.display = 'block';
       
       // Agenten-Status im UI visuell auf "Fehler" setzen
       const statusText = document.getElementById('status-text');
@@ -759,94 +753,66 @@ async function initApp() {
           statusSub.style.color = "var(--error)";
       }
   }
+  // ----------------------------------------
 
-  // ... (Rest der Funktion initApp) ...
-}
-  
-// Prüfung auf Zahlungsproblem (Guthaben)
-if (user.payment_error === true) {
-    document.getElementById('payment-warning-banner').style.display = 'block';
-    
-    // Optional: Den Agenten-Status im UI visuell auf "Fehler" setzen
-    const statusText = document.getElementById('status-text');
-    if (statusText) {
-        statusText.textContent = "Zahlung fehlt";
-        statusText.style.color = "var(--error)";
-        statusText.style.borderColor = "var(--error)";
-    }
-}
-  // Show body
+  // Body sichtbar machen
   document.documentElement.style.opacity = '';
   document.body.classList.add('ready');
 
-  // Hide loading screen
+  // Lade-Screen entfernen
   setTimeout(() => {
     const ls = document.getElementById('loading-screen');
     if (ls) { ls.classList.add('fade-out'); setTimeout(() => ls.remove(), 700); }
   }, 900);
 
-  // #14 Time-based greeting
+  // Greeting & Plan-Logik
   const hour = new Date().getHours();
   const greet = hour < 12 ? 'Guten Morgen' : hour < 18 ? 'Guten Tag' : 'Guten Abend';
-  let displayName = 'User';
-  if (user.name) displayName = user.name.split(' ')[0];
-  else if (user.email) {
-    const en = user.email.split('@')[0];
-    displayName = en.charAt(0).toUpperCase() + en.slice(1);
-  }
+  let displayName = user.name ? user.name.split(' ')[0] : (user.email ? user.email.split('@')[0] : 'User');
   document.getElementById('user-name').textContent = `${greet}, ${displayName}`;
 
-  // #45 Plan display
   const plan = user.plan || 'atelier';
   document.getElementById('plan-display').textContent = plan === 'premium' ? '✦ Maison' : 'Atelier';
-
-  // #99 Upgrade banner for Atelier users
   if (plan !== 'premium') document.getElementById('upgrade-banner').style.display = 'block';
 
-  // Agent status
+  // Agent status & Budget
   const isActive = user.agent_status === 'active';
   updateUI(isActive);
 
-  // #44 Budget warning
   const budget = user.budget || 0;
   document.getElementById('current-budget-display').textContent = `${budget}€`;
   if (!budget || budget === 0) document.getElementById('budget-warning').classList.add('show');
   highlightActiveBudget(budget);
 
-  // #42 #43 Optimization times
   updateOptTimes();
 
-  // Load data
+  // Daten laden
   await loadDashboardData(user);
   await loadHistory(user);
   loadChecklist(user);
   loadNotifications(user);
 
-  // Inits
+  // Inits starten
   initScrollProgress();
   initHeaderScroll();
   initPullToRefresh(user);
   initAutoRefresh(user);
   initInactivityLogout();
   initKeyboard();
-  initDashParticles();   // #1
-  initDashIntro();       // #2
-  initScrollReveal();    // #3
-  initChartReveal();     // #6
+  initDashParticles();
+  initDashIntro();
+  initScrollReveal();
+  initChartReveal();
 
-  // Add reveal classes to all cards dynamically
-  document.querySelectorAll('.card,.card-wrap').forEach((el, i) => {
+  // Reveal-Animationen triggern
+  document.querySelectorAll('.card').forEach((el, i) => {
     if (!el.classList.contains('reveal')) {
       el.classList.add('reveal');
-      if (i % 3 === 1) el.classList.add('reveal-delay-1');
-      if (i % 3 === 2) el.classList.add('reveal-delay-2');
+      if (i % 2 !== 0) el.classList.add('reveal-delay-1');
     }
   });
-  if (document.getElementById('upgrade-banner')) {
-    document.getElementById('upgrade-banner').classList.add('reveal');
-  }
 
-  // #75 PocketBase Realtime
+  // Realtime Update
   pb.collection(CFG.COLLECTION_REPORTS).subscribe('*', (e) => {
     if (e.record.user === user.id) loadDashboardData(user);
   });
