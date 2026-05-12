@@ -1481,9 +1481,12 @@ function selectPlan(id,fee,setup,event) {
 // =========================================================
 // STEP 4
 // =========================================================
+// =========================================================
+// STEP 4
+// =========================================================
 function validateFinal(){document.getElementById('slider-activate').style.display=document.getElementById('check-legal').checked?'block':'none';}
 
-llet _launching = false;
+let _launching = false;
 async function launch() {
   if (_launching) return;
   _launching = true;
@@ -1538,8 +1541,8 @@ async function launch() {
         showToast(err.name === 'AbortError' ? 'Zeitüberschreitung – bitte erneut versuchen' : 'Verbindungsfehler – bitte erneut versuchen', 'error');
     }
   }
+}
 
-// =========================================================
 // SLIDE
 // =========================================================
 function initSlide() {
