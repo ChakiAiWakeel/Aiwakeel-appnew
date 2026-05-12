@@ -21,7 +21,7 @@
   <!-- #10 CSP -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' cdnjs.cloudflare.com cdn.jsdelivr.net; style-src 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; connect-src ads.aiwakeel.ai n8n.aiwakeel.ai; img-src 'self' data:; frame-ancestors 'none';">
   <title>AiWakeel · Elite Dashboard</title>
-
+ 
   <!-- #6 Font-Variablen immer setzen, Dateien nur nach Consent -->
   <script>
   (function(){
@@ -41,7 +41,7 @@
     document.documentElement.style.opacity = '0';
   })();
   </script>
-
+ 
   <!-- #36 SRI hashes on CDN scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js"
     integrity="sha512-1B3bTKOuMpRaMKzHUAWlNKiQMNGckV8V6TVHS7XZE1aM3VlZVL0wIvLEH1QL+iNGqjp3bKBMiNdLlDAGBVug=="
@@ -49,7 +49,7 @@
   <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.2/dist/apexcharts.min.js"
     integrity="sha256-+3uMIfmZVVXoTPHlj2S3RHVrkDC/VNcrFTDGlH2DQOI="
     crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
-
+ 
   <style>
     :root {
       --font-serif: Georgia,'Times New Roman',serif;
@@ -60,10 +60,10 @@
       --text:#F0EDE8; --text-muted:rgba(240,237,232,0.42); --text-dim:rgba(240,237,232,0.22);
       --error:rgba(255,80,80,0.8); --success:#4CAF50;
     }
-
+ 
     /* #1 CANVAS PARTICLES */
     #db-particle-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.45}
-
+ 
     /* #2 CINEMATIC INTRO */
     #db-intro{position:fixed;inset:0;background:var(--obsidian);z-index:999999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;transition:opacity .7s ease,transform .7s ease}
     #db-intro.fade-out{opacity:0;transform:scale(1.04);pointer-events:none}
@@ -74,66 +74,66 @@
     @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     @keyframes growLine{from{width:0}to{width:50px}}
     @keyframes spinFadeIn{to{opacity:1}}
-
+ 
     /* #3 SCROLL REVEAL */
     .reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
     .reveal.revealed{opacity:1;transform:translateY(0)}
     .reveal-delay-1{transition-delay:.08s}.reveal-delay-2{transition-delay:.16s}.reveal-delay-3{transition-delay:.24s}
-
+ 
     /* #5 ANIMATED BACKGROUND GRADIENT */
     @keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
     body::before{background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,168,76,0.07) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(201,168,76,0.03) 0%,transparent 50%);background-size:200% 200%;animation:gradientShift 12s ease infinite}
-
+ 
     /* #6 CHART FADE-IN */
     #chart-container-box{animation:none}
     #chart-container-box.chart-loaded{animation:chartFadeIn .6s ease forwards}
     @keyframes chartFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
+ 
     /* #8 BUDGET DISPLAY TRANSITION */
     #current-budget-display{transition:all .4s cubic-bezier(0.22,1,0.36,1)}
-
+ 
     /* #10 TOGGLE ACTIVE GLOW */
     .switch.active{box-shadow:0 0 0 4px rgba(201,168,76,.12),0 0 16px rgba(201,168,76,.2)}
-
+ 
     /* #11 STATUS BADGE TRANSITION */
     #status-text{transition:color .3s ease,border-color .3s ease,background .3s ease}
-
+ 
     /* #15 FOOTER LINKS HOVER */
     .footer-links a{transition:color .3s}
     .footer-links a:hover{color:var(--gold)}
-
+ 
     /* #63 ARIA TOAST role already set, add visual */
     #toast{border-radius:2px}
-
+ 
     /* #3 SCROLL REVEAL on cards */
     .card{will-change:transform}
-
+ 
     /* #9 will-change on switch */
     .switch,.switch-circle{will-change:transform,background}
-
+ 
     /* #61 ACCESSIBLE SWITCH */
     #agent-toggle:focus-visible{outline:1px solid var(--gold);outline-offset:4px;border-radius:20px}
-
+ 
     /* #7 METRIC TOOLTIP already done via .metric-tip – ensure text wraps */
     .metric-tip::after{max-width:160px;white-space:normal;text-align:center;line-height:1.4}
-
+ 
     /* CHART FADE */
     #chart{opacity:0;transition:opacity .5s ease}
     #chart.visible{opacity:1}
-
+ 
     /* #15 GOLD SCROLLBAR */
     ::-webkit-scrollbar{width:4px;height:4px}
     ::-webkit-scrollbar-track{background:var(--obsidian)}
     ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,transparent,var(--gold),transparent);border-radius:2px}
     html{scrollbar-width:thin;scrollbar-color:var(--gold) var(--obsidian)}
-
+ 
     /* #9 CUSTOM FOCUS RING */
     :focus-visible{outline:1px solid var(--gold);outline-offset:3px;border-radius:2px}
-
+ 
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     /* #39 touch-action on all interactive */
     button,input,a,[role=button],.switch{touch-action:manipulation;user-select:none;-webkit-user-select:none}
-
+ 
     body{
       background:var(--obsidian);color:var(--text);font-family:var(--font-sans);
       min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;
@@ -143,10 +143,10 @@
     body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,168,76,0.07) 0%,transparent 60%);pointer-events:none;z-index:0}
     /* #51 NOISE OVERLAY */
     body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.7}
-
+ 
     /* #56 SCROLL PROGRESS */
     #scroll-progress{position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-light));z-index:9999;pointer-events:none;transition:width .1s linear}
-
+ 
     /* #12 LOADING SCREEN */
     #loading-screen{position:fixed;inset:0;background:var(--obsidian);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;transition:opacity .6s ease,transform .6s ease}
     #loading-screen.fade-out{opacity:0;transform:scale(1.03);pointer-events:none}
@@ -160,7 +160,7 @@
     @keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
     @keyframes shimmer{0%,100%{background-position:200% 0}50%{background-position:-200% 0}}
     @keyframes pulseBorder{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.25)}50%{box-shadow:0 0 0 5px rgba(201,168,76,0)}}
-
+ 
     /* HEADER */
     .header{
       padding:20px 24px;display:flex;justify-content:space-between;align-items:center;
@@ -179,14 +179,14 @@
       transition:all .3s;font-family:var(--font-sans);
     }
     .logout-btn:hover{border-color:rgba(255,80,80,.4);color:var(--error)}
-
+ 
     /* MAIN */
     .main-content{flex:1;max-width:500px;margin:0 auto;padding:40px 16px;position:relative;z-index:1;width:100%}
-
+ 
     /* GREETING */
     .greeting h1{font-family:var(--font-serif);font-size:32px;font-weight:300;margin-bottom:4px;text-transform:capitalize}
     .greeting p{color:var(--text-muted);font-size:13px;font-style:italic;font-family:var(--font-serif);margin-bottom:32px}
-
+ 
     /* CARDS */
     .card{
       background:var(--surface);border:1px solid var(--border);padding:28px;
@@ -197,10 +197,10 @@
     .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
     /* #55 card hover */
     .card:hover{border-color:rgba(201,168,76,.26);box-shadow:0 40px 100px rgba(0,0,0,.7),0 0 28px rgba(201,168,76,.06),0 0 0 1px rgba(201,168,76,.08)}
-
+ 
     /* #13 SKELETON */
     .skeleton{background:linear-gradient(90deg,var(--surface2) 25%,rgba(201,168,76,.06) 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.4s ease infinite;border-radius:2px}
-
+ 
     /* METRICS */
     .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
     .metric-box{
@@ -215,12 +215,12 @@
     .metric-live{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:4px}
     .live-dot-sm{width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);animation:livePulse 1.8s ease infinite}
     .live-label{font-size:8px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase}
-
+ 
     /* #108 METRIC TOOLTIP */
     .metric-tip{position:relative;cursor:help}
     .metric-tip::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border);padding:5px 10px;font-size:9px;color:var(--text-muted);white-space:nowrap;opacity:0;transition:opacity .2s;z-index:10;pointer-events:none;border-radius:2px;font-family:var(--font-sans)}
     .metric-tip:hover::after{opacity:1}
-
+ 
     /* SWITCH - #27 larger tap target */
     .switch-wrap{min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center}
     .switch{width:48px;height:26px;background:#111;border-radius:20px;position:relative;cursor:pointer;border:1px solid var(--border2);transition:background .4s,border-color .4s}
@@ -228,11 +228,11 @@
     .switch.processing{opacity:.5;pointer-events:none}
     .switch-circle{position:absolute;top:3px;left:3px;width:18px;height:18px;background:white;border-radius:50%;transition:transform .3s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 1px 4px rgba(0,0,0,.4)}
     .switch.active .switch-circle{transform:translateX(22px)}
-
+ 
     /* #59 STATUS BADGE PULSE */
     #status-text{animation:none}
     #status-text.active-pulse{animation:pulseBorder 2s ease infinite}
-
+ 
     /* BUDGET */
     .budget-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:15px}
     .budget-btn{
@@ -254,17 +254,17 @@
     }
     .custom-input::-webkit-inner-spin-button,.custom-input::-webkit-outer-spin-button{-webkit-appearance:none}
     .custom-input:focus{border-color:var(--gold)}
-
+ 
     /* #44 BUDGET WARNING */
     .budget-warning{background:rgba(255,80,80,.06);border:1px solid rgba(255,80,80,.2);padding:10px 14px;margin-top:12px;font-size:11px;color:var(--error);display:none;border-radius:2px}
     .budget-warning.show{display:block;animation:fadeInUp .3s ease}
-
+ 
     /* #70 BUDGET PROGRESS */
     .budget-progress-wrap{margin-top:16px}
     .budget-progress-label{display:flex;justify-content:space-between;font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
     .budget-progress-bar{height:2px;background:var(--border2);border-radius:2px;overflow:hidden}
     .budget-progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:2px;transition:width .6s ease;width:0%}
-
+ 
     /* CHART */
     .chart-controls{display:flex;gap:10px;justify-content:center;margin-top:15px}
     .chart-toggle-btn{
@@ -277,24 +277,24 @@
     .chart-range{display:flex;gap:6px;justify-content:flex-end;margin-bottom:10px}
     .range-btn{background:none;border:1px solid var(--border2);color:var(--text-dim);padding:4px 10px;font-size:9px;cursor:pointer;font-family:var(--font-sans);letter-spacing:.08em;text-transform:uppercase;transition:all .3s}
     .range-btn.active{border-color:rgba(201,168,76,.4);color:var(--gold)}
-
+ 
     /* HISTORY */
     .history-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border2);font-size:12px;animation:fadeInUp .3s ease}
     .history-date{color:var(--text-dim);font-size:10px;margin-top:2px}
     .history-amount{color:var(--gold);font-family:var(--font-serif);font-size:16px}
     .history-clicks{color:var(--text-dim);font-size:10px;text-align:right;margin-top:2px}
-
+ 
     /* #42 #43 NEXT/LAST OPTIMIZATION */
     .opt-info{display:flex;justify-content:space-between;margin-top:16px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border2)}
     .opt-item{text-align:center}
     .opt-val{font-family:var(--font-serif);font-size:14px;color:var(--gold);display:block}
     .opt-label{font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:2px}
-
+ 
     /* #45 PLAN BADGE */
     .plan-badge-wrap{display:flex;align-items:center;gap:8px;margin-bottom:16px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border2)}
     .plan-badge-label{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.12em}
     .plan-badge-val{font-family:var(--font-serif);font-size:14px;color:var(--gold);margin-left:auto}
-
+ 
     /* #40 STRIPE PORTAL BUTTON */
     .stripe-portal-btn{
       width:100%;margin-top:14px;padding:12px;background:transparent;
@@ -303,7 +303,7 @@
       transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px;
     }
     .stripe-portal-btn:hover{border-color:rgba(100,91,255,.4);color:#8a84ff}
-
+ 
     /* #99 UPGRADE BANNER */
     #upgrade-banner{
       background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.04));
@@ -315,7 +315,7 @@
     .upgrade-text{font-size:11px;color:var(--text-muted);line-height:1.6;margin-bottom:12px;font-style:italic}
     .upgrade-btn{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:8px 18px;font-size:9px;text-transform:uppercase;letter-spacing:.15em;cursor:pointer;font-family:var(--font-sans);transition:all .3s}
     .upgrade-btn:hover{background:var(--gold-dim)}
-
+ 
     /* #105 NOTIFICATIONS SECTION */
     .notif-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border2);animation:fadeInUp .3s ease}
     .notif-item:last-child{border-bottom:none}
@@ -326,7 +326,7 @@
     .notif-text{font-size:11px;color:var(--text-muted);line-height:1.5}
     .notif-time{font-size:9px;color:var(--text-dim);margin-top:2px}
     #notif-empty{font-size:11px;color:var(--text-dim);text-align:center;padding:20px 0;font-style:italic;font-family:var(--font-serif)}
-
+ 
     /* #102 ONBOARDING CHECKLIST */
     .check-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border2);font-size:12px}
     .check-item:last-child{border-bottom:none}
@@ -335,7 +335,7 @@
     .check-icon.pending{color:var(--text-dim)}
     .check-label{color:var(--text-muted)}
     .check-label.done{color:var(--text-dim);text-decoration:line-through}
-
+ 
     /* #101 SUPPORT + #104 FEEDBACK BUTTONS */
     .support-row{display:flex;gap:10px;margin-top:14px}
     .support-btn{
@@ -345,7 +345,7 @@
       align-items:center;justify-content:center;gap:6px;
     }
     .support-btn:hover{border-color:rgba(201,168,76,.3);color:var(--gold)}
-
+ 
     /* #96 PULL TO REFRESH */
     #ptr-indicator{
       position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-60px);
@@ -355,7 +355,7 @@
     }
     #ptr-indicator.visible{opacity:1}
     #ptr-indicator.show{transform:translateX(-50%) translateY(0);opacity:1}
-
+ 
     /* TOAST */
     #toast{
       position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(20px);
@@ -368,7 +368,7 @@
     #toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
     #toast.error{border-color:var(--error);color:var(--error)}
     #toast.success{border-color:rgba(76,175,80,.4);color:var(--success)}
-
+ 
     /* #41 CONFIRM DIALOG */
     #confirm-dialog{
       position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:20000;display:none;
@@ -384,7 +384,7 @@
     .confirm-cancel:hover{color:var(--text)}
     .confirm-ok{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:12px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;font-family:var(--font-sans);transition:all .3s}
     .confirm-ok:hover{background:var(--gold-dim)}
-
+ 
     /* FOOTER */
     .footer{
       width:100%;text-align:center;padding:max(60px,env(safe-area-inset-bottom)) 0 max(40px,env(safe-area-inset-bottom));
@@ -397,7 +397,7 @@
     .footer-links a{color:var(--text-dim);font-size:9px;text-decoration:none;text-transform:uppercase;letter-spacing:1.8px;transition:color .3s;cursor:pointer}
     .footer-links a:hover{color:var(--gold)}
     .footer-copy{font-size:8px;color:rgba(240,237,232,.18);text-transform:uppercase;letter-spacing:3px}
-
+ 
     /* MODAL */
     .modal{
       position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:30000;display:none;
@@ -408,7 +408,7 @@
       margin:0 auto;padding:40px;position:relative;font-size:13px;color:var(--text-muted);line-height:1.7;
     }
     .modal-content::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-
+ 
     /* #98 LANDSCAPE */
     @media(orientation:landscape) and (max-height:500px){
       .main-content{padding:20px 16px}
@@ -417,22 +417,22 @@
     }
     /* #97 Chart min-width */
     #chart{min-width:0;overflow:hidden}
-
+ 
     /* #36 Number input */
     input[type=number]{-moz-appearance:textfield;appearance:textfield}
   </style>
 </head>
 <body>
-
+ 
 <!-- #12 LOADING SCREEN -->
 <div id="loading-screen">
   <div class="loading-logo">AiWakeel</div>
   <div class="loading-line"></div>
   <div class="loading-spinner"></div>
 </div>
-
+ 
 <canvas id="db-particle-canvas"></canvas>
-
+ 
 <!-- #2 CINEMATIC INTRO -->
 <div id="db-intro">
   <div class="db-intro-logo">AiWakeel</div>
@@ -440,13 +440,13 @@
   <div class="db-intro-sub">Elite Dashboard</div>
   <div class="db-intro-spinner"></div>
 </div>
-
+ 
 <!-- #56 SCROLL PROGRESS -->
 <div id="scroll-progress"></div>
-
+ 
 <!-- #96 PULL TO REFRESH -->
 <div id="ptr-indicator">↓ Loslassen zum Aktualisieren</div>
-
+ 
 <!-- #41 CONFIRM DIALOG -->
 <div id="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirm-heading">
   <div class="confirm-box">
@@ -458,9 +458,9 @@
     </div>
   </div>
 </div>
-
+ 
 <div id="toast" role="status" aria-live="polite"></div>
-
+ 
 <!-- LEGAL MODAL -->
 <div id="legal-modal" class="modal" onclick="closeModal(event)" role="dialog" aria-modal="true">
   <div class="modal-content">
@@ -468,7 +468,7 @@
     <div id="modal-text"></div>
   </div>
 </div>
-
+ 
 <header class="header" id="main-header">
   <div class="logo-wrap">
     <div class="logo-text">AiWakeel</div>
@@ -477,21 +477,21 @@
   <!-- #46 LOGOUT CONFIRMATION -->
   <button class="logout-btn" onclick="confirmLogout()">Abmelden</button>
 </header>
-
+ 
 <div class="main-content" id="main-content">
-
+ 
   <!-- #99 UPGRADE BANNER (shown for Atelier users) -->
   <div id="upgrade-banner" role="complementary" aria-label="Upgrade-Angebot" class="reveal">
     <div class="upgrade-title">&#10022; Maison freischalten</div>
     <p class="upgrade-text">WhatsApp-Direktsteuerung, Echtzeit-Alerts und tägliche Berichte direkt auf dein Handy. Upgrade auf Maison für nur 30€ mehr pro Monat.</p>
     <button class="upgrade-btn" onclick="openStripePortal()">Jetzt upgraden &rarr;</button>
   </div>
-
+ 
   <div class="greeting">
     <h1 id="user-name">Guten Tag</h1>
     <p>Intelligence in Every Impression.</p>
   </div>
-
+ 
   <!-- AGENT CARD -->
   <div class="card">
     <!-- #45 PLAN BADGE -->
@@ -499,12 +499,12 @@
       <span class="plan-badge-label">Aktiver Plan</span>
       <span class="plan-badge-val" id="plan-display">—</span>
     </div>
-
+ 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
       <h2 style="font-family:var(--font-serif);font-size:24px;font-weight:300">Management Agent</h2>
       <div id="status-text" style="font-size:9px;text-transform:uppercase;padding:4px 12px;border:1px solid var(--gold);color:var(--gold);letter-spacing:2px">Aktiv</div>
     </div>
-
+ 
     <!-- #42 #43 NEXT / LAST OPTIMIZATION -->
     <div class="opt-info">
       <div class="opt-item">
@@ -517,7 +517,7 @@
         <span class="opt-label">Nächste Optimierung</span>
       </div>
     </div>
-
+ 
     <div style="display:flex;justify-content:space-between;align-items:center;padding-top:20px;border-top:1px solid var(--border2);margin-top:16px">
       <div>
         <div style="font-size:14px">KI-Optimierung</div>
@@ -530,7 +530,7 @@
         </div>
       </div>
     </div>
-
+ 
     <div class="metrics">
       <div class="metric-box metric-tip" data-tip="Klicks der letzten 24 Stunden" aria-label="Klicks letzte 24 Stunden">
         <span id="clicks-val" class="metric-val skeleton" style="height:34px;display:block">&nbsp;</span>
@@ -555,7 +555,7 @@
       </div>
     </div>
   </div>
-
+ 
   <!-- BUDGET CARD -->
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
@@ -587,7 +587,7 @@
       <span style="font-size:13px">&#128274;</span> Abo verwalten / kündigen
     </button>
   </div>
-
+ 
   <!-- PERFORMANCE CHART CARD -->
   <div class="card" style="background:transparent;border:none;box-shadow:none;padding:0">
     <div style="font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:2px;margin-bottom:15px">Performance Analyse</div>
@@ -605,25 +605,25 @@
       </div>
     </div>
   </div>
-
+ 
   <!-- NOTIFICATIONS CARD -->
   <div class="card" style="margin-top:20px">
     <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:300;margin-bottom:20px">Benachrichtigungen</h2>
     <div id="notif-list"><div id="notif-empty">Keine neuen Benachrichtigungen</div></div>
   </div>
-
+ 
   <!-- HISTORY CARD -->
   <div class="card" style="margin-top:20px">
     <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:300;margin-bottom:20px">Kampagnen-Historie</h2>
     <div id="history-list"><div class="skeleton" style="height:44px;margin-bottom:10px"></div><div class="skeleton" style="height:44px"></div></div>
   </div>
-
+ 
   <!-- ONBOARDING CHECKLIST -->
   <div class="card" style="margin-top:20px" id="checklist-card">
     <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:300;margin-bottom:20px">Einrichtungs-Status</h2>
     <div id="checklist-list"></div>
   </div>
-
+ 
   <!-- SUPPORT & FEEDBACK -->
   <div class="card" style="margin-top:20px">
     <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:300;margin-bottom:16px">Support</h2>
@@ -639,9 +639,9 @@
       </button>
     </div>
   </div>
-
+ 
 </div>
-
+ 
 <footer class="footer">
   <div class="footer-links">
     <a onclick="showLegal('impressum')" role="button" tabindex="0">Impressum</a>
@@ -652,7 +652,7 @@
   </div>
   <span class="footer-copy">&copy; 2026 AIWAKEEL · Intelligent Management</span>
 </footer>
-
+ 
 <script>
 // =========================================================
 // CONFIG (#82)
@@ -666,10 +666,10 @@ const CFG = {
   COLLECTION_REPORTS: 'daily_reports',
   COLLECTION_USERS: 'users'
 };
-
+ 
 // Wait for deferred scripts
 let pb, chart, allReports = [], currentRange = 7;
-
+ 
 // =========================================================
 // INIT
 // =========================================================
@@ -685,10 +685,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Timeout after 8s
   setTimeout(() => { clearInterval(initInterval); showToast('Skript-Ladefehler', true); }, 8000);
 });
-
+ 
 async function initApp() {
   pb = new PocketBase(CFG.PB_URL);
-
+ 
   // #1 #11 Auth check with null-guard
   if (!pb.authStore.model || !pb.authStore.isValid) {
     // #3 fade out before redirect
@@ -696,7 +696,7 @@ async function initApp() {
     setTimeout(() => { window.location.href = 'login.html'; }, 300);
     return;
   }
-
+ 
   // #2 Verify token server-side
   try {
     await pb.collection(CFG.COLLECTION_USERS).authRefresh();
@@ -705,19 +705,19 @@ async function initApp() {
     setTimeout(() => { window.location.href = 'login.html'; }, 300);
     return;
   }
-
+ 
   const user = pb.authStore.model;
-
+ 
   // Show body
   document.documentElement.style.opacity = '';
   document.body.classList.add('ready');
-
+ 
   // Hide loading screen
   setTimeout(() => {
     const ls = document.getElementById('loading-screen');
     if (ls) { ls.classList.add('fade-out'); setTimeout(() => ls.remove(), 700); }
   }, 900);
-
+ 
   // #14 Time-based greeting
   const hour = new Date().getHours();
   const greet = hour < 12 ? 'Guten Morgen' : hour < 18 ? 'Guten Tag' : 'Guten Abend';
@@ -728,33 +728,33 @@ async function initApp() {
     displayName = en.charAt(0).toUpperCase() + en.slice(1);
   }
   document.getElementById('user-name').textContent = `${greet}, ${displayName}`;
-
+ 
   // #45 Plan display
   const plan = user.plan || 'atelier';
   document.getElementById('plan-display').textContent = plan === 'premium' ? '✦ Maison' : 'Atelier';
-
+ 
   // #99 Upgrade banner for Atelier users
   if (plan !== 'premium') document.getElementById('upgrade-banner').style.display = 'block';
-
+ 
   // Agent status
   const isActive = user.agent_status === 'active';
   updateUI(isActive);
-
+ 
   // #44 Budget warning
   const budget = user.budget || 0;
   document.getElementById('current-budget-display').textContent = `${budget}€`;
   if (!budget || budget === 0) document.getElementById('budget-warning').classList.add('show');
   highlightActiveBudget(budget);
-
+ 
   // #42 #43 Optimization times
   updateOptTimes();
-
+ 
   // Load data
   await loadDashboardData(user);
   await loadHistory(user);
   loadChecklist(user);
   loadNotifications(user);
-
+ 
   // Inits
   initScrollProgress();
   initHeaderScroll();
@@ -766,7 +766,7 @@ async function initApp() {
   initDashIntro();       // #2
   initScrollReveal();    // #3
   initChartReveal();     // #6
-
+ 
   // Add reveal classes to all cards dynamically
   document.querySelectorAll('.card,.card-wrap').forEach((el, i) => {
     if (!el.classList.contains('reveal')) {
@@ -778,13 +778,13 @@ async function initApp() {
   if (document.getElementById('upgrade-banner')) {
     document.getElementById('upgrade-banner').classList.add('reveal');
   }
-
+ 
   // #75 PocketBase Realtime
   pb.collection(CFG.COLLECTION_REPORTS).subscribe('*', (e) => {
     if (e.record.user === user.id) loadDashboardData(user);
   });
 }
-
+ 
 // =========================================================
 // #42 #43 OPTIMIZATION TIMES
 // =========================================================
@@ -793,15 +793,15 @@ function updateOptTimes() {
   const next = new Date();
   next.setHours(7, 0, 0, 0);
   if (now >= next) next.setDate(next.getDate() + 1);
-
+ 
   const isToday = next.getDate() === new Date(Date.now() + 86400000).getDate() ? 'Morgen' : 'Heute';
   document.getElementById('next-opt').textContent = `${isToday} 07:00`;
-
+ 
   // Last optimization: if before 7am today, yesterday 07:00, else today 07:00
   const lastOpt = now.getHours() >= 7 ? 'Heute 07:00' : 'Gestern 07:00';
   document.getElementById('last-opt').textContent = lastOpt;
 }
-
+ 
 // =========================================================
 // DASHBOARD DATA (#21 animated metrics, #68 CPC, #85 race fix)
 // =========================================================
@@ -815,7 +815,7 @@ async function loadDashboardData(user) {
       sort: '-created'
     });
     allReports = records.items;
-
+ 
     if (allReports.length > 0) {
       const latest = allReports[0];
       // #21 Animated metrics
@@ -823,13 +823,13 @@ async function loadDashboardData(user) {
       animateMetric('pos-val', parseFloat(latest.position || 0).toFixed(1), false);
       animateMetric('cpc-val', (latest.cpc || 0).toFixed(2) + '€', false);
       animateMetric('imps-val', latest.impressions || 0);
-
+ 
       // Remove skeletons
       ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
         document.getElementById(id).classList.remove('skeleton');
         document.getElementById(id).style.height = '';
       });
-
+ 
       renderChart(allReports.slice().reverse(), currentRange);
     } else {
       document.getElementById('chart').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);font-size:10px;letter-spacing:2px">WARTE AUF DATEN-SYNC...</div>';
@@ -839,7 +839,7 @@ async function loadDashboardData(user) {
         el.classList.remove('skeleton'); el.textContent = '—'; el.style.height = '';
       });
     }
-
+ 
     // #70 Budget progress (mock: use random spend for demo)
     updateBudgetProgress(user);
   } catch(e) {
@@ -851,7 +851,7 @@ async function loadDashboardData(user) {
     });
   } finally { _loadLock = false; }
 }
-
+ 
 // #21 METRIC COUNTUP
 function animateMetric(id, target, isInt = true) {
   const el = document.getElementById(id);
@@ -870,7 +870,7 @@ function animateMetric(id, target, isInt = true) {
   };
   requestAnimationFrame(step);
 }
-
+ 
 // #70 Budget progress
 function updateBudgetProgress(user) {
   const budget = user.budget || 0;
@@ -884,14 +884,14 @@ function updateBudgetProgress(user) {
   document.getElementById('budget-spent-label').textContent = `${spent}€ von ${budget}€ verbraucht`;
   document.getElementById('budget-pct-label').textContent = pct + '%';
 }
-
+ 
 // =========================================================
 // CHART (#53 gold tooltip, #54 label color, #72 time range)
 // =========================================================
 function renderChart(data, days = 7) {
   const sliced = data.slice(-days);
   if (!sliced.length) return;
-
+ 
   const options = {
     series: [
       { name: 'Impressionen', type: 'area', data: sliced.map(r => r.impressions || 0) },
@@ -927,7 +927,7 @@ function renderChart(data, days = 7) {
     },
     legend: { show: false }
   };
-
+ 
   if (chart) { chart.destroy(); chart = null; }
   const el = document.querySelector('#chart');
   if (!el) return;
@@ -940,21 +940,21 @@ function renderChart(data, days = 7) {
     }, 200);
   });
 }
-
+ 
 function toggleSeries(name) {
   const btn = name === 'Impressionen' ? document.getElementById('toggle-imps') : document.getElementById('toggle-clicks');
   const isActive = btn.classList.toggle('active');
   btn.setAttribute('aria-pressed', String(isActive));
   if (chart) chart.toggleSeries(name);
 }
-
+ 
 function setRange(days, btn) {
   currentRange = days;
   document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   if (allReports.length) renderChart(allReports.slice().reverse(), days);
 }
-
+ 
 // =========================================================
 // HISTORY (#22 real data, #47 clicks + ROI)
 // =========================================================
@@ -983,7 +983,7 @@ async function loadHistory(user) {
     document.getElementById('history-list').innerHTML = '<div style="color:var(--text-dim);font-size:11px;padding:12px 0">Historiendaten nicht verfügbar.</div>';
   }
 }
-
+ 
 // =========================================================
 // #105 NOTIFICATIONS
 // =========================================================
@@ -993,7 +993,7 @@ function loadNotifications(user) {
   if (!user.budget || user.budget === 0) notifs.push({ type:'warn', text:'Kein Budget gesetzt – Agent kann keine Kampagnen starten.', time:'Jetzt' });
   if (user.agent_status === 'active') notifs.push({ type:'ok', text:'Agent läuft – nächste Optimierung heute um 07:00 Uhr.', time:'Täglich' });
   if (user.plan !== 'premium') notifs.push({ type:'info', text:'Upgrade auf Maison verfügbar – WhatsApp-Berichte und Echtzeit-Alerts.', time:'Angebot' });
-
+ 
   if (!notifs.length) return;
   document.getElementById('notif-empty')?.remove();
   list.innerHTML = notifs.map(n => `
@@ -1002,7 +1002,7 @@ function loadNotifications(user) {
       <div><div class="notif-text">${n.text}</div><div class="notif-time">${n.time}</div></div>
     </div>`).join('');
 }
-
+ 
 // =========================================================
 // #102 ONBOARDING CHECKLIST
 // =========================================================
@@ -1023,12 +1023,12 @@ function loadChecklist(user) {
       <span class="check-label ${i.done ? 'done' : ''}">${i.label}</span>
     </div>`).join('');
 }
-
+ 
 // =========================================================
 // TOGGLE AGENT (#41 confirm, #60 haptic, #7 no sensitive IDs, #83 timeout)
 // =========================================================
 let _pendingToggle = false;
-
+ 
 function requestToggleAgent() {
   const isActive = document.getElementById('agent-toggle').classList.contains('active');
   if (isActive) {
@@ -1039,26 +1039,26 @@ function requestToggleAgent() {
     executeToggle();
   }
 }
-
+ 
 async function closeConfirm(confirmed) {
   document.getElementById('confirm-dialog').classList.remove('show');
   if (confirmed && _pendingToggle) executeToggle();
   _pendingToggle = false;
 }
-
+ 
 async function executeToggle() {
   const user = pb.authStore.model;
   const toggleBtn = document.getElementById('agent-toggle');
   if (toggleBtn.classList.contains('processing')) return;
   const isCurrentlyActive = toggleBtn.classList.contains('active');
   const nextStatus = isCurrentlyActive ? 'inactive' : 'active';
-
+ 
   toggleBtn.classList.add('processing');
   haptic(isCurrentlyActive ? [60,40,60] : 60);
-
+ 
   try {
     await pb.collection(CFG.COLLECTION_USERS).update(user.id, { agent_status: nextStatus });
-
+ 
     // #83 Fetch with timeout – #8 with auth header – #7 no sensitive IDs in payload
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), 10000);
@@ -1068,7 +1068,7 @@ async function executeToggle() {
       body: JSON.stringify({ userId: user.id, status: nextStatus }),
       signal: ctrl.signal
     }).then(() => clearTimeout(tid)).catch(() => clearTimeout(tid));
-
+ 
     updateUI(!isCurrentlyActive);
     showToast(nextStatus === 'active' ? '✦ Agent gestartet' : 'Agent pausiert');
     // #19 micro-interaction on activation
@@ -1079,7 +1079,7 @@ async function executeToggle() {
     toggleBtn.classList.remove('processing');
   }
 }
-
+ 
 function updateUI(isActive) {
   const t = document.getElementById('agent-toggle');
   const s = document.getElementById('status-text');
@@ -1096,7 +1096,7 @@ function updateUI(isActive) {
     sub.textContent = 'Google Ads Kampagne gestoppt'; sub.style.color = 'var(--error)';
   }
 }
-
+ 
 // #19 Celebration on agent start
 function showCelebration() {
   const colors = ['#C9A84C','#E8C97A','#F0EDE8'];
@@ -1109,7 +1109,7 @@ function showCelebration() {
     }, i * 40);
   }
 }
-
+ 
 // =========================================================
 // BUDGET (#31 no reload, #87 rate limit)
 // =========================================================
@@ -1139,27 +1139,27 @@ async function updateBudget(amt) {
     showToast('Fehler beim Budget-Update', true);
   }
 }
-
+ 
 function highlightActiveBudget(amt) {
   document.querySelectorAll('.budget-btn').forEach(b => {
     const val = parseInt(b.querySelector('span')?.textContent?.replace(/[^0-9]/g,''));
     b.classList.toggle('current', val === amt);
   });
 }
-
+ 
 async function saveCustomBudget() {
   const val = parseInt(document.getElementById('custom-budget').value);
   if (val > 0) { await updateBudget(val); document.getElementById('custom-budget').value = ''; }
   else showToast('Ungültiger Betrag', true);
 }
-
+ 
 // =========================================================
 // #40 STRIPE PORTAL
 // =========================================================
 function openStripePortal() {
   window.open(CFG.STRIPE_PORTAL_URL + '?prefilled_email=' + encodeURIComponent(pb.authStore.model?.email || ''), '_blank', 'noopener');
 }
-
+ 
 // =========================================================
 // #101 SUPPORT · #104 FEEDBACK
 // =========================================================
@@ -1171,7 +1171,7 @@ function openFeedback() {
   showToast('Feedback-Formular wird geöffnet …');
   setTimeout(() => window.open('mailto:kontakt@aiwakeel.ai?subject=Feedback%20AiWakeel', '_blank', 'noopener'), 800);
 }
-
+ 
 // =========================================================
 // LOGOUT (#46 confirm, #61 fade, #91 history)
 // =========================================================
@@ -1190,7 +1190,7 @@ function doLogout() {
   document.body.style.transition = 'opacity .4s ease';
   setTimeout(() => { pb.authStore.clear(); window.location.replace('login.html'); }, 400);
 }
-
+ 
 // =========================================================
 // #2 AUTO TOKEN REFRESH + #2 INACTIVITY LOGOUT
 // =========================================================
@@ -1200,14 +1200,14 @@ async function initAutoRefresh() {
     catch(e) { doLogout(); }
   }, 4 * 60 * 1000); // Every 4 min
 }
-
+ 
 function initInactivityLogout() {
   let timer;
   const reset = () => { clearTimeout(timer); timer = setTimeout(doLogout, 30 * 60 * 1000); }; // 30 min
   ['mousemove','keydown','touchstart','click'].forEach(ev => window.addEventListener(ev, reset, { passive: true }));
   reset();
 }
-
+ 
 // =========================================================
 // SCROLL PROGRESS (#56) + HEADER SCROLL (#20)
 // =========================================================
@@ -1222,7 +1222,7 @@ function initHeaderScroll() {
   const h = document.getElementById('main-header');
   window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
 }
-
+ 
 // =========================================================
 // #96 PULL TO REFRESH
 // =========================================================
@@ -1248,7 +1248,7 @@ function initPullToRefresh(user) {
     pulling = false;
   }, { passive: true });
 }
-
+ 
 // =========================================================
 // #33 AUTO REFRESH on tab focus
 // =========================================================
@@ -1257,7 +1257,7 @@ function initAutoRefresh(user) {
     if (!document.hidden) loadDashboardData(user);
   });
 }
-
+ 
 // =========================================================
 // KEYBOARD (#9)
 // =========================================================
@@ -1272,12 +1272,12 @@ function initKeyboard() {
     }
   });
 }
-
+ 
 // =========================================================
 // HAPTIC (#60)
 // =========================================================
 function haptic(p = 40) { try { if (navigator.vibrate) navigator.vibrate(p); } catch {} }
-
+ 
 // =========================================================
 // TOAST
 // =========================================================
@@ -1288,7 +1288,7 @@ function showToast(msg, isError = false, isSuccess = false) {
   clearTimeout(t._timer);
   t._timer = setTimeout(() => t.classList.remove('show'), 3200);
 }
-
+ 
 // =========================================================
 // LEGAL TEXTS (full, DSGVO-compliant - #9)
 // =========================================================
@@ -1296,7 +1296,7 @@ function showLegal(type) {
   const s = (t,b) => `<h2 style="color:var(--gold);margin-bottom:18px;font-family:var(--font-serif);font-size:22px;font-weight:300;letter-spacing:.04em">${t}</h2>${b}`;
   const h3 = t => `<h3 style="color:var(--text);font-family:var(--font-serif);font-size:15px;font-weight:400;margin:18px 0 7px">${t}</h3>`;
   const p = t => `<p style="margin-bottom:10px;line-height:1.75;font-size:12px;color:rgba(240,237,232,0.5)">${t}</p>`;
-
+ 
   const c = {
     impressum: s('Impressum', `
       ${h3('Angaben gemäß § 5 TMG')}
@@ -1365,16 +1365,16 @@ function showLegal(type) {
   document.getElementById('modal-text').innerHTML = c[type];
   document.getElementById('legal-modal').style.display = 'block';
 }
-
+ 
 function closeModal(e) {
   if (!e || e.target.classList.contains('modal')) document.getElementById('legal-modal').style.display = 'none';
 }
-
+ 
 // #49 Confetti CSS needed
 const confStyle = document.createElement('style');
 confStyle.textContent = '@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(200px) rotate(720deg);opacity:0}}';
 document.head.appendChild(confStyle);
-
+ 
 // =========================================================
 // #1 DASHBOARD CANVAS PARTICLES
 // =========================================================
@@ -1405,7 +1405,7 @@ function initDashParticles() {
   };
   draw();
 }
-
+ 
 // =========================================================
 // #2 DASHBOARD CINEMATIC INTRO
 // =========================================================
@@ -1419,7 +1419,7 @@ function initDashIntro() {
     sessionStorage.setItem('dbIntroSeen', '1');
   }, 1500);
 }
-
+ 
 // =========================================================
 // #3 SCROLL REVEAL
 // =========================================================
@@ -1439,7 +1439,7 @@ function initScrollReveal() {
     else obs.observe(el);
   });
 }
-
+ 
 // =========================================================
 // #6 CHART CONTAINER PRE-HIDE (fade-in handled in renderChart)
 // =========================================================
