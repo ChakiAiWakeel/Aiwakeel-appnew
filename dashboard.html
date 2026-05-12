@@ -799,13 +799,18 @@ function updateOptTimes() {
 // DASHBOARD DATA (#21 animated metrics, #68 CPC, #85 race fix)
 // =========================================================
 let _loadLock = false;
-async function loadDashboardData(user) {
+aasync function loadDashboardData(user) {
   if (_loadLock) return;
   _loadLock = true;
+  
+  // Debug
+  console.log('Loading data for user:', user?.id);
+  console.log('Auth valid:', pb.authStore.isValid);
+  
   try {
-    // ✅ FIX: user.id statt user für Relation-Filter
     const records = await pb.collection('daily_reports').getList(1, 30, {
-  sort: '-created'
+      filter: `user = "${user.id}"`,  // Expliziter Filter
+      sort: '-created'
     });
     allReports = records.items;
 
