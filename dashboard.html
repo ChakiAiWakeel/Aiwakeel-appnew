@@ -803,35 +803,33 @@ async function loadDashboardData(user) {
   if (_loadLock) return;
   _loadLock = true;
   try {
-    // Wir nutzen hier die exakte Syntax für PocketBase Relationen
-  const records = await pb.collection('daily_reports').getList(1, 30, {
-  filter: `user.id = "${user.id}"`, // Nur 'user', nicht 'user.id'
-  sort: '-created'
-});
+    // ✅ FIX: user.id statt user für Relation-Filter
+    const records = await pb.collection('daily_reports').getList(1, 30, {
+      filter: `user.id = "${user.id}"`,
+      sort: '-created'
+    });
     allReports = records.items;
 
-    // In der Funktion loadDashboardData
-if (allReports.length > 0) {
-  const latest = allReports[0];
-  
-  animateMetric('clicks-val', latest.clicks || 0);
-  animateMetric('pos-val', parseFloat(latest.position || 0).toFixed(1), false);
-  animateMetric('cpc-val', (latest.current_cpc || 0).toFixed(2) + '€', false); 
-  animateMetric('imps-val', latest.impressions || 0);
+    if (allReports.length > 0) {
+      const latest = allReports[0];
+      
+      animateMetric('clicks-val', latest.clicks || 0);
+      animateMetric('pos-val', parseFloat(latest.position || 0).toFixed(1), false);
+      animateMetric('cpc-val', (latest.current_cpc || 0).toFixed(2) + '€', false); 
+      animateMetric('imps-val', latest.impressions || 0);
 
-  const statusSub = document.getElementById('status-sub');
-  if (statusSub && latest.keyword) {
-    statusSub.textContent = `Optimiert für: ${latest.keyword}`;
-  }
+      const statusSub = document.getElementById('status-sub');
+      if (statusSub && latest.keyword) {
+        statusSub.textContent = `Optimiert für: ${latest.keyword}`;
+      }
 
-  ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
-    document.getElementById(id).classList.remove('skeleton');
-    document.getElementById(id).style.height = '';
-  });
+      ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
+        document.getElementById(id).classList.remove('skeleton');
+        document.getElementById(id).style.height = '';
+      });
 
-  renderChart(allReports.slice().reverse(), currentRange);
+      renderChart(allReports.slice().reverse(), currentRange);
     } else {
-      // Falls keine Daten da sind: Skelette weg und Strich anzeigen
       ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
         const el = document.getElementById(id);
         if(el) {
@@ -956,8 +954,10 @@ function setRange(days, btn) {
 // =========================================================
 async function loadHistory(user) {
   try {
+    // ✅ FIX: user.id statt user für Relation-Filter
     const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 10, {
-      filter: user.id = "${user.id}", sort: '-created'
+      filter: `user.id = "${user.id}"`,
+      sort: '-created'
     });
     const list = document.getElementById('history-list');
     if (!records.items.length) {
