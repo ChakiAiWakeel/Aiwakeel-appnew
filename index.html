@@ -1483,19 +1483,60 @@ function selectPlan(id,fee,setup,event) {
 // =========================================================
 function validateFinal(){document.getElementById('slider-activate').style.display=document.getElementById('check-legal').checked?'block':'none';}
 
-let _launching=false;
+llet _launching = false;
 async function launch() {
-  if(_launching)return;_launching=true;
-  document.getElementById('slide-done').classList.add('show');document.getElementById('slide-text').classList.add('hidden');haptic([60,40,100]);
+  if (_launching) return;
+  _launching = true;
+  document.getElementById('slide-done').classList.add('show');
+  document.getElementById('slide-text').classList.add('hidden');
+  haptic([60, 40, 100]);
+
   try {
-    const res=await fetchWithTimeout(CONFIG.N8N_LAUNCH,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:state.userId,domain:state.domain,industry:state.industry,phone:state.phone,email:state.email,whatsapp:state.whatsapp,budget:state.budget,plan:state.plan,monthlyFee:state.monthlyFee,setupFee:state.setupFee,ads_customer_id:state.ads_customer_id,ads_budget_id:state.ads_budget_id,agent_status:'active',onboarding_completed:true,utm_source:state.utmSource,utm_medium:state.utmMedium})},15000);
-    window.onbeforeunload=null;
-    const data=await safeJson(res);
-    const url=data.url||data.checkoutUrl;
-    if(url&&url.startsWith('https://'))window.location.href=url;else goToStep(5);
-  }catch(err){
-    _launching=false;document.getElementById('slide-done').classList.remove('show');document.getElementById('slide-text').classList.remove('hidden');
-    showToast(err.name==='AbortError'?'Zeitüberschreitung – bitte erneut versuchen':'Verbindungsfehler – bitte erneut versuchen','error');
+    const res = await fetchWithTimeout(CONFIG.N8N_LAUNCH, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: state.userId, domain: state.domain, industry: state.industry,
+        phone: state.phone, email: state.email, whatsapp: state.whatsapp,
+        budget: state.budget, plan: state.plan, monthlyFee: state.monthlyFee,
+        setupFee: state.setupFee, ads_customer_id: state.ads_customer_id,
+        ads_budget_id: state.ads_budget_id, agent_status: 'active',
+        onboarding_completed: true, utm_source: state.utmSource, utm_medium: state.utmMedium
+      })
+    }, 15000);
+
+    const data = await safeJson(res);
+
+    // Abfangen der "Kunde existiert bereits" Meldung
+    if (data.error === 'user_exists') {
+      _launching = false;
+      document.getElementById('slide-done').classList.remove('show');
+      document.getElementById('slide-text').classList.remove('hidden');
+      showToast(data.message, 'error');
+      return;
+    }
+
+    const url = data.url || data.checkoutUrl;
+    
+    // STRICT CHECK: Nur wenn ein echter Link kommt, geht es weiter
+    if (url && url.startsWith('https://')) {
+      window.onbeforeunload = null;
+      window.location.href = url;
+    } else {
+      // FEHLER-FALL: Workflow in n8n ist abgestürzt (z.B. Google Ads inaktiv)
+      throw new Error('missing_checkout_url');
+    }
+
+  } catch (err) {
+    _launching = false;
+    document.getElementById('slide-done').classList.remove('show');
+    document.getElementById('slide-text').classList.remove('hidden');
+    
+    if (err.message === 'missing_checkout_url') {
+        showToast('Setup fehlgeschlagen: Bitte prüfe, ob dein Google Ads Konto vollständig aktiviert ist.', 'error');
+    } else {
+        showToast(err.name === 'AbortError' ? 'Zeitüberschreitung – bitte erneut versuchen' : 'Verbindungsfehler – bitte erneut versuchen', 'error');
+    }
   }
 }
 
