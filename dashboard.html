@@ -816,9 +816,9 @@ async function loadDashboardData(user) {
     });
     allReports = records.items;
 
-    if (allReports.length > 0) {
+    if (allReports && allReports.length > 0) {
       const latest = allReports[0];
-      // #21 Animated metrics
+      // Animated metrics
       animateMetric('clicks-val', latest.clicks || 0);
       animateMetric('pos-val', parseFloat(latest.position || 0).toFixed(1), false);
       animateMetric('cpc-val', (latest.cpc || 0).toFixed(2) + '€', false);
@@ -826,28 +826,41 @@ async function loadDashboardData(user) {
 
       // Remove skeletons
       ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
-        document.getElementById(id).classList.remove('skeleton');
-        document.getElementById(id).style.height = '';
+        const el = document.getElementById(id);
+        if (el) {
+          el.classList.remove('skeleton');
+          el.style.height = '';
+        }
       });
 
       renderChart(allReports.slice().reverse(), currentRange);
     } else {
-      document.getElementById('chart').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);font-size:10px;letter-spacing:2px">WARTE AUF DATEN-SYNC...</div>';
-      document.querySelector('.chart-controls').style.display = 'none';
+      const chartEl = document.getElementById('chart');
+      if (chartEl) chartEl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);font-size:10px;letter-spacing:2px">WARTE AUF DATEN-SYNC...</div>';
+      
+      const controls = document.querySelector('.chart-controls');
+      if (controls) controls.style.display = 'none';
+      
       ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
         const el = document.getElementById(id);
-        el.classList.remove('skeleton'); el.textContent = '—'; el.style.height = '';
+        if (el) {
+          el.classList.remove('skeleton'); 
+          el.textContent = '—'; 
+          el.style.height = '';
+        }
       });
     }
 
-    // #70 Budget progress (mock: use random spend for demo)
     updateBudgetProgress(user);
   } catch(e) {
-    // #77 Proper error
     showToast('Fehler beim Laden der Daten', true);
     ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
       const el = document.getElementById(id);
-      el.classList.remove('skeleton'); el.textContent = 'Fehler'; el.style.height = '';
+      if (el) {
+        el.classList.remove('skeleton'); 
+        el.textContent = 'Fehler'; 
+        el.style.height = '';
+      }
     });
   } finally { _loadLock = false; }
 }
