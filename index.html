@@ -1322,11 +1322,51 @@ function initTestiSwipe() {
   track.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;dragging=true;},{passive:true});
   track.addEventListener('touchend',e=>{if(!dragging)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>50){const vis=[...track.querySelectorAll('.testi-card:not(.hidden)')];tIdx=dx<0?Math.min(tIdx+1,vis.length-1):Math.max(tIdx-1,0);scrollT(tIdx);resetT();}dragging=false;},{passive:true});
 }
+// =========================================================
+// STRIPE RETURN & AUTO-REDIRECT
+// =========================================================
 function checkStripeReturn() {
   document.getElementById('oauth-loading').classList.remove('show');
-  const p=new URLSearchParams(window.location.search);const pay=p.get('payment');
-  if(pay==='success'){goToStep(5,false,true);window.history.replaceState({},document.title,window.location.pathname);}
-  else if(pay==='cancelled'){showToast('Zahlung abgebrochen – jederzeit erneut versuchen.','info');window.history.replaceState({},document.title,window.location.pathname);}
+  const p = new URLSearchParams(window.location.search);
+  const pay = p.get('payment');
+  
+  if (pay === 'success') {
+    // 1. Zeige Schritt 5 (Erfolgs-Screen mit Konfetti)
+    goToStep(5, false, true);
+    window.history.replaceState({}, document.title, window.location.pathname);
+    
+    // 2. Passe den Text an, um den Auto-Redirect anzukündigen
+    const step5 = document.getElementById('step-5');
+    const oldLink = step5.querySelector('p:last-of-type');
+    if (oldLink) oldLink.style.display = 'none'; // Verstecke den alten manuellen Link
+    
+    const countdownEl = document.createElement('div');
+    countdownEl.style.cssText = "font-size:10px; color:var(--gold); margin-top:24px; letter-spacing:0.15em; text-transform:uppercase; animation: fadeInUp .4s ease;";
+    step5.appendChild(countdownEl);
+    
+    // 3. Countdown & Weiterleitung
+    let seconds = 4;
+    countdownEl.innerHTML = `Weiterleitung zum Elite-Dashboard in ${seconds}s...`;
+    
+    const interval = setInterval(() => {
+        seconds--;
+        if (seconds > 0) {
+            countdownEl.innerHTML = `Weiterleitung zum Elite-Dashboard in ${seconds}s...`;
+        } else {
+            clearInterval(interval);
+            countdownEl.innerHTML = `Lade Dashboard <span class="spinner" style="width:12px;height:12px;border-width:1.5px;margin-left:6px;vertical-align:middle"></span>`;
+            
+            // Weicher Übergang
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity .5s ease';
+            setTimeout(() => { window.location.href = 'dashboard.html'; }, 500);
+        }
+    }, 1000);
+    
+  } else if (pay === 'cancelled') {
+    showToast('Zahlung abgebrochen – jederzeit erneut versuchen.', 'info');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
 }
 
 // =========================================================
