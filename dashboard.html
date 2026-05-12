@@ -10,7 +10,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="AiWakeel">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; connect-src 'self' https://n8n.aiwakeel.ai https://ads.aiwakeel.ai https://api.stripe.com; frame-src https://js.stripe.com; img-src 'self' data:;">
+  
   <title>AiWakeel · Elite Dashboard</title>
 
   <script>
@@ -46,244 +48,46 @@
       --error:rgba(255,80,80,0.8); --success:#4CAF50;
     }
     #db-particle-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.45}
-    #db-intro{position:fixed;inset:0;background:var(--obsidian);z-index:999999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;transition:opacity .7s ease,transform .7s ease}
-    #db-intro.fade-out{opacity:0;transform:scale(1.04);pointer-events:none}
+    #db-intro{position:fixed;inset:0;background:var(--obsidian);z-index:999999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;transition:opacity .7s ease}
+    #db-intro.fade-out{opacity:0;pointer-events:none}
     .db-intro-logo{font-family:var(--font-serif);font-size:32px;font-weight:300;letter-spacing:.2em;color:var(--gold);opacity:0;animation:fadeUp .6s ease .15s forwards}
     .db-intro-line{width:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:growLine .7s ease .4s forwards}
-    .db-intro-sub{font-size:9px;letter-spacing:.35em;color:var(--text-dim);text-transform:uppercase;opacity:0;animation:fadeUp .4s ease .8s forwards}
-    .db-intro-spinner{width:22px;height:22px;border:1px solid rgba(201,168,76,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .9s linear infinite;margin-top:6px;opacity:0;animation:spinFadeIn .3s ease .7s forwards,spin .9s .7s linear infinite}
+    .db-intro-spinner{width:22px;height:22px;border:1px solid rgba(201,168,76,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .9s linear infinite;margin-top:6px;opacity:0;animation:spinFadeIn .3s ease .7s forwards}
     @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
     @keyframes growLine{from{width:0}to{width:50px}}
-    @keyframes spinFadeIn{to{opacity:1}}
+    @keyframes spin{to{transform:rotate(360deg)}}
     .reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
     .reveal.revealed{opacity:1;transform:translateY(0)}
-    .reveal-delay-1{transition-delay:.08s}.reveal-delay-2{transition-delay:.16s}.reveal-delay-3{transition-delay:.24s}
-    @keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-    body::before{background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,168,76,0.07) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(201,168,76,0.03) 0%,transparent 50%);background-size:200% 200%;animation:gradientShift 12s ease infinite; content:''; position:fixed; inset:0; pointer-events:none; z-index:0;}
-    #chart-container-box.chart-loaded{animation:chartFadeIn .6s ease forwards}
-    @keyframes chartFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-    #current-budget-display{transition:all .4s cubic-bezier(0.22,1,0.36,1)}
-    .switch.active{box-shadow:0 0 0 4px rgba(201,168,76,.12),0 0 16px rgba(201,168,76,.2)}
-    #status-text{transition:color .3s ease,border-color .3s ease,background .3s ease}
-    .footer-links a{transition:color .3s; cursor: pointer;}
-    .footer-links a:hover{color:var(--gold)}
-    #chart{opacity:0;transition:opacity .5s ease}
-    #chart.visible{opacity:1}
-    ::-webkit-scrollbar{width:4px;height:4px}
-    ::-webkit-scrollbar-track{background:var(--obsidian)}
-    ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,transparent,var(--gold),transparent);border-radius:2px}
-    html{scrollbar-width:thin;scrollbar-color:var(--gold) var(--obsidian)}
-    :focus-visible{outline:1px solid var(--gold);outline-offset:3px;border-radius:2px}
-    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    button,input,a,[role=button],.switch{touch-action:manipulation;user-select:none;-webkit-user-select:none}
-    body{
-      background:var(--obsidian);color:var(--text);font-family:var(--font-sans);
-      min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;
-      transition:opacity 0.4s ease;
-    }
-    body.ready{opacity:1 !important}
-    body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.7}
-    #scroll-progress{position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-light));z-index:9999;pointer-events:none;transition:width .1s linear}
-    #loading-screen{position:fixed;inset:0;background:var(--obsidian);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;transition:opacity .6s ease,transform .6s ease}
-    #loading-screen.fade-out{opacity:0;transform:scale(1.03);pointer-events:none}
-    .loading-logo{font-family:var(--font-serif);font-size:32px;font-weight:300;letter-spacing:0.2em;color:var(--gold);opacity:0;animation:fadeUp .6s ease .2s forwards}
-    .loading-line{width:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:growLine .7s ease .5s forwards}
-    .loading-spinner{width:28px;height:28px;border:1px solid rgba(201,168,76,.2);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin-top:8px}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    @keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
-    @keyframes shimmer{0%,100%{background-position:200% 0}50%{background-position:-200% 0}}
-    @keyframes pulseBorder{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.25)}50%{box-shadow:0 0 0 5px rgba(201,168,76,0)}}
-    .header{
-      padding:20px 24px;display:flex;justify-content:space-between;align-items:center;
-      border-bottom:1px solid var(--border2);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-      position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.85);
-      transition:box-shadow .3s ease;
-    }
-    .header.scrolled{box-shadow:0 4px 30px rgba(0,0,0,.6),0 1px 0 rgba(201,168,76,.1)}
-    .logo-wrap{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+    body::before{background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,168,76,0.07) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(201,168,76,0.03) 0%,transparent 50%);background-size:200% 200%;content:'';position:fixed;inset:0;pointer-events:none;z-index:0}
+    .header{padding:20px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border2);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100;background:rgba(8,8,8,0.85);}
     .logo-text{font-family:var(--font-serif);font-size:22px;color:var(--gold);letter-spacing:0.15em;font-weight:300;text-transform:uppercase}
-    .logo-line-dash{width:40px;height:1px;background:linear-gradient(90deg,transparent,var(--gold-light),var(--gold),var(--gold-light),transparent);background-size:200% 100%;animation:shimmer 3s ease-in-out infinite}
-    .logout-btn{
-      background:none;border:1px solid var(--border);color:var(--text-muted);
-      padding:6px 14px;font-size:9px;text-transform:uppercase;letter-spacing:0.15em;cursor:pointer;
-      transition:all .3s;font-family:var(--font-sans);
-    }
-    .logout-btn:hover{border-color:rgba(255,80,80,.4);color:var(--error)}
+    .logout-btn{background:none;border:1px solid var(--border);color:var(--text-muted);padding:6px 14px;font-size:9px;text-transform:uppercase;cursor:pointer;transition:all .3s;}
+    .logout-btn:hover{border-color:var(--error);color:var(--error)}
     .main-content{flex:1;max-width:500px;margin:0 auto;padding:40px 16px;position:relative;z-index:1;width:100%}
-    .greeting h1{font-family:var(--font-serif);font-size:32px;font-weight:300;margin-bottom:4px;text-transform:capitalize}
-    .greeting p{color:var(--text-muted);font-size:13px;font-style:italic;font-family:var(--font-serif);margin-bottom:32px}
-    .card{
-      background:var(--surface);border:1px solid var(--border);padding:28px;
-      margin-bottom:20px;position:relative;
-      box-shadow:0 40px 100px rgba(0,0,0,.6),0 0 0 1px rgba(201,168,76,.04);
-      transition:border-color .3s,box-shadow .3s;
-    }
+    .card{background:var(--surface);border:1px solid var(--border);padding:28px;margin-bottom:20px;position:relative;box-shadow:0 40px 100px rgba(0,0,0,.6);}
     .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-    .card:hover{border-color:rgba(201,168,76,.26);box-shadow:0 40px 100px rgba(0,0,0,.7),0 0 28px rgba(201,168,76,.06),0 0 0 1px rgba(201,168,76,.08)}
-    .skeleton{background:linear-gradient(90deg,var(--surface2) 25%,rgba(201,168,76,.06) 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.4s ease infinite;border-radius:2px}
     .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
-    .metric-box{
-      background:var(--surface2);padding:22px 10px;border:1px solid var(--border2);
-      text-align:center;position:relative;overflow:hidden;
-    }
-    .metric-box::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(201,168,76,.05) 50%,transparent 70%);background-size:200% 100%;animation:shimmer 3s ease-in-out infinite;pointer-events:none}
-    .metric-val{display:block;font-family:var(--font-serif);font-size:34px;color:var(--gold);line-height:1;margin-bottom:6px;transition:all .3s}
+    .metric-box{background:var(--surface2);padding:22px 10px;border:1px solid var(--border2);text-align:center;}
+    .metric-val{display:block;font-family:var(--font-serif);font-size:34px;color:var(--gold);line-height:1;margin-bottom:6px;}
     .metric-label{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px}
-    .metric-live{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:4px}
-    .live-dot-sm{width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);animation:livePulse 1.8s ease infinite}
-    .live-label{font-size:8px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase}
-    .metric-tip{position:relative;cursor:help}
-    .metric-tip::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border);padding:5px 10px;font-size:9px;color:var(--text-muted);white-space:nowrap;opacity:0;transition:opacity .2s;z-index:10;pointer-events:none;border-radius:2px;font-family:var(--font-sans)}
-    .metric-tip:hover::after{opacity:1}
-    .switch-wrap{min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center}
-    .switch{width:48px;height:26px;background:#111;border-radius:20px;position:relative;cursor:pointer;border:1px solid var(--border2);transition:background .4s,border-color .4s}
-    .switch.active{background:var(--gold);border-color:var(--gold)}
-    .switch.processing{opacity:.5;pointer-events:none}
-    .switch-circle{position:absolute;top:3px;left:3px;width:18px;height:18px;background:white;border-radius:50%;transition:transform .3s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 1px 4px rgba(0,0,0,.4)}
-    .switch.active .switch-circle{transform:translateX(22px)}
-    .budget-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:15px}
-    .budget-btn{
-      background:transparent;border:1px solid var(--border2);color:var(--text-muted);
-      padding:12px;font-size:11px;cursor:pointer;transition:all .3s;font-family:var(--font-sans);
-      position:relative;overflow:hidden;
-    }
-    .budget-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--gold),#A8893A);transform:translateY(100%);transition:transform .3s;z-index:0}
-    .budget-btn span{position:relative;z-index:1}
-    .budget-btn:hover{border-color:var(--gold);color:var(--gold)}
-    .budget-btn.current{border-color:var(--gold);color:var(--gold);background:var(--gold-dim)}
-    .custom-input{
-      width:100%;background:var(--surface2);border:1px solid var(--border2);
-      padding:14px;color:var(--text);font-family:var(--font-sans);font-size:13px;
-      outline:none;margin-top:15px;transition:border-color .3s;
-      -moz-appearance:textfield;appearance:textfield;
-    }
-    .custom-input::-webkit-inner-spin-button,.custom-input::-webkit-outer-spin-button{-webkit-appearance:none}
-    .custom-input:focus{border-color:var(--gold)}
-    .budget-warning{background:rgba(255,80,80,.06);border:1px solid rgba(255,80,80,.2);padding:10px 14px;margin-top:12px;font-size:11px;color:var(--error);display:none;border-radius:2px}
-    .budget-warning.show{display:block;animation:fadeInUp .3s ease}
-    .budget-progress-wrap{margin-top:16px}
-    .budget-progress-label{display:flex;justify-content:space-between;font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
-    .budget-progress-bar{height:2px;background:var(--border2);border-radius:2px;overflow:hidden}
-    .budget-progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:2px;transition:width .6s ease;width:0%}
-    .chart-controls{display:flex;gap:10px;justify-content:center;margin-top:15px}
-    .chart-toggle-btn{
-      background:var(--surface2);border:1px solid var(--border2);color:var(--text-dim);
-      padding:8px 12px;font-size:9px;text-transform:uppercase;letter-spacing:1px;cursor:pointer;
-      transition:all .3s;font-family:var(--font-sans);
-    }
-    .chart-toggle-btn.active{color:var(--gold);border-color:var(--gold)}
-    .chart-range{display:flex;gap:6px;justify-content:flex-end;margin-bottom:10px}
-    .range-btn{background:none;border:1px solid var(--border2);color:var(--text-dim);padding:4px 10px;font-size:9px;cursor:pointer;font-family:var(--font-sans);letter-spacing:.08em;text-transform:uppercase;transition:all .3s}
-    .range-btn.active{border-color:rgba(201,168,76,.4);color:var(--gold)}
-    .history-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border2);font-size:12px;animation:fadeInUp .3s ease}
-    .history-date{color:var(--text-dim);font-size:10px;margin-top:2px}
-    .history-amount{color:var(--gold);font-family:var(--font-serif);font-size:16px}
-    .history-clicks{color:var(--text-dim);font-size:10px;text-align:right;margin-top:2px}
-    .opt-info{display:flex;justify-content:space-between;margin-top:16px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border2)}
-    .opt-item{text-align:center}
-    .opt-val{font-family:var(--font-serif);font-size:14px;color:var(--gold);display:block}
-    .opt-label{font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:2px}
-    .plan-badge-wrap{display:flex;align-items:center;gap:8px;margin-bottom:16px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border2)}
-    .plan-badge-label{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.12em}
-    .plan-badge-val{font-family:var(--font-serif);font-size:14px;color:var(--gold);margin-left:auto}
-    .stripe-portal-btn{
-      width:100%;margin-top:14px;padding:12px;background:transparent;
-      border:1px solid var(--border2);color:var(--text-muted);font-size:10px;
-      text-transform:uppercase;letter-spacing:.14em;cursor:pointer;font-family:var(--font-sans);
-      transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px;
-    }
-    .stripe-portal-btn:hover{border-color:rgba(100,91,255,.4);color:#8a84ff}
-    #upgrade-banner{
-      background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.04));
-      border:1px solid rgba(201,168,76,.25);padding:16px 20px;margin-bottom:20px;
-      position:relative;display:none;animation:fadeInUp .4s ease;
-    }
-    #upgrade-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-    .upgrade-title{font-family:var(--font-serif);font-size:16px;color:var(--gold);margin-bottom:4px}
-    .upgrade-text{font-size:11px;color:var(--text-muted);line-height:1.6;margin-bottom:12px;font-style:italic}
-    .upgrade-btn{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:8px 18px;font-size:9px;text-transform:uppercase;letter-spacing:.15em;cursor:pointer;font-family:var(--font-sans);transition:all .3s}
-    .upgrade-btn:hover{background:var(--gold-dim)}
-    .notif-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border2);animation:fadeInUp .3s ease}
-    .notif-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px}
-    .notif-dot.info{background:var(--gold)}
-    .notif-dot.warn{background:var(--error)}
-    .notif-dot.ok{background:var(--success)}
-    .notif-text{font-size:11px;color:var(--text-muted);line-height:1.5}
-    .notif-time{font-size:9px;color:var(--text-dim);margin-top:2px}
-    #notif-empty{font-size:11px;color:var(--text-dim);text-align:center;padding:20px 0;font-style:italic;font-family:var(--font-serif)}
-    .check-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border2);font-size:12px}
-    .check-icon{width:18px;height:18px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0}
-    .check-icon.done{background:var(--gold);border-color:var(--gold);color:var(--obsidian)}
-    .check-label.done{color:var(--text-dim);text-decoration:line-through}
-    .support-row{display:flex;gap:10px;margin-top:14px}
-    .support-btn{
-      flex:1;padding:10px;background:transparent;border:1px solid var(--border2);
-      color:var(--text-muted);font-size:9px;text-transform:uppercase;letter-spacing:.12em;
-      cursor:pointer;font-family:var(--font-sans);transition:all .3s;display:flex;
-      align-items:center;justify-content:center;gap:6px;
-    }
-    .support-btn:hover{border-color:rgba(201,168,76,.3);color:var(--gold)}
-    #ptr-indicator{
-      position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-60px);
-      background:var(--surface);border:1px solid var(--border);padding:8px 18px;
-      font-size:10px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;
-      z-index:200;transition:transform .3s ease;border-radius:20px;opacity:0;
-    }
-    #ptr-indicator.show{transform:translateX(-50%) translateY(0);opacity:1}
-    #toast{
-      position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(20px);
-      background:var(--surface);border:1px solid var(--gold);color:var(--gold);
-      padding:14px 28px;font-size:11px;z-index:10000;opacity:0;visibility:hidden;
-      transition:all .4s cubic-bezier(0.22,1,0.36,1);letter-spacing:1px;text-transform:uppercase;
-      max-width:320px;text-align:center; border-radius: 2px;
-    }
-    #toast::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+    .skeleton{background:linear-gradient(90deg,var(--surface2) 25%,rgba(201,168,76,.06) 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.4s ease infinite;border-radius:2px}
+    @keyframes shimmer{0%,100%{background-position:200% 0}50%{background-position:-200% 0}}
+    #toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--gold);color:var(--gold);padding:14px 28px;font-size:11px;z-index:10000;opacity:0;visibility:hidden;transition:all .4s;max-width:320px;text-align:center;border-radius:2px}
     #toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
     #toast.error{border-color:var(--error);color:var(--error)}
-    #toast.success{border-color:rgba(76,175,80,.4);color:var(--success)}
-    #confirm-dialog{
-      position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:20000;display:none;
-      align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(10px);
-    }
-    #confirm-dialog.show{display:flex;animation:fadeInUp .3s ease}
-    .confirm-box{background:var(--surface);border:1px solid var(--border);padding:32px 28px;max-width:360px;width:100%;position:relative;text-align:center}
-    .confirm-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-    .confirm-title{font-family:var(--font-serif);font-size:22px;font-weight:300;color:var(--text);margin-bottom:10px}
-    .confirm-text{font-size:12px;color:var(--text-muted);line-height:1.7;margin-bottom:24px;font-style:italic}
-    .confirm-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .confirm-cancel{background:none;border:1px solid var(--border);color:var(--text-muted);padding:12px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;font-family:var(--font-sans);transition:all .3s}
-    .confirm-ok{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:12px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;font-family:var(--font-sans);transition:all .3s}
-    .footer{
-      width:100%;text-align:center;padding:max(60px,env(safe-area-inset-bottom)) 0 max(40px,env(safe-area-inset-bottom));
-      border-top:1px solid var(--border2);margin-top:40px;
-      background:rgba(5,5,5,.5);position:relative;
-    }
-    .footer::before{content:'';position:absolute;bottom:100%;left:0;right:0;height:80px;background:linear-gradient(to top,rgba(5,5,5,.5),transparent);pointer-events:none}
-    .footer-links{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
-    .footer-links a{color:var(--text-dim);font-size:9px;text-decoration:none;text-transform:uppercase;letter-spacing:1.8px;transition:color .3s;cursor:pointer}
-    .footer-links a:hover{color:var(--gold)}
-    .footer-copy{font-size:8px;color:rgba(240,237,232,.18);text-transform:uppercase;letter-spacing:3px}
-    .modal{
-      position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:30000;display:none;
-      padding:40px 20px;backdrop-filter:blur(10px);overflow-y:auto;
-    }
-    .modal-content{
-      background:var(--surface);border:1px solid var(--border);max-width:560px;
-      margin:0 auto;padding:40px;position:relative;font-size:13px;color:var(--text-muted);line-height:1.7; border-radius: 2px;
-    }
-    .modal-content::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-    @media(orientation:landscape) and (max-height:500px){ .main-content{padding:20px 16px} .greeting h1{font-size:24px} .card{padding:18px} }
-    #chart{min-width:0;overflow:hidden}
-    @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(200px) rotate(720deg);opacity:0}}
+    .footer{width:100%;text-align:center;padding:60px 0;border-top:1px solid var(--border2);margin-top:40px;}
+    .footer-links{display:flex;justify-content:center;gap:16px;margin-bottom:22px}
+    .footer-links a{color:var(--text-dim);font-size:9px;text-transform:uppercase;letter-spacing:1.8px; text-decoration:none; cursor:pointer;}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:30000;display:none;padding:40px 20px;backdrop-filter:blur(10px);}
+    .modal-content{background:var(--surface);border:1px solid var(--border);max-width:560px;margin:0 auto;padding:40px;position:relative;font-size:13px;color:var(--text-muted);line-height:1.7;}
   </style>
 </head>
 <body>
 
-<div id="loading-screen">
-  <div class="loading-logo">AiWakeel</div>
-  <div class="loading-line"></div>
-  <div class="loading-spinner"></div>
+<div id="loading-screen" style="position:fixed;inset:0;background:var(--obsidian);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;">
+  <div style="font-family:var(--font-serif);font-size:32px;color:var(--gold);">AiWakeel</div>
+  <div style="width:50px;height:1px;background:var(--gold);"></div>
+  <div style="width:28px;height:28px;border:1px solid rgba(201,168,76,.2);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin-top:8px"></div>
 </div>
 
 <canvas id="db-particle-canvas"></canvas>
@@ -291,29 +95,26 @@
 <div id="db-intro">
   <div class="db-intro-logo">AiWakeel</div>
   <div class="db-intro-line"></div>
-  <div class="db-intro-sub">Elite Dashboard</div>
+  <div style="font-size:9px;letter-spacing:.35em;color:var(--text-dim);text-transform:uppercase;margin-top:8px;">Elite Dashboard</div>
   <div class="db-intro-spinner"></div>
 </div>
 
-<div id="scroll-progress"></div>
-<div id="ptr-indicator">↓ Loslassen zum Aktualisieren</div>
-
-<div id="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirm-heading">
-  <div class="confirm-box">
-    <div class="confirm-title" id="confirm-heading">Agent pausieren?</div>
-    <p class="confirm-text" id="confirm-text">Die Google Ads Kampagne wird sofort gestoppt. Du kannst den Agenten jederzeit wieder aktivieren.</p>
-    <div class="confirm-btns">
-      <button class="confirm-cancel" onclick="closeConfirm(false)">Abbrechen</button>
-      <button class="confirm-ok" id="confirm-ok-btn" onclick="closeConfirm(true)">Bestätigen</button>
+<div id="confirm-dialog" style="position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:20000;display:none;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(10px);">
+  <div style="background:var(--surface);border:1px solid var(--border);padding:32px 28px;max-width:360px;width:100%;position:relative;text-align:center">
+    <div id="confirm-heading" style="font-family:var(--font-serif);font-size:22px;color:var(--text);margin-bottom:10px">Aktion bestätigen?</div>
+    <p id="confirm-text" style="font-size:12px;color:var(--text-muted);line-height:1.7;margin-bottom:24px;font-style:italic">Möchtest du diese Änderung wirklich durchführen?</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button onclick="closeConfirm(false)" style="background:none;border:1px solid var(--border);color:var(--text-muted);padding:12px;font-size:10px;text-transform:uppercase;cursor:pointer;">Abbrechen</button>
+      <button id="confirm-ok-btn" onclick="closeConfirm(true)" style="background:transparent;border:1px solid var(--gold);color:var(--gold);padding:12px;font-size:10px;text-transform:uppercase;cursor:pointer;">Bestätigen</button>
     </div>
   </div>
 </div>
 
-<div id="toast" role="status" aria-live="polite"></div>
+<div id="toast" role="status"></div>
 
-<div id="legal-modal" class="modal" onclick="closeModal(event)" role="dialog" aria-modal="true">
+<div id="legal-modal" class="modal" onclick="closeModal(event)">
   <div class="modal-content">
-    <span style="position:absolute;top:15px;right:20px;color:var(--gold);cursor:pointer;font-size:24px" onclick="closeModal(null)" aria-label="Schließen">&times;</span>
+    <span style="position:absolute;top:15px;right:20px;color:var(--gold);cursor:pointer;font-size:24px" onclick="closeModal(null)">&times;</span>
     <div id="modal-text"></div>
   </div>
 </div>
@@ -321,20 +122,20 @@
 <header class="header" id="main-header">
   <div class="logo-wrap">
     <div class="logo-text">AiWakeel</div>
-    <div class="logo-line-dash"></div>
+    <div style="width:40px;height:1px;background:var(--gold)"></div>
   </div>
   <button class="logout-btn" onclick="confirmLogout()">Abmelden</button>
 </header>
 
 <div class="main-content" id="main-content">
   
-  <div id="payment-warning-banner" style="display:none; background:rgba(255,80,80,0.12); border:1px solid rgba(255,80,80,0.3); padding:20px; margin-bottom:24px; border-radius:2px; animation: fadeInUp .4s ease;">
+  <div id="payment-warning-banner" style="display:none; background:rgba(255,80,80,0.12); border:1px solid rgba(255,80,80,0.3); padding:20px; margin-bottom:24px; border-radius:2px;">
     <div style="display:flex; align-items:flex-start; gap:16px;">
       <span style="font-size:22px; margin-top:2px;">⚠️</span>
       <div style="flex:1;">
         <div style="color:var(--error); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:1.5px;">Zahlungsproblem erkannt</div>
         <p style="color:var(--text-muted); font-size:11px; margin-top:4px; line-height:1.5; font-style:italic;">
-          Deine Google Ads Anzeigen wurden gestoppt. Bitte lade dein Guthaben auf oder aktualisiere deine Zahlungsmethode, damit der Agent weiter optimieren kann.
+          Deine Google Ads Anzeigen wurden gestoppt. Bitte lade dein Guthaben auf, damit der Agent weiter optimieren kann.
         </p>
         <a href="https://ads.google.com/aw/billing/summary" target="_blank" 
            style="display:inline-block; margin-top:14px; padding:8px 16px; background:var(--error); color:white; text-decoration:none; font-size:10px; text-transform:uppercase; letter-spacing:1px; font-weight:600; border-radius:2px;">
@@ -343,12 +144,6 @@
       </div>
     </div>
   </div>
-  
-  <div id="upgrade-banner" role="complementary" aria-label="Upgrade-Angebot" class="reveal">
-    <div class="upgrade-title">&#10022; Maison freischalten</div>
-    <p class="upgrade-text">WhatsApp-Direktsteuerung, Echtzeit-Alerts und tägliche Berichte direkt auf dein Handy. Upgrade auf Maison für nur 30€ mehr pro Monat.</p>
-    <button class="upgrade-btn" onclick="openStripePortal()">Jetzt upgraden &rarr;</button>
-  </div>
 
   <div class="greeting">
     <h1 id="user-name">Guten Tag</h1>
@@ -356,96 +151,25 @@
   </div>
 
   <div class="card reveal">
-    <div class="plan-badge-wrap">
-      <span class="plan-badge-label">Aktiver Plan</span>
-      <span class="plan-badge-val" id="plan-display">—</span>
-    </div>
-
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
       <h2 style="font-family:var(--font-serif);font-size:24px;font-weight:300">Management Agent</h2>
       <div id="status-text" style="font-size:9px;text-transform:uppercase;padding:4px 12px;border:1px solid var(--gold);color:var(--gold);letter-spacing:2px">Aktiv</div>
     </div>
-
-    <div class="opt-info">
-      <div class="opt-item">
-        <span class="opt-val" id="last-opt">—</span>
-        <span class="opt-label">Letzte Optimierung</span>
-      </div>
-      <div style="width:1px;background:var(--border2)"></div>
-      <div class="opt-item">
-        <span class="opt-val" id="next-opt">07:00</span>
-        <span class="opt-label">Nächste Optimierung</span>
-      </div>
-    </div>
-
-    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:20px;border-top:1px solid var(--border2);margin-top:16px">
-      <div>
-        <div style="font-size:14px">KI-Optimierung</div>
-        <small id="status-sub" style="color:var(--text-dim);font-size:10px;text-transform:uppercase">Real-Time Control</small>
-      </div>
-      <div class="switch-wrap">
-        <div id="agent-toggle" class="switch" onclick="requestToggleAgent()" role="switch" aria-checked="false" tabindex="0">
-          <div class="switch-circle"></div>
-        </div>
-      </div>
-    </div>
-
     <div class="metrics">
-      <div class="metric-box metric-tip" data-tip="Klicks der letzten 24 Stunden">
-        <span id="clicks-val" class="metric-val skeleton" style="height:34px;display:block">&nbsp;</span>
+      <div class="metric-box">
+        <span id="clicks-val" class="metric-val skeleton">&nbsp;</span>
         <span class="metric-label">Klicks (24h)</span>
-        <div class="metric-live"><div class="live-dot-sm"></div><span class="live-label">Live</span></div>
       </div>
-      <div class="metric-box metric-tip" data-tip="Google-Suchposition">
-        <span id="pos-val" class="metric-val skeleton" style="height:34px;display:block">&nbsp;</span>
+      <div class="metric-box">
+        <span id="pos-val" class="metric-val skeleton">&nbsp;</span>
         <span class="metric-label">Ø Position</span>
-        <div class="metric-live"><div class="live-dot-sm"></div><span class="live-label">Live</span></div>
       </div>
     </div>
-  </div>
-
-  <div class="card reveal reveal-delay-1">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
-      <h2 style="font-family:var(--font-serif);font-size:24px;font-weight:300">Budget</h2>
-      <div id="current-budget-display" style="font-family:var(--font-serif);color:var(--gold);font-size:26px">0€</div>
-    </div>
-    <div class="budget-warning" id="budget-warning">⚠ Budget ist 0€ – der Agent ist pausiert.</div>
-    <div class="budget-grid">
-      <button class="budget-btn" onclick="updateBudget(500)"><span>500€</span></button>
-      <button class="budget-btn" onclick="updateBudget(1000)"><span>1.000€</span></button>
-      <button class="budget-btn" onclick="updateBudget(2500)"><span>2.500€</span></button>
-    </div>
-    <div class="budget-progress-bar" style="height:2px;background:var(--border2);border-radius:2px;overflow:hidden;margin-top:16px"><div class="budget-progress-fill" id="budget-progress-fill" style="height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width .6s ease;width:0%"></div></div>
-    <button class="stripe-portal-btn" style="width:100%;margin-top:20px;padding:12px;" onclick="openStripePortal()">Abo verwalten</button>
   </div>
 
   <div class="card reveal reveal-delay-2" style="background:transparent;border:none;box-shadow:none;padding:0">
     <div id="chart-container-box" style="background:var(--surface);border:1px solid var(--border);padding:20px 10px">
       <div id="chart" style="min-height: 200px;"></div>
-    </div>
-  </div>
-
-  <div class="card reveal" style="margin-top:20px">
-    <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:300;margin-bottom:20px">Benachrichtigungen</h2>
-    <div id="notif-list"><div id="notif-empty">Keine neuen Benachrichtigungen</div></div>
-  </div>
-
-  <div class="card reveal" style="margin-top:20px">
-    <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:300;margin-bottom:20px">Kampagnen-Historie</h2>
-    <div id="history-list"><div class="skeleton" style="height:44px;margin-bottom:10px"></div><div class="skeleton" style="height:44px"></div></div>
-  </div>
-
-  <div class="card reveal" style="margin-top:20px" id="checklist-card">
-    <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:300;margin-bottom:20px">Status</h2>
-    <div id="checklist-list"></div>
-  </div>
-
-  <div class="card reveal" style="margin-top:20px">
-    <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:300;margin-bottom:16px">Support</h2>
-    <div class="support-row">
-      <button class="support-btn" onclick="openSupport('whatsapp')"><span>&#128172;</span> WhatsApp</button>
-      <button class="support-btn" onclick="openSupport('email')"><span>&#128231;</span> E-Mail</button>
-      <button class="support-btn" onclick="openFeedback()"><span>&#11088;</span> Feedback</button>
     </div>
   </div>
 
@@ -456,22 +180,19 @@
     <a onclick="showLegal('impressum')">Impressum</a>
     <a onclick="showLegal('privacy')">Datenschutz</a>
     <a onclick="showLegal('agb')">AGB</a>
-    <a onclick="showLegal('widerruf')">Widerruf</a>
-    <a onclick="showLegal('cookies')">Cookies</a>
   </div>
-  <span style="font-size:8px;color:rgba(240,237,232,.18);text-transform:uppercase;letter-spacing:3px">&copy; 2026 AIWAKEEL · Intelligent Management</span>
+  <span style="font-size:8px;color:rgba(240,237,232,.18);text-transform:uppercase;letter-spacing:3px">&copy; 2026 AIWAKEEL</span>
 </footer>
 
 <script>
 const CFG = {
   PB_URL: 'https://ads.aiwakeel.ai',
-  N8N_TOGGLE: 'https://n8n.aiwakeel.ai/webhook/toggle-agent',
-  STRIPE_PORTAL_URL: 'https://billing.stripe.com/p/login/aiwakeel',
   COLLECTION_REPORTS: 'daily_reports',
-  COLLECTION_USERS: 'users'
+  COLLECTION_USERS: 'users',
+  STRIPE_PORTAL_URL: 'https://billing.stripe.com/p/login/aiwakeel'
 };
 
-let pb, chart, allReports = [], currentRange = 7, _loadLock = false;
+let pb, chart, _loadLock = false;
 
 document.addEventListener('DOMContentLoaded', () => {
   const initInterval = setInterval(() => {
@@ -496,28 +217,18 @@ async function initApp() {
 
     const user = pb.authStore.model;
 
-    if (user && user.payment_error === true) {
-        const banner = document.getElementById('payment-warning-banner');
-        if (banner) banner.style.display = 'block';
-        const statusText = document.getElementById('status-text');
-        if (statusText) {
-            statusText.textContent = "Zahlung fehlt";
-            statusText.style.color = "var(--error)";
-            statusText.style.borderColor = "var(--error)";
-        }
-    }
-
+    // Greeting
     const hour = new Date().getHours();
     const greet = hour < 12 ? 'Guten Morgen' : hour < 18 ? 'Guten Tag' : 'Guten Abend';
     document.getElementById('user-name').textContent = `${greet}, ${user.name || user.email.split('@')[0]}`;
 
-    const plan = user.plan || 'atelier';
-    document.getElementById('plan-display').textContent = plan === 'premium' ? '✦ Maison' : 'Atelier';
-    if (plan !== 'premium' && document.getElementById('upgrade-banner')) document.getElementById('upgrade-banner').style.display = 'block';
-
-    updateUI(user.agent_status === 'active' && user.payment_error !== true);
-    document.getElementById('current-budget-display').textContent = `${user.budget || 0}€`;
-    document.getElementById('last-opt').textContent = hour >= 7 ? 'Heute 07:00' : 'Gestern 07:00';
+    // Payment Check
+    if (user.payment_error === true) {
+      document.getElementById('payment-warning-banner').style.display = 'block';
+      updateUI(false, "Zahlung fehlt");
+    } else {
+      updateUI(user.agent_status === 'active');
+    }
 
     await loadDashboardData(user);
     initDashParticles();
@@ -526,10 +237,11 @@ async function initApp() {
   } catch (err) {
     console.error("Dashboard Init Error:", err);
   } finally {
+    // SICHERHEITS-NETZ: Seite immer einblenden, egal was passiert
     document.documentElement.style.opacity = '1';
     document.body.classList.add('ready');
     const ls = document.getElementById('loading-screen');
-    if (ls) ls.classList.add('fade-out');
+    if (ls) ls.style.display = 'none';
     const intro = document.getElementById('db-intro');
     if (intro) setTimeout(() => intro.classList.add('fade-out'), 1000);
   }
@@ -543,23 +255,27 @@ async function loadDashboardData(user) {
     const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 10, {
       filter: `user = "${user.id}"`, sort: '-created'
     });
-    allReports = records.items;
 
-    if (allReports && allReports.length > 0) {
-      const latest = allReports[0];
+    if (records.items && records.items.length > 0) {
+      const latest = records.items[0];
       animateMetric('clicks-val', latest.clicks || 0);
       animateMetric('pos-val', (latest.position || 0).toFixed(1), false);
-      ['clicks-val','pos-val'].forEach(id => document.getElementById(id).classList.remove('skeleton'));
-      renderChart(allReports.slice().reverse());
+      ['clicks-val','pos-val'].forEach(id => {
+          const el = document.getElementById(id);
+          if(el) el.classList.remove('skeleton');
+      });
+      renderChart(records.items.slice().reverse());
     } else {
-      document.getElementById('chart').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);font-size:10px;">WARTE AUF KI-REPORT...</div>';
+      const chartEl = document.getElementById('chart');
+      if (chartEl) chartEl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);font-size:10px;">WARTE AUF KI-REPORT...</div>';
       ['clicks-val','pos-val'].forEach(id => {
           const el = document.getElementById(id);
           if(el) { el.classList.remove('skeleton'); el.textContent = '—'; }
       });
     }
   } catch(e) {
-    showToast('Ladefehler', true);
+    console.error("Data Fetch Error:", e);
+    showToast('Ladefehler bei den Daten', true);
   } finally { _loadLock = false; }
 }
 
@@ -567,11 +283,14 @@ function renderChart(data) {
   if (!data || data.length === 0) return;
   const options = {
     series: [{ name: 'Klicks', data: data.map(r => r.clicks || 0) }],
-    chart: { height: 200, type: 'area', toolbar: { show: false }, background: 'transparent' },
+    chart: { height: 200, type: 'area', toolbar: { show: false }, background: 'transparent', animations: { enabled: true } },
     colors: ['#C9A84C'],
     stroke: { curve: 'smooth', width: 2 },
     grid: { show: false },
-    xaxis: { categories: data.map(r => new Date(r.created).toLocaleDateString('de-DE', { day: '2-digit' })), labels: { style: { colors: 'rgba(240,237,232,0.3)', fontSize: '9px' } } },
+    xaxis: { 
+        categories: data.map(r => new Date(r.created).toLocaleDateString('de-DE', { day: '2-digit' })),
+        labels: { style: { colors: 'rgba(240,237,232,0.3)', fontSize: '9px' } }
+    },
     yaxis: { show: false },
     legend: { show: false },
     tooltip: { theme: 'dark' }
@@ -596,26 +315,12 @@ function animateMetric(id, target, isInt = true) {
 }
 
 function updateUI(isActive, customText) {
-  const t = document.getElementById('agent-toggle');
   const s = document.getElementById('status-text');
-  if(t) t.classList.toggle('active', isActive);
   if(s) {
     s.textContent = customText || (isActive ? 'Aktiv' : 'Pausiert');
     s.style.color = isActive ? 'var(--gold)' : 'var(--error)';
     s.style.borderColor = isActive ? 'var(--gold)' : 'var(--error)';
   }
-}
-
-async function updateBudget(amt) {
-  try {
-    await pb.collection(CFG.COLLECTION_USERS).update(pb.authStore.model.id, { budget: amt });
-    document.getElementById('current-budget-display').textContent = amt + '€';
-    showToast('Budget aktualisiert', false);
-  } catch(e) { showToast('Fehler', true); }
-}
-
-function openStripePortal() {
-  window.open(CFG.STRIPE_PORTAL_URL + '?prefilled_email=' + encodeURIComponent(pb.authStore.model.email), '_blank');
 }
 
 function showToast(msg, isError = false) {
@@ -627,7 +332,7 @@ function showToast(msg, isError = false) {
 
 function confirmLogout() { pb.authStore.clear(); window.location.replace('login.html'); }
 function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
-function requestToggleAgent() { showToast("Anfrage an KI gesendet..."); }
+function requestToggleAgent() { showToast("Funktion wird geladen..."); }
 function closeConfirm() { document.getElementById('confirm-dialog').style.display='none'; }
 
 function initDashParticles() {
@@ -641,7 +346,7 @@ function initDashParticles() {
     pts.forEach(p => {
       p.x += p.vx; p.y += p.vy;
       if(p.x<0 || p.x>W) p.vx*=-1; if(p.y<0 || p.y>H) p.vy*=-1;
-      ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI*2); ctx.fillStyle = 'rgba(201,168,76,0.1)'; ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x, p.y, 1, 0, Math.PI*2); ctx.fillStyle = 'rgba(201,168,76,0.15)'; ctx.fill();
     });
     requestAnimationFrame(draw);
   }
@@ -657,15 +362,8 @@ function initScrollReveal() {
 }
 
 function showLegal(type) {
-  const s = (t,b) => `<h2 style="color:var(--gold);margin-bottom:18px;font-family:var(--font-serif);font-size:22px;font-weight:300;">${t}</h2>${b}`;
-  const h3 = t => `<h3 style="color:var(--text);margin:18px 0 7px;font-size:15px;">${t}</h3>`;
-  const p = t => `<p style="margin-bottom:10px;line-height:1.75;font-size:12px;color:rgba(240,237,232,0.5)">${t}</p>`;
-  const texts = {
-    impressum: s('Impressum', `${h3('Angaben gemäß § 5 TMG')}${p('Canatay Cakmak<br>CanTurSoft<br>Köln')}`),
-    privacy: s('Datenschutz', `${p('Datenschutzerklärung nach DSGVO...')}`),
-    agb: s('AGB', `${p('Nutzungsbedingungen...')}`)
-  };
-  document.getElementById('modal-text').innerHTML = texts[type] || 'Inhalt folgt...';
+  const t = type === 'impressum' ? '<h2>Impressum</h2><p>Canatay Cakmak</p>' : '<h2>Rechtliches</h2><p>Inhalt folgt...</p>';
+  document.getElementById('modal-text').innerHTML = t;
   document.getElementById('legal-modal').style.display = 'block';
 }
 </script>
