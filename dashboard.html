@@ -902,6 +902,9 @@ function updateBudgetProgress(user) {
 // CHART (#53 gold tooltip, #54 label color, #72 time range)
 // =========================================================
 function renderChart(data, days = 7) {
+  // FIX: Sicherheits-Check, falls data leer oder kein Array ist!
+  if (!data || !Array.isArray(data) || data.length === 0) return;
+  
   const sliced = data.slice(-days);
   if (!sliced.length) return;
 
@@ -915,14 +918,12 @@ function renderChart(data, days = 7) {
     stroke: { curve: 'smooth', width: [2, 2] },
     fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: [0.35, 0], opacityTo: [0, 0] } },
     grid: { show: false },
-    // #54 Fixed x-axis label color
     xaxis: {
       categories: sliced.map(r => new Date(r.created).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' })),
       labels: { style: { colors: Array(sliced.length).fill('rgba(240,237,232,0.28)'), fontSize: '9px', fontFamily: 'DM Sans, system-ui' } }
     },
     yaxis: { show: false },
     dataLabels: { enabled: false },
-    // #53 Gold tooltip
     tooltip: {
       theme: 'dark',
       style: { fontSize: '11px', fontFamily: 'DM Sans, system-ui' },
