@@ -805,8 +805,7 @@ async function loadDashboardData(user) {
   try {
     // ✅ FIX: user.id statt user für Relation-Filter
     const records = await pb.collection('daily_reports').getList(1, 30, {
-      filter: `user.id = "${user.id}"`,
-      sort: '-created'
+  sort: '-created'
     });
     allReports = records.items;
 
