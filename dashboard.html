@@ -805,8 +805,8 @@ async function loadDashboardData(user) {
   if (_loadLock) return;
   _loadLock = true;
   try {
-    const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 30, {
-      filter: `user = "${user.id}"`, // Dein korrigierter Filter
+    const records = await pb.collection('daily_reports').getList(1, 30, {
+      filter: `user = "${user.id}"`, // Filtert nach der User-Relation
       sort: '-created'
     });
     allReports = records.items;
@@ -814,39 +814,37 @@ async function loadDashboardData(user) {
     if (allReports.length > 0) {
       const latest = allReports[0];
       
-      // --- HIER EINFÜGEN ---
+      // Hier nutzen wir exakt die Namen aus deinem pb_schema.json
       animateMetric('clicks-val', latest.clicks || 0);
       animateMetric('pos-val', parseFloat(latest.position || 0).toFixed(1), false);
       animateMetric('cpc-val', (latest.current_cpc || 0).toFixed(2) + '€', false); 
       animateMetric('imps-val', latest.impressions || 0);
-      // ---------------------
 
-      // Ab hier geht dein bestehender Code weiter (Skelette entfernen, Chart rendern etc.)
+      // Entferne die Lade-Animation (Skelette)
       ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
-        document.getElementById(id).classList.remove('skeleton');
-        document.getElementById(id).style.height = '';
+        const el = document.getElementById(id);
+        if(el) {
+            el.classList.remove('skeleton');
+            el.style.height = '';
+        }
       });
 
       renderChart(allReports.slice().reverse(), currentRange);
-    } 
-   else {
-      document.getElementById('chart').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);font-size:10px;letter-spacing:2px">WARTE AUF DATEN-SYNC...</div>';
-      document.querySelector('.chart-controls').style.display = 'none';
+    } else {
+      // Falls keine Daten da sind: Skelette weg und Strich anzeigen
       ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
         const el = document.getElementById(id);
-        el.classList.remove('skeleton'); el.textContent = '—'; el.style.height = '';
+        if(el) {
+            el.classList.remove('skeleton');
+            el.textContent = '—';
+            el.style.height = '';
+        }
       });
+      document.getElementById('chart').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);font-size:10px;">WARTE AUF ERSTEN KI-REPORT...</div>';
     }
-
-    // #70 Budget progress (mock: use random spend for demo)
-    updateBudgetProgress(user);
   } catch(e) {
-    // #77 Proper error
-    showToast('Fehler beim Laden der Daten', true);
-    ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
-      const el = document.getElementById(id);
-      el.classList.remove('skeleton'); el.textContent = 'Fehler'; el.style.height = '';
-    });
+    console.error("Dashboard Load Error:", e);
+    showToast('Daten konnten nicht geladen werden', true);
   } finally { _loadLock = false; }
 }
 
