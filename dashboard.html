@@ -811,25 +811,26 @@ async function loadDashboardData(user) {
     });
     allReports = records.items;
 
-    if (allReports.length > 0) {
-      const latest = allReports[0];
-      
-      // Hier nutzen wir exakt die Namen aus deinem pb_schema.json
-      animateMetric('clicks-val', latest.clicks || 0);
-      animateMetric('pos-val', parseFloat(latest.position || 0).toFixed(1), false);
-      animateMetric('cpc-val', (latest.current_cpc || 0).toFixed(2) + '€', false); 
-      animateMetric('imps-val', latest.impressions || 0);
+    // In der Funktion loadDashboardData
+if (allReports.length > 0) {
+  const latest = allReports[0];
+  
+  animateMetric('clicks-val', latest.clicks || 0);
+  animateMetric('pos-val', parseFloat(latest.position || 0).toFixed(1), false);
+  animateMetric('cpc-val', (latest.current_cpc || 0).toFixed(2) + '€', false); 
+  animateMetric('imps-val', latest.impressions || 0);
 
-      // Entferne die Lade-Animation (Skelette)
-      ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
-        const el = document.getElementById(id);
-        if(el) {
-            el.classList.remove('skeleton');
-            el.style.height = '';
-        }
-      });
+  const statusSub = document.getElementById('status-sub');
+  if (statusSub && latest.keyword) {
+    statusSub.textContent = `Optimiert für: ${latest.keyword}`;
+  }
 
-      renderChart(allReports.slice().reverse(), currentRange);
+  ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
+    document.getElementById(id).classList.remove('skeleton');
+    document.getElementById(id).style.height = '';
+  });
+
+  renderChart(allReports.slice().reverse(), currentRange);
     } else {
       // Falls keine Daten da sind: Skelette weg und Strich anzeigen
       ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
