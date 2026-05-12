@@ -19,7 +19,7 @@
   <!-- #93 -->
   <!--<link rel="manifest" href="/manifest.json">-->
   <!-- #10 CSP -->
- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' cdnjs.cloudflare.com cdn.jsdelivr.net; style-src 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; connect-src ads.aiwakeel.ai n8n.aiwakeel.ai; img-src 'self' data:;">
+ <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' cdnjs.cloudflare.com cdn.jsdelivr.net; style-src 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; connect-src 'self' ads.aiwakeel.ai n8n.aiwakeel.ai cdnjs.cloudflare.com; img-src 'self' data:;">
   <title>AiWakeel · Elite Dashboard</title>
  
   <!-- #6 Font-Variablen immer setzen, Dateien nur nach Consent -->
@@ -43,10 +43,8 @@
   </script>
  
   <!-- #36 SRI hashes on CDN scripts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js"
-  crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
- <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.2/dist/apexcharts.min.js"
-  crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js" crossorigin="anonymous" defer></script>
+ <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.2/dist/apexcharts.min.js" crossorigin="anonymous" defer></script>
  
   <style>
     :root {
