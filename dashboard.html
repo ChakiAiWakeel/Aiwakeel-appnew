@@ -11,9 +11,9 @@
   <meta name="apple-mobile-web-app-title" content="AiWakeel">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
-  
+
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; connect-src 'self' https://n8n.aiwakeel.ai https://ads.aiwakeel.ai https://api.stripe.com; frame-src https://js.stripe.com; img-src 'self' data:;">
-  
+
   <title>AiWakeel · Elite Dashboard</title>
 
   <script>
@@ -30,6 +30,7 @@
         document.head.appendChild(fl);
       }
     } catch(e){}
+    // Startet unsichtbar gegen Flackern
     document.documentElement.style.opacity = '0';
   })();
   </script>
@@ -76,8 +77,12 @@
     .logout-btn:hover{border-color:var(--error);color:var(--error)}
 
     .main-content{flex:1;max-width:500px;margin:0 auto;padding:40px 16px;position:relative;z-index:1;width:100%}
-    .card{background:var(--surface);border:1px solid var(--border);padding:28px;margin-bottom:20px;position:relative;box-shadow:0 40px 100px rgba(0,0,0,.6);}
+    .greeting h1{font-family:var(--font-serif);font-size:32px;font-weight:300;margin-bottom:4px;text-transform:capitalize}
+    .greeting p{color:var(--text-muted);font-size:13px;font-style:italic;font-family:var(--font-serif);margin-bottom:32px}
+
+    .card{background:var(--surface);border:1px solid var(--border);padding:28px;margin-bottom:20px;position:relative;box-shadow:0 40px 100px rgba(0,0,0,.6);transition:border-color .3s,box-shadow .3s;}
     .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+    .card:hover{border-color:rgba(201,168,76,0.26);box-shadow:0 40px 100px rgba(0,0,0,0.7),0 0 28px rgba(201,168,76,0.06),0 0 0 1px rgba(201,168,76,0.08)}
 
     .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
     .metric-box{background:var(--surface2);padding:22px 10px;border:1px solid var(--border2);text-align:center;position:relative;overflow:hidden;}
@@ -85,7 +90,7 @@
     .metric-label{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px}
 
     .switch{width:48px;height:26px;background:#111;border-radius:20px;position:relative;cursor:pointer;border:1px solid var(--border2);transition:background .4s;}
-    .switch.active{background:var(--gold);border-color:var(--gold)}
+    .switch.active{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 4px rgba(201,168,76,0.12),0 0 16px rgba(201,168,76,0.2)}
     .switch-circle{position:absolute;top:3px;left:3px;width:18px;height:18px;background:white;border-radius:50%;transition:transform .3s;}
     .switch.active .switch-circle{transform:translateX(22px)}
 
@@ -97,11 +102,14 @@
     .budget-progress-bar{height:2px;background:var(--border2);border-radius:2px;overflow:hidden;margin-top:16px}
     .budget-progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width .6s ease;width:0%}
 
+    #chart{opacity:0;transition:opacity .5s ease; min-height: 200px;}
+    #chart.visible{opacity:1}
+
     #toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--gold);color:var(--gold);padding:14px 28px;font-size:11px;z-index:10000;opacity:0;visibility:hidden;transition:all .4s;max-width:320px;text-align:center;border-radius:2px}
     #toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
     #toast.error{border-color:var(--error);color:var(--error)}
 
-    .footer{width:100%;text-align:center;padding:60px 0;border-top:1px solid var(--border2);margin-top:40px;}
+    .footer{width:100%;text-align:center;padding:60px 0;border-top:1px solid var(--border2);margin-top:40px;background:rgba(5,5,5,.5);position:relative;}
     .footer-links{display:flex;justify-content:center;gap:16px;margin-bottom:22px}
     .footer-links a{color:var(--text-dim);font-size:9px;text-transform:uppercase;letter-spacing:1.8px; text-decoration:none; cursor:pointer;}
 
@@ -127,6 +135,17 @@
   <div class="db-intro-spinner"></div>
 </div>
 
+<div id="confirm-dialog" style="position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:20000;display:none;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(10px);">
+  <div style="background:var(--surface);border:1px solid var(--border);padding:32px 28px;max-width:360px;width:100%;position:relative;text-align:center">
+    <div id="confirm-heading" style="font-family:var(--font-serif);font-size:22px;color:var(--text);margin-bottom:10px">Aktion bestätigen?</div>
+    <p id="confirm-text" style="font-size:12px;color:var(--text-muted);line-height:1.7;margin-bottom:24px;font-style:italic">Möchtest du diese Änderung wirklich durchführen?</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button onclick="closeConfirm(false)" style="background:none;border:1px solid var(--border);color:var(--text-muted);padding:12px;font-size:10px;text-transform:uppercase;cursor:pointer;">Abbrechen</button>
+      <button id="confirm-ok-btn" onclick="closeConfirm(true)" style="background:transparent;border:1px solid var(--gold);color:var(--gold);padding:12px;font-size:10px;text-transform:uppercase;cursor:pointer;">Bestätigen</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast" role="status"></div>
 
 <header class="header" id="main-header">
@@ -145,13 +164,21 @@
       <div style="flex:1;">
         <div style="color:var(--error); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:1.5px;">Zahlungsproblem erkannt</div>
         <p style="color:var(--text-muted); font-size:11px; margin-top:4px; line-height:1.5; font-style:italic;">
-          Deine Google Ads Anzeigen wurden gestoppt. Bitte lade dein Guthaben auf, damit der Agent weiter optimieren kann.
+          Deine Google Ads Anzeigen wurden gestoppt. Bitte lade dein Guthaben auf oder aktualisiere deine Zahlungsmethode, damit der Agent weiter optimieren kann.
         </p>
-        <a href="https://ads.google.com/aw/billing/summary" target="_blank" 
+        <a href="https://ads.google.com/aw/billing/summary" target="_blank" rel="noopener" 
            style="display:inline-block; margin-top:14px; padding:8px 16px; background:var(--error); color:white; text-decoration:none; font-size:10px; text-transform:uppercase; letter-spacing:1px; font-weight:600; border-radius:2px;">
            Guthaben aufladen &rarr;
         </a>
       </div>
+    </div>
+  </div>
+  
+  <div id="upgrade-banner" style="display:none;" class="reveal">
+    <div style="background:linear-gradient(135deg,rgba(201,168,76,.1),transparent); border:1px solid var(--border); padding:20px; margin-bottom:20px;">
+      <div style="color:var(--gold); font-family:var(--font-serif); font-size:18px; margin-bottom:5px;">✦ Maison freischalten</div>
+      <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">Erhalte WhatsApp-Steuerung und Echtzeit-Alerts.</p>
+      <button onclick="openStripePortal()" style="background:transparent; border:1px solid var(--gold); color:var(--gold); padding:8px 15px; font-size:9px; text-transform:uppercase;">Jetzt upgraden</button>
     </div>
   </div>
 
@@ -161,9 +188,20 @@
   </div>
 
   <div class="card reveal">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:10px 0;">
       <h2 style="font-family:var(--font-serif);font-size:24px;font-weight:300">Management Agent</h2>
-      <div id="status-text" style="font-size:9px;text-transform:uppercase;padding:4px 12px;border:1px solid var(--gold);color:var(--gold);letter-spacing:2px">Lädt...</div>
+      <div id="status-text" style="font-size:9px;text-transform:uppercase;padding:4px 12px;border:1px solid var(--gold);color:var(--gold);letter-spacing:2px">Aktiv</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:20px;border-top:1px solid var(--border2);">
+      <div>
+        <div style="font-size:14px">Status</div>
+        <small id="status-sub" style="color:var(--text-dim);font-size:10px;text-transform:uppercase">Real-Time Control</small>
+      </div>
+      <div class="switch-wrap">
+        <div id="agent-toggle" class="switch" onclick="requestToggleAgent()" role="switch" aria-checked="false" tabindex="0">
+          <div class="switch-circle"></div>
+        </div>
+      </div>
     </div>
     <div class="metrics">
       <div class="metric-box">
@@ -177,7 +215,22 @@
     </div>
   </div>
 
-  <div class="card reveal reveal-delay-1" style="background:transparent;border:none;box-shadow:none;padding:0">
+  <div class="card reveal reveal-delay-1">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h2 style="font-family:var(--font-serif);font-size:24px;font-weight:300">Budget</h2>
+      <div id="current-budget-display" style="font-family:var(--font-serif);color:var(--gold);font-size:26px">0€</div>
+    </div>
+    <div class="budget-warning" id="budget-warning">⚠ Budget ist 0€ – der Agent ist pausiert.</div>
+    <div class="budget-grid">
+      <button class="budget-btn" onclick="updateBudget(500)">500€</button>
+      <button class="budget-btn" onclick="updateBudget(1000)">1.000€</button>
+      <button class="budget-btn" onclick="updateBudget(2500)">2.500€</button>
+    </div>
+    <div class="budget-progress-bar"><div class="budget-progress-fill" id="budget-progress-fill"></div></div>
+    <button class="logout-btn" style="width:100%;margin-top:20px;padding:12px;" onclick="openStripePortal()">Abo verwalten</button>
+  </div>
+
+  <div class="card reveal reveal-delay-2" style="background:transparent;border:none;box-shadow:none;padding:0">
     <div id="chart-container-box" style="background:var(--surface);border:1px solid var(--border);padding:20px 10px">
       <div id="chart"></div>
     </div>
@@ -197,12 +250,13 @@
 <script>
 const CFG = {
   PB_URL: 'https://ads.aiwakeel.ai',
+  N8N_TOGGLE: 'https://n8n.aiwakeel.ai/webhook/toggle-agent',
+  STRIPE_PORTAL_URL: 'https://billing.stripe.com/p/login/aiwakeel',
   COLLECTION_REPORTS: 'daily_reports',
-  COLLECTION_USERS: 'users',
-  STRIPE_PORTAL_URL: 'https://billing.stripe.com/p/login/aiwakeel'
+  COLLECTION_USERS: 'users'
 };
 
-let pb, chart, _loadLock = false;
+let pb, chart, allReports = [], _loadLock = false;
 
 document.addEventListener('DOMContentLoaded', () => {
   const initInterval = setInterval(() => {
@@ -222,39 +276,56 @@ async function initApp() {
       return;
     }
 
-    // Auth Refresh
-    try { await pb.collection(CFG.COLLECTION_USERS).authRefresh(); } 
-    catch(e) { pb.authStore.clear(); window.location.href = 'login.html'; return; }
+    try {
+      await pb.collection(CFG.COLLECTION_USERS).authRefresh();
+    } catch(e) {
+      pb.authStore.clear();
+      window.location.href = 'login.html';
+      return;
+    }
 
     const user = pb.authStore.model;
+
+    // PRÜFUNG AUF ZAHLUNGSPROBLEM
+    if (user && user.payment_error === true) {
+        const banner = document.getElementById('payment-warning-banner');
+        if (banner) banner.style.display = 'block';
+        const statusText = document.getElementById('status-text');
+        if (statusText) {
+            statusText.textContent = "Zahlung fehlt";
+            statusText.style.color = "var(--error)";
+            statusText.style.borderColor = "var(--error)";
+        }
+    }
 
     // UI Begrüßung
     const hour = new Date().getHours();
     const greet = hour < 12 ? 'Guten Morgen' : hour < 18 ? 'Guten Tag' : 'Guten Abend';
     document.getElementById('user-name').textContent = `${greet}, ${user.name || user.email.split('@')[0]}`;
 
-    // Zahlungsfehler-Banner
-    if (user.payment_error === true) {
-      document.getElementById('payment-warning-banner').style.display = 'block';
-      updateUI(false, "Zahlung fehlt");
-    } else {
-      updateUI(user.agent_status === 'active');
+    // Plan & Upgrade
+    const plan = user.plan || 'atelier';
+    if (plan !== 'premium' && document.getElementById('upgrade-banner')) {
+        document.getElementById('upgrade-banner').style.display = 'block';
     }
 
-    // Daten laden
+    updateUI(user.agent_status === 'active' && user.payment_error !== true);
+    document.getElementById('current-budget-display').textContent = `${user.budget || 0}€`;
+
     await loadDashboardData(user);
     initDashParticles();
     initScrollReveal();
 
   } catch (err) {
-    console.error("Dashboard Init Error:", err);
+    console.error("Init Error:", err);
   } finally {
-    // Sicherstellen, dass die Seite sichtbar wird
+    // NOTBREMSE: Seite sichtbar machen
     document.documentElement.style.opacity = '1';
     document.body.classList.add('ready');
-    document.getElementById('loading-screen').classList.add('fade-out');
+    const ls = document.getElementById('loading-screen');
+    if (ls) ls.classList.add('fade-out');
     const intro = document.getElementById('db-intro');
-    if (intro) setTimeout(() => intro.classList.add('fade-out'), 1000);
+    if (intro) intro.classList.add('fade-out');
   }
 }
 
@@ -265,15 +336,20 @@ async function loadDashboardData(user) {
     const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 10, {
       filter: `user = "${user.id}"`, sort: '-created'
     });
+    allReports = records.items;
 
-    if (records.items && records.items.length > 0) {
-      const latest = records.items[0];
+    if (allReports && allReports.length > 0) {
+      const latest = allReports[0];
       animateMetric('clicks-val', latest.clicks || 0);
       animateMetric('pos-val', (latest.position || 0).toFixed(1), false);
-      ['clicks-val','pos-val'].forEach(id => document.getElementById(id).classList.remove('skeleton'));
-      renderChart(records.items.slice().reverse());
+      ['clicks-val','pos-val'].forEach(id => {
+          const el = document.getElementById(id);
+          if(el) el.classList.remove('skeleton');
+      });
+      renderChart(allReports.slice().reverse());
     } else {
-      document.getElementById('chart').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);font-size:10px;">WARTE AUF DATEN-SYNC...</div>';
+      const chartEl = document.getElementById('chart');
+      if (chartEl) chartEl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);font-size:10px;">WARTE AUF DATEN...</div>';
       ['clicks-val','pos-val'].forEach(id => {
           const el = document.getElementById(id);
           if(el) { el.classList.remove('skeleton'); el.textContent = '—'; }
@@ -316,13 +392,27 @@ function animateMetric(id, target, isInt = true) {
   requestAnimationFrame(step);
 }
 
-function updateUI(isActive, customText) {
+function updateUI(isActive) {
+  const t = document.getElementById('agent-toggle');
   const s = document.getElementById('status-text');
+  if(t) t.classList.toggle('active', isActive);
   if(s) {
-    s.textContent = customText || (isActive ? 'Aktiv' : 'Pausiert');
+    s.textContent = isActive ? 'Aktiv' : 'Pausiert';
     s.style.color = isActive ? 'var(--gold)' : 'var(--error)';
     s.style.borderColor = isActive ? 'var(--gold)' : 'var(--error)';
   }
+}
+
+async function updateBudget(amt) {
+  try {
+    await pb.collection(CFG.COLLECTION_USERS).update(pb.authStore.model.id, { budget: amt });
+    document.getElementById('current-budget-display').textContent = amt + '€';
+    showToast('Budget aktualisiert', false);
+  } catch(e) { showToast('Fehler', true); }
+}
+
+function openStripePortal() {
+  window.open(CFG.STRIPE_PORTAL_URL + '?prefilled_email=' + encodeURIComponent(pb.authStore.model.email), '_blank');
 }
 
 function showToast(msg, isError = false) {
@@ -359,9 +449,10 @@ function initScrollReveal() {
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 }
 
-function showLegal(type) { showToast("Rechtstexte im Hauptmenü verfügbar."); }
+function showLegal(type) { showToast("Wird geladen..."); }
 function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
-function requestToggleAgent() { showToast("Funktion im Wartungsmodus."); }
+function requestToggleAgent() { showToast("Anfrage gesendet..."); }
+function closeConfirm() { document.getElementById('confirm-dialog').style.display='none'; }
 </script>
 </body>
 </html>
