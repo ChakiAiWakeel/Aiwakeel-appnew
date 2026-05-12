@@ -183,6 +183,16 @@
     /* MAIN */
     .main-content{flex:1;max-width:500px;margin:0 auto;padding:40px 16px;position:relative;z-index:1;width:100%}
 
+    <div id="payment-warning-banner" style="display:none; background:rgba(255,80,80,0.15); border:1px solid var(--error); padding:16px; margin-bottom:20px; border-radius:2px; animation: fadeInUp .4s ease;">
+  <div style="display:flex; align-items:center; gap:12px;">
+    <span style="font-size:20px;">⚠️</span>
+    <div>
+      <div style="color:var(--error); font-weight:600; font-size:13px; text-transform:uppercase; letter-spacing:1px;">Zahlungsproblem erkannt</div>
+      <p style="color:var(--text-muted); font-size:11px; margin-top:2px; font-style:italic;">Deine Anzeigen sind offline. Bitte prüfe das Guthaben in deinem Google Ads Konto.</p>
+    </div>
+  </div>
+</div>
+
     /* GREETING */
     .greeting h1{font-family:var(--font-serif);font-size:32px;font-weight:300;margin-bottom:4px;text-transform:capitalize}
     .greeting p{color:var(--text-muted);font-size:13px;font-style:italic;font-family:var(--font-serif);margin-bottom:32px}
@@ -479,7 +489,23 @@
 </header>
 
 <div class="main-content" id="main-content">
-
+  
+<div id="payment-warning-banner" style="display:none; background:rgba(255,80,80,0.12); border:1px solid rgba(255,80,80,0.3); padding:20px; margin-bottom:24px; border-radius:2px; animation: fadeInUp .4s ease;">
+  <div style="display:flex; align-items:flex-start; gap:16px;">
+    <span style="font-size:22px; margin-top:2px;">⚠️</span>
+    <div style="flex:1;">
+      <div style="color:var(--error); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:1.5px;">Zahlungsproblem erkannt</div>
+      <p style="color:var(--text-muted); font-size:11px; margin-top:4px; line-height:1.5; font-style:italic;">
+        Deine Google Ads Anzeigen wurden gestoppt. Bitte lade dein Guthaben auf oder aktualisiere deine Zahlungsmethode, damit der Agent weiter optimieren kann.
+      </p>
+      <a href="https://ads.google.com/aw/billing/summary" target="_blank" rel="noopener" 
+         style="display:inline-block; margin-top:14px; padding:8px 16px; background:var(--error); color:white; text-decoration:none; font-size:10px; text-transform:uppercase; letter-spacing:1px; font-weight:600; border-radius:2px; transition: opacity 0.2s;">
+         Guthaben aufladen &rarr;
+      </a>
+    </div>
+  </div>
+</div>
+  
   <!-- #99 UPGRADE BANNER (shown for Atelier users) -->
   <div id="upgrade-banner" role="complementary" aria-label="Upgrade-Angebot" class="reveal">
     <div class="upgrade-title">&#10022; Maison freischalten</div>
@@ -707,7 +733,48 @@ async function initApp() {
   }
 
   const user = pb.authStore.model;
+  
+async function initApp() {
+  pb = new PocketBase(CFG.PB_URL);
+  // ... (bestehender Auth Check) ...
 
+  const user = pb.authStore.model;
+
+  // NEU: Prüfung auf Zahlungsproblem
+  if (user && user.payment_error === true) {
+      document.getElementById('payment-warning-banner').style.display = 'block';
+      
+      // Agenten-Status im UI visuell auf "Fehler" setzen
+      const statusText = document.getElementById('status-text');
+      if (statusText) {
+          statusText.textContent = "Zahlung fehlt";
+          statusText.style.color = "var(--error)";
+          statusText.style.borderColor = "var(--error)";
+          statusText.classList.remove('active-pulse'); // Stoppt das grüne Pulsieren
+      }
+      
+      const statusSub = document.getElementById('status-sub');
+      if (statusSub) {
+          statusSub.textContent = "Anzeigen pausiert (Guthaben)";
+          statusSub.style.color = "var(--error)";
+      }
+  }
+
+  // ... (Rest der Funktion initApp) ...
+}
+  
+// Prüfung auf Zahlungsproblem (Guthaben)
+if (user.payment_error === true) {
+    document.getElementById('payment-warning-banner').style.display = 'block';
+    
+    // Optional: Den Agenten-Status im UI visuell auf "Fehler" setzen
+    const statusText = document.getElementById('status-text');
+    if (statusText) {
+        statusText.textContent = "Zahlung fehlt";
+        statusText.style.color = "var(--error)";
+        statusText.style.borderColor = "var(--error)";
+    }
+}
   // Show body
   document.documentElement.style.opacity = '';
   document.body.classList.add('ready');
