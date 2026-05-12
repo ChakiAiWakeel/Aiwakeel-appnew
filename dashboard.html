@@ -19,8 +19,7 @@
   <!-- #93 -->
  <!-- <link rel="manifest" href="/manifest.json">-->
   <!-- #10 CSP -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' cdnjs.cloudflare.com cdn.jsdelivr.net; style-src 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; connect-src 'self' ads.aiwakeel.ai n8n.aiwakeel.ai cdnjs.cloudflare.com; img-src 'self' data:;">  <title>AiWakeel · Elite Dashboard</title>
-
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' cdnjs.cloudflare.com cdn.jsdelivr.net; style-src 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; connect-src 'self' https://ads.aiwakeel.ai https://n8n.aiwakeel.ai; img-src 'self' data:;">
   <!-- #6 Font-Variablen immer setzen, Dateien nur nach Consent -->
   <script>
   (function(){
@@ -805,8 +804,9 @@ async function loadDashboardData(user) {
   if (_loadLock) return;
   _loadLock = true;
   try {
+    // Wir nutzen hier die exakte Syntax für PocketBase Relationen
     const records = await pb.collection('daily_reports').getList(1, 30, {
-      filter: `user = "${user.id}"`, // Filtert nach der User-Relation
+      filter: `user.id = "${user.id}"`, // Geändert von user = zu user.id =
       sort: '-created'
     });
     allReports = records.items;
