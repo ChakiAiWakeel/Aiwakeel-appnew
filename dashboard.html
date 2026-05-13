@@ -17,9 +17,13 @@
   <!-- #94 -->
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <!-- #93 -->
- <!-- <link rel="manifest" href="/manifest.json">-->
+  <link rel="manifest" href="/manifest.json">
   <!-- #10 CSP -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; connect-src 'self' https://n8n.aiwakeel.ai https://ads.aiwakeel.ai https://api.stripe.com; frame-src https://js.stripe.com; img-src 'self' data:;">  <script>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' cdnjs.cloudflare.com cdn.jsdelivr.net; style-src 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; connect-src ads.aiwakeel.ai n8n.aiwakeel.ai; img-src 'self' data:; frame-ancestors 'none';">
+  <title>AiWakeel · Elite Dashboard</title>
+
+  <!-- #6 Font-Variablen immer setzen, Dateien nur nach Consent -->
+  <script>
   (function(){
     document.documentElement.style.setProperty('--font-serif',"'Cormorant Garamond',Georgia,'Times New Roman',serif");
     document.documentElement.style.setProperty('--font-sans',"'DM Sans',system-ui,-apple-system,sans-serif");
@@ -39,8 +43,12 @@
   </script>
 
   <!-- #36 SRI hashes on CDN scripts -->
- <script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js" crossorigin="anonymous" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.2/dist/apexcharts.min.js" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js"
+    integrity="sha512-1B3bTKOuMpRaMKzHUAWlNKiQMNGckV8V6TVHS7XZE1aM3VlZVL0wIvLEH1QL+iNGqjp3bKBMiNdLlDAGBVug=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.2/dist/apexcharts.min.js"
+    integrity="sha256-+3uMIfmZVVXoTPHlj2S3RHVrkDC/VNcrFTDGlH2DQOI="
+    crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
 
   <style>
     :root {
@@ -802,25 +810,27 @@ async function loadDashboardData(user) {
   if (_loadLock) return;
   _loadLock = true;
   try {
-    // ✅ FIX: user.id statt user für Relation-Filter
-    const records = await pb.collection('daily_reports').getList(1, 30, {
-  sort: '-created'
+    const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 30, {
+      filter: `user = "${user.id}"`,
+      sort: '-created'
     });
     allReports = records.items;
 
     if (allReports.length > 0) {
       const latest = allReports[0];
-      
+      // #21 Animated metrics
       animateMetric('clicks-val', latest.clicks || 0);
       animateMetric('pos-val', parseFloat(latest.position || 0).toFixed(1), false);
-      animateMetric('cpc-val', (latest.current_cpc || 0).toFixed(2) + '€', false); 
+      animateMetric('cpc-val', (latest.current_cpc || 0).toFixed(2) + '€', false);
       animateMetric('imps-val', latest.impressions || 0);
 
+      // Show optimized keyword in status line
       const statusSub = document.getElementById('status-sub');
-      if (statusSub && latest.keyword) {
+      if (statusSub && latest.keyword && latest.keyword !== 'N/A') {
         statusSub.textContent = `Optimiert für: ${latest.keyword}`;
       }
 
+      // Remove skeletons
       ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
         document.getElementById(id).classList.remove('skeleton');
         document.getElementById(id).style.height = '';
@@ -828,19 +838,23 @@ async function loadDashboardData(user) {
 
       renderChart(allReports.slice().reverse(), currentRange);
     } else {
+      document.getElementById('chart').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);font-size:10px;letter-spacing:2px">WARTE AUF DATEN-SYNC...</div>';
+      document.querySelector('.chart-controls').style.display = 'none';
       ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
         const el = document.getElementById(id);
-        if(el) {
-            el.classList.remove('skeleton');
-            el.textContent = '—';
-            el.style.height = '';
-        }
+        el.classList.remove('skeleton'); el.textContent = '—'; el.style.height = '';
       });
-      document.getElementById('chart').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);font-size:10px;">WARTE AUF ERSTEN KI-REPORT...</div>';
     }
+
+    // #70 Budget progress (mock: use random spend for demo)
+    updateBudgetProgress(user);
   } catch(e) {
-    console.error("Dashboard Load Error:", e);
-    showToast('Daten konnten nicht geladen werden', true);
+    // #77 Proper error
+    showToast('Fehler beim Laden der Daten', true);
+    ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
+      const el = document.getElementById(id);
+      el.classList.remove('skeleton'); el.textContent = 'Fehler'; el.style.height = '';
+    });
   } finally { _loadLock = false; }
 }
 
@@ -952,9 +966,8 @@ function setRange(days, btn) {
 // =========================================================
 async function loadHistory(user) {
   try {
-    // ✅ FIX: user.id statt user für Relation-Filter
-const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 10, {
-  sort: '-created'
+    const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 10, {
+      filter: `user = "${user.id}"`, sort: '-created'
     });
     const list = document.getElementById('history-list');
     if (!records.items.length) {
@@ -969,7 +982,7 @@ const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 10, {
         </div>
         <div style="text-align:right">
           <div class="history-amount">${(r.clicks||0).toLocaleString('de-DE')} Klicks</div>
-          <div class="history-clicks">Ø ${(r.position||0).toFixed(1)} Pos · ${(r.cpc||0).toFixed(2)}€ CPC</div>
+          <div class="history-clicks">Ø ${(r.position||0).toFixed(1)} Pos · ${(r.current_cpc||0).toFixed(2)}€ CPC · CTR: ${((r.ctr||0)*100).toFixed(1)}%</div>
         </div>
       </div>`).join('');
   } catch(e) {
