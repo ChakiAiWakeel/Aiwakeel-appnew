@@ -19,7 +19,7 @@
   <!-- #93 -->
   <link rel="manifest" href="/manifest.json">
   <!-- #10 CSP -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' cdnjs.cloudflare.com cdn.jsdelivr.net; style-src 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; connect-src ads.aiwakeel.ai n8n.aiwakeel.ai; img-src 'self' data:; frame-ancestors 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' cdnjs.cloudflare.com cdn.jsdelivr.net; style-src 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; connect-src 'self' https://ads.aiwakeel.ai https://n8n.aiwakeel.ai https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: blob:;">
   <title>AiWakeel · Elite Dashboard</title>
 
   <!-- #6 Font-Variablen immer setzen, Dateien nur nach Consent -->
@@ -808,7 +808,8 @@ async function loadDashboardData(user) {
   try {
     const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 30, {
       filter: `user = "${user.id}"`,
-      sort: '-created'
+      sort: '-created',
+      requestKey: null
     });
     allReports = records.items;
 
@@ -963,7 +964,7 @@ function setRange(days, btn) {
 async function loadHistory(user) {
   try {
     const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 10, {
-      filter: `user = "${user.id}"`, sort: '-created'
+      filter: `user = "${user.id}"`, sort: '-created', requestKey: null
     });
     const list = document.getElementById('history-list');
     if (!records.items.length) {
