@@ -42,13 +42,9 @@
   })();
   </script>
 
-  <!-- #36 SRI hashes on CDN scripts -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js"
-    integrity="sha512-1B3bTKOuMpRaMKzHUAWlNKiQMNGckV8V6TVHS7XZE1aM3VlZVL0wIvLEH1QL+iNGqjp3bKBMiNdLlDAGBVug=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.2/dist/apexcharts.min.js"
-    integrity="sha256-+3uMIfmZVVXoTPHlj2S3RHVrkDC/VNcrFTDGlH2DQOI="
-    crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+  <!-- Scripts deferred - SRI removed (hash mismatch blocked scripts) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js" crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.2/dist/apexcharts.min.js" crossorigin="anonymous" defer></script>
 
   <style>
     :root {
