@@ -816,7 +816,7 @@ async function loadDashboardData(user) {
     pb.beforeSend = null;
 
     const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 30, {
-  filter: `user = "${user.id}"`,
+  filter: `user.id = "${user.id}"`
   sort: '-created'
 });
     allReports = records.items;
