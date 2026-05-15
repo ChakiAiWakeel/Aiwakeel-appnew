@@ -809,15 +809,11 @@ async function loadDashboardData(user) {
   if (_loadLock) return;
   _loadLock = true;
   try {
-    // Try with explicit auth header to ensure PocketBase recognizes the session
-    pb.beforeSend = function(url, options) {
-      options.headers = Object.assign({}, options.headers, {
-        'Authorization': pb.authStore.token ? `Bearer ${pb.authStore.token}` : ''
-      });
-      return { url, options };
-    };
+    // Remove beforeSend if previously set
+    pb.beforeSend = null;
 
     const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 30, {
+      filter: `user.id = "${user.id}"`,
       sort: '-created',
       requestKey: 'dashboard-main'
     });
@@ -977,6 +973,7 @@ function setRange(days, btn) {
 async function loadHistory(user) {
   try {
     const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 10, {
+      filter: `user.id = "${user.id}"`,
       sort: '-created',
       requestKey: 'dashboard-history'
     });
