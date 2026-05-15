@@ -813,7 +813,6 @@ async function loadDashboardData(user) {
     pb.beforeSend = null;
 
     const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 30, {
-      filter: `user = "${user.id}"`,
       sort: '-created',
       requestKey: 'dashboard-main'
     });
@@ -973,7 +972,6 @@ function setRange(days, btn) {
 async function loadHistory(user) {
   try {
     const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 10, {
-      filter: `user = "${user.id}"`,
       sort: '-created',
       requestKey: 'dashboard-history'
     });
