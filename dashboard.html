@@ -45,8 +45,8 @@
   })();
   </script>
 
-  <!-- v2.1 - no SRI, requestKey fix -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.36.9/pocketbase.umd.js" crossorigin="anonymous" defer></script>
+  <!-- PocketBase SDK - latest version for server 0.36.x -->
+  <script src="https://cdn.jsdelivr.net/npm/pocketbase/dist/pocketbase.umd.js" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.2/dist/apexcharts.min.js" crossorigin="anonymous" defer></script>
 
   <style>
@@ -688,9 +688,11 @@ document.addEventListener('DOMContentLoaded', () => {
 async function initApp() {
   pb = new PocketBase(CFG.PB_URL);
 
+  // PocketBase 0.22+ uses authStore.record, older uses authStore.model
+  const authRecord = pb.authStore.record || pb.authStore.model;
+
   // #1 #11 Auth check with null-guard
-  if (!pb.authStore.model || !pb.authStore.isValid) {
-    // #3 fade out before redirect
+  if (!authRecord || !pb.authStore.isValid) {
     document.documentElement.style.opacity = '0';
     setTimeout(() => { window.location.href = 'login.html'; }, 300);
     return;
@@ -705,7 +707,8 @@ async function initApp() {
     return;
   }
 
-  const user = pb.authStore.model;
+  // PocketBase 0.22+ uses authStore.record, older uses authStore.model
+  const user = pb.authStore.record || pb.authStore.model;
 
   // Show body
   document.documentElement.style.opacity = '';
@@ -1059,7 +1062,7 @@ async function closeConfirm(confirmed) {
 }
 
 async function executeToggle() {
-  const user = pb.authStore.model;
+  const user = pb.authStore.record || pb.authStore.model;
   const toggleBtn = document.getElementById('agent-toggle');
   if (toggleBtn.classList.contains('processing')) return;
   const isCurrentlyActive = toggleBtn.classList.contains('active');
@@ -1131,7 +1134,7 @@ async function updateBudget(amt) {
   _budgetLock = true;
   setTimeout(() => _budgetLock = false, 2000);
   try {
-    await pb.collection(CFG.COLLECTION_USERS).update(pb.authStore.model.id, { budget: amt });
+    await pb.collection(CFG.COLLECTION_USERS).update((pb.authStore.record || pb.authStore.model).id, { budget: amt });
     // #8 Animate budget display instead of instant swap
     const currentVal = parseInt(document.getElementById('current-budget-display').textContent) || 0;
     const dur = 500, start = performance.now();
@@ -1169,7 +1172,7 @@ async function saveCustomBudget() {
 // #40 STRIPE PORTAL
 // =========================================================
 function openStripePortal() {
-  window.open(CFG.STRIPE_PORTAL_URL + '?prefilled_email=' + encodeURIComponent(pb.authStore.model?.email || ''), '_blank', 'noopener');
+  window.open(CFG.STRIPE_PORTAL_URL + '?prefilled_email=' + encodeURIComponent((pb.authStore.record || pb.authStore.model)?.email || ''), '_blank', 'noopener');
 }
 
 // =========================================================
