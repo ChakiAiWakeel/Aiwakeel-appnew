@@ -45,7 +45,7 @@
   })();
   </script>
 
-  <!-- Scripts deferred - SRI removed (hash mismatch blocked scripts) -->
+  <!-- v2.1 - no SRI, requestKey fix -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.2/dist/apexcharts.min.js" crossorigin="anonymous" defer></script>
 
@@ -810,7 +810,8 @@ async function loadDashboardData(user) {
   _loadLock = true;
   try {
     const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 30, {
-      sort: '-created'
+      sort: '-created',
+      requestKey: 'dashboard-main'
     });
     allReports = records.items;
 
@@ -965,7 +966,8 @@ function setRange(days, btn) {
 async function loadHistory(user) {
   try {
     const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 10, {
-      sort: '-created'
+      sort: '-created',
+      requestKey: 'dashboard-history'
     });
     const list = document.getElementById('history-list');
     if (!records.items.length) {
