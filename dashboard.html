@@ -1,4 +1,4 @@
-<!-- AiWakeel Dashboard v3.0 | CanTurSoft © 2026 -->
+<!-- AiWakeel Dashboard v2.0 | CanTurSoft © 2026 -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -19,10 +19,7 @@
   <!-- #93 -->
   <link rel="manifest" href="/manifest.json">
   <!-- #10 CSP -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' cdnjs.cloudflare.com cdn.jsdelivr.net; style-src 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; connect-src 'self' https://ads.aiwakeel.ai https://n8n.aiwakeel.ai https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: blob:;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' cdnjs.cloudflare.com cdn.jsdelivr.net; style-src 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; connect-src ads.aiwakeel.ai n8n.aiwakeel.ai; img-src 'self' data:; frame-ancestors 'none';">
   <title>AiWakeel · Elite Dashboard</title>
 
   <!-- #6 Font-Variablen immer setzen, Dateien nur nach Consent -->
@@ -45,9 +42,9 @@
   })();
   </script>
 
-  <!-- PocketBase SDK - latest version for server 0.36.x -->
-  <script src="https://cdn.jsdelivr.net/npm/pocketbase/dist/pocketbase.umd.js" crossorigin="anonymous" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.2/dist/apexcharts.min.js" crossorigin="anonymous" defer></script>
+  <!-- #4 #5 Scripts loaded after DOM – deferred -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
 
   <style>
     :root {
@@ -59,66 +56,6 @@
       --text:#F0EDE8; --text-muted:rgba(240,237,232,0.42); --text-dim:rgba(240,237,232,0.22);
       --error:rgba(255,80,80,0.8); --success:#4CAF50;
     }
-
-    /* #1 CANVAS PARTICLES */
-    #db-particle-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.45}
-
-    /* #2 CINEMATIC INTRO */
-    #db-intro{position:fixed;inset:0;background:var(--obsidian);z-index:999999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;transition:opacity .7s ease,transform .7s ease}
-    #db-intro.fade-out{opacity:0;transform:scale(1.04);pointer-events:none}
-    .db-intro-logo{font-family:var(--font-serif);font-size:32px;font-weight:300;letter-spacing:.2em;color:var(--gold);opacity:0;animation:fadeUp .6s ease .15s forwards}
-    .db-intro-line{width:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:growLine .7s ease .4s forwards}
-    .db-intro-sub{font-size:9px;letter-spacing:.35em;color:var(--text-dim);text-transform:uppercase;opacity:0;animation:fadeUp .4s ease .8s forwards}
-    .db-intro-spinner{width:22px;height:22px;border:1px solid rgba(201,168,76,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .9s linear infinite;margin-top:6px;opacity:0;animation:spinFadeIn .3s ease .7s forwards,spin .9s .7s linear infinite}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes growLine{from{width:0}to{width:50px}}
-    @keyframes spinFadeIn{to{opacity:1}}
-
-    /* #3 SCROLL REVEAL */
-    .reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
-    .reveal.revealed{opacity:1;transform:translateY(0)}
-    .reveal-delay-1{transition-delay:.08s}.reveal-delay-2{transition-delay:.16s}.reveal-delay-3{transition-delay:.24s}
-
-    /* #5 ANIMATED BACKGROUND GRADIENT */
-    @keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-    body::before{background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,168,76,0.07) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(201,168,76,0.03) 0%,transparent 50%);background-size:200% 200%;animation:gradientShift 12s ease infinite}
-
-    /* #6 CHART FADE-IN */
-    #chart-container-box{animation:none}
-    #chart-container-box.chart-loaded{animation:chartFadeIn .6s ease forwards}
-    @keyframes chartFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
-    /* #8 BUDGET DISPLAY TRANSITION */
-    #current-budget-display{transition:all .4s cubic-bezier(0.22,1,0.36,1)}
-
-    /* #10 TOGGLE ACTIVE GLOW */
-    .switch.active{box-shadow:0 0 0 4px rgba(201,168,76,.12),0 0 16px rgba(201,168,76,.2)}
-
-    /* #11 STATUS BADGE TRANSITION */
-    #status-text{transition:color .3s ease,border-color .3s ease,background .3s ease}
-
-    /* #15 FOOTER LINKS HOVER */
-    .footer-links a{transition:color .3s}
-    .footer-links a:hover{color:var(--gold)}
-
-    /* #63 ARIA TOAST role already set, add visual */
-    #toast{border-radius:2px}
-
-    /* #3 SCROLL REVEAL on cards */
-    .card{will-change:transform}
-
-    /* #9 will-change on switch */
-    .switch,.switch-circle{will-change:transform,background}
-
-    /* #61 ACCESSIBLE SWITCH */
-    #agent-toggle:focus-visible{outline:1px solid var(--gold);outline-offset:4px;border-radius:20px}
-
-    /* #7 METRIC TOOLTIP already done via .metric-tip – ensure text wraps */
-    .metric-tip::after{max-width:160px;white-space:normal;text-align:center;line-height:1.4}
-
-    /* CHART FADE */
-    #chart{opacity:0;transition:opacity .5s ease}
-    #chart.visible{opacity:1}
 
     /* #15 GOLD SCROLLBAR */
     ::-webkit-scrollbar{width:4px;height:4px}
@@ -430,16 +367,6 @@
   <div class="loading-spinner"></div>
 </div>
 
-<canvas id="db-particle-canvas"></canvas>
-
-<!-- #2 CINEMATIC INTRO -->
-<div id="db-intro">
-  <div class="db-intro-logo">AiWakeel</div>
-  <div class="db-intro-line"></div>
-  <div class="db-intro-sub">Elite Dashboard</div>
-  <div class="db-intro-spinner"></div>
-</div>
-
 <!-- #56 SCROLL PROGRESS -->
 <div id="scroll-progress"></div>
 
@@ -480,7 +407,7 @@
 <div class="main-content" id="main-content">
 
   <!-- #99 UPGRADE BANNER (shown for Atelier users) -->
-  <div id="upgrade-banner" role="complementary" aria-label="Upgrade-Angebot" class="reveal">
+  <div id="upgrade-banner" role="complementary" aria-label="Upgrade-Angebot">
     <div class="upgrade-title">&#10022; Maison freischalten</div>
     <p class="upgrade-text">WhatsApp-Direktsteuerung, Echtzeit-Alerts und tägliche Berichte direkt auf dein Handy. Upgrade auf Maison für nur 30€ mehr pro Monat.</p>
     <button class="upgrade-btn" onclick="openStripePortal()">Jetzt upgraden &rarr;</button>
@@ -688,11 +615,9 @@ document.addEventListener('DOMContentLoaded', () => {
 async function initApp() {
   pb = new PocketBase(CFG.PB_URL);
 
-  // PocketBase 0.22+ uses authStore.record, older uses authStore.model
-  const authRecord = pb.authStore.record || pb.authStore.model;
-
   // #1 #11 Auth check with null-guard
-  if (!authRecord || !pb.authStore.isValid) {
+  if (!pb.authStore.model || !pb.authStore.isValid) {
+    // #3 fade out before redirect
     document.documentElement.style.opacity = '0';
     setTimeout(() => { window.location.href = 'login.html'; }, 300);
     return;
@@ -707,8 +632,7 @@ async function initApp() {
     return;
   }
 
-  // PocketBase 0.22+ uses authStore.record, older uses authStore.model
-  const user = pb.authStore.record || pb.authStore.model;
+  const user = pb.authStore.model;
 
   // Show body
   document.documentElement.style.opacity = '';
@@ -764,22 +688,6 @@ async function initApp() {
   initAutoRefresh(user);
   initInactivityLogout();
   initKeyboard();
-  initDashParticles();   // #1
-  initDashIntro();       // #2
-  initScrollReveal();    // #3
-  initChartReveal();     // #6
-
-  // Add reveal classes to all cards dynamically
-  document.querySelectorAll('.card,.card-wrap').forEach((el, i) => {
-    if (!el.classList.contains('reveal')) {
-      el.classList.add('reveal');
-      if (i % 3 === 1) el.classList.add('reveal-delay-1');
-      if (i % 3 === 2) el.classList.add('reveal-delay-2');
-    }
-  });
-  if (document.getElementById('upgrade-banner')) {
-    document.getElementById('upgrade-banner').classList.add('reveal');
-  }
 
   // #75 PocketBase Realtime
   pb.collection(CFG.COLLECTION_REPORTS).subscribe('*', (e) => {
@@ -812,13 +720,10 @@ async function loadDashboardData(user) {
   if (_loadLock) return;
   _loadLock = true;
   try {
-    // Remove beforeSend if previously set
-    pb.beforeSend = null;
-
-    const records = await pb.collection('daily_reports').getList(1, 30, {
-  filter: `user.id = "${user.id}"`,
-  sort: '-created'
-});
+    const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 30, {
+      filter: `user = "${user.id}"`,
+      sort: '-created'
+    });
     allReports = records.items;
 
     if (allReports.length > 0) {
@@ -826,14 +731,8 @@ async function loadDashboardData(user) {
       // #21 Animated metrics
       animateMetric('clicks-val', latest.clicks || 0);
       animateMetric('pos-val', parseFloat(latest.position || 0).toFixed(1), false);
-      animateMetric('cpc-val', (latest.current_cpc || 0).toFixed(2) + '€', false);
+      animateMetric('cpc-val', (latest.cpc || 0).toFixed(2) + '€', false);
       animateMetric('imps-val', latest.impressions || 0);
-
-      // Show optimized keyword in status line
-      const statusSub = document.getElementById('status-sub');
-      if (statusSub && latest.keyword && latest.keyword !== 'N/A') {
-        statusSub.textContent = `Optimiert für: ${latest.keyword}`;
-      }
 
       // Remove skeletons
       ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
@@ -854,11 +753,8 @@ async function loadDashboardData(user) {
     // #70 Budget progress (mock: use random spend for demo)
     updateBudgetProgress(user);
   } catch(e) {
-    // Log full PocketBase error for debugging
-    const errMsg = e?.data?.message || e?.message || JSON.stringify(e);
-    const errCode = e?.status || e?.code || '?';
-    console.error('PocketBase Error:', errCode, errMsg, e);
-    showToast(`Fehler ${errCode}: ${errMsg}`, true);
+    // #77 Proper error
+    showToast('Fehler beim Laden der Daten', true);
     ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
       const el = document.getElementById(id);
       el.classList.remove('skeleton'); el.textContent = 'Fehler'; el.style.height = '';
@@ -943,16 +839,11 @@ function renderChart(data, days = 7) {
   };
 
   if (chart) { chart.destroy(); chart = null; }
+  // #85 Race condition fix
   const el = document.querySelector('#chart');
   if (!el) return;
   chart = new ApexCharts(el, options);
-  chart.render().then(() => {
-    setTimeout(() => {
-      el.classList.add('visible');
-      const box = document.getElementById('chart-container-box');
-      if (box) { box.style.opacity = '1'; box.classList.add('chart-loaded'); }
-    }, 200);
-  });
+  chart.render();
 }
 
 function toggleSeries(name) {
@@ -974,11 +865,9 @@ function setRange(days, btn) {
 // =========================================================
 async function loadHistory(user) {
   try {
-// loadHistory  
-const records = await pb.collection('daily_reports').getList(1, 30, {
-  filter: `user.id = "${user.id}"`,
-  sort: '-created'
-});
+    const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 10, {
+      filter: `user = "${user.id}"`, sort: '-created'
+    });
     const list = document.getElementById('history-list');
     if (!records.items.length) {
       list.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-dim);font-size:11px;font-style:italic;font-family:var(--font-serif)">Noch keine Kampagnen-Daten verfügbar.</div>';
@@ -992,7 +881,7 @@ const records = await pb.collection('daily_reports').getList(1, 30, {
         </div>
         <div style="text-align:right">
           <div class="history-amount">${(r.clicks||0).toLocaleString('de-DE')} Klicks</div>
-          <div class="history-clicks">Ø ${(r.position||0).toFixed(1)} Pos · ${(r.current_cpc||0).toFixed(2)}€ CPC · CTR: ${((r.ctr||0)*100).toFixed(1)}%</div>
+          <div class="history-clicks">Ø ${(r.position||0).toFixed(1)} Pos · ${(r.cpc||0).toFixed(2)}€ CPC</div>
         </div>
       </div>`).join('');
   } catch(e) {
@@ -1063,7 +952,7 @@ async function closeConfirm(confirmed) {
 }
 
 async function executeToggle() {
-  const user = pb.authStore.record || pb.authStore.model;
+  const user = pb.authStore.model;
   const toggleBtn = document.getElementById('agent-toggle');
   if (toggleBtn.classList.contains('processing')) return;
   const isCurrentlyActive = toggleBtn.classList.contains('active');
@@ -1135,17 +1024,9 @@ async function updateBudget(amt) {
   _budgetLock = true;
   setTimeout(() => _budgetLock = false, 2000);
   try {
-    await pb.collection(CFG.COLLECTION_USERS).update((pb.authStore.record || pb.authStore.model).id, { budget: amt });
-    // #8 Animate budget display instead of instant swap
-    const currentVal = parseInt(document.getElementById('current-budget-display').textContent) || 0;
-    const dur = 500, start = performance.now();
-    const animBudget = ts => {
-      const p = Math.min((ts - start) / dur, 1), ease = 1 - Math.pow(1-p, 3);
-      document.getElementById('current-budget-display').textContent = Math.round(currentVal + (amt - currentVal) * ease) + '€';
-      if (p < 1) requestAnimationFrame(animBudget);
-      else document.getElementById('current-budget-display').textContent = amt + '€';
-    };
-    requestAnimationFrame(animBudget);
+    await pb.collection(CFG.COLLECTION_USERS).update(pb.authStore.model.id, { budget: amt });
+    // #31 Update display without reload
+    document.getElementById('current-budget-display').textContent = `${amt}€`;
     if (amt === 0) document.getElementById('budget-warning').classList.add('show');
     else document.getElementById('budget-warning').classList.remove('show');
     highlightActiveBudget(amt);
@@ -1173,7 +1054,7 @@ async function saveCustomBudget() {
 // #40 STRIPE PORTAL
 // =========================================================
 function openStripePortal() {
-  window.open(CFG.STRIPE_PORTAL_URL + '?prefilled_email=' + encodeURIComponent((pb.authStore.record || pb.authStore.model)?.email || ''), '_blank', 'noopener');
+  window.open(CFG.STRIPE_PORTAL_URL + '?prefilled_email=' + encodeURIComponent(pb.authStore.model?.email || ''), '_blank', 'noopener');
 }
 
 // =========================================================
@@ -1390,79 +1271,6 @@ function closeModal(e) {
 const confStyle = document.createElement('style');
 confStyle.textContent = '@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(200px) rotate(720deg);opacity:0}}';
 document.head.appendChild(confStyle);
-
-// =========================================================
-// #1 DASHBOARD CANVAS PARTICLES
-// =========================================================
-function initDashParticles() {
-  const canvas = document.getElementById('db-particle-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  let W, H, pts = [];
-  const resize = () => { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; };
-  resize();
-  window.addEventListener('resize', resize, { passive: true });
-  for (let i = 0; i < 5; i++) pts.push({
-    x: Math.random() * 1400, y: Math.random() * 1400,
-    r: .8 + Math.random() * 1.4,
-    vx: (Math.random() - .5) * .14, vy: (Math.random() - .5) * .14,
-    o: .05 + Math.random() * .09
-  });
-  const draw = () => {
-    ctx.clearRect(0, 0, W, H);
-    pts.forEach(p => {
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
-      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
-      ctx.beginPath(); ctx.arc(p.x % W, p.y % H, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(201,168,76,${p.o})`; ctx.fill();
-    });
-    requestAnimationFrame(draw);
-  };
-  draw();
-}
-
-// =========================================================
-// #2 DASHBOARD CINEMATIC INTRO
-// =========================================================
-function initDashIntro() {
-  const intro = document.getElementById('db-intro');
-  if (!intro) return;
-  if (sessionStorage.getItem('dbIntroSeen')) { intro.remove(); return; }
-  setTimeout(() => {
-    intro.classList.add('fade-out');
-    setTimeout(() => intro.remove(), 700);
-    sessionStorage.setItem('dbIntroSeen', '1');
-  }, 1500);
-}
-
-// =========================================================
-// #3 SCROLL REVEAL
-// =========================================================
-function initScrollReveal() {
-  if (!('IntersectionObserver' in window)) {
-    document.querySelectorAll('.reveal').forEach(el => el.classList.add('revealed'));
-    return;
-  }
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('revealed'); obs.unobserve(e.target); }
-    });
-  }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
-  document.querySelectorAll('.reveal').forEach(el => {
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight) el.classList.add('revealed');
-    else obs.observe(el);
-  });
-}
-
-// =========================================================
-// #6 CHART CONTAINER PRE-HIDE (fade-in handled in renderChart)
-// =========================================================
-function initChartReveal() {
-  const box = document.getElementById('chart-container-box');
-  if (box) { box.style.opacity = '0'; box.style.transition = 'opacity .6s ease'; }
-}
 </script>
 </body>
 </html>
