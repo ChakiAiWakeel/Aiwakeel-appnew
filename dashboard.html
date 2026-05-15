@@ -809,6 +809,14 @@ async function loadDashboardData(user) {
   if (_loadLock) return;
   _loadLock = true;
   try {
+    // Try with explicit auth header to ensure PocketBase recognizes the session
+    pb.beforeSend = function(url, options) {
+      options.headers = Object.assign({}, options.headers, {
+        'Authorization': pb.authStore.token ? `Bearer ${pb.authStore.token}` : ''
+      });
+      return { url, options };
+    };
+
     const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 30, {
       sort: '-created',
       requestKey: 'dashboard-main'
@@ -848,8 +856,11 @@ async function loadDashboardData(user) {
     // #70 Budget progress (mock: use random spend for demo)
     updateBudgetProgress(user);
   } catch(e) {
-    // #77 Proper error
-    showToast('Fehler beim Laden der Daten', true);
+    // Log full PocketBase error for debugging
+    const errMsg = e?.data?.message || e?.message || JSON.stringify(e);
+    const errCode = e?.status || e?.code || '?';
+    console.error('PocketBase Error:', errCode, errMsg, e);
+    showToast(`Fehler ${errCode}: ${errMsg}`, true);
     ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
       const el = document.getElementById(id);
       el.classList.remove('skeleton'); el.textContent = 'Fehler'; el.style.height = '';
