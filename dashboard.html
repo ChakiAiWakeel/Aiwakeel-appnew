@@ -720,10 +720,7 @@ async function loadDashboardData(user) {
   if (_loadLock) return;
   _loadLock = true;
   try {
-    const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 30, {
-      filter: `user = "${user.id}"`,
-      sort: '-created'
-    });
+    const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 30, { filter: `user = "${user.id}"` });
     allReports = records.items;
 
     if (allReports.length > 0) {
