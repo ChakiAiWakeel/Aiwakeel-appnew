@@ -600,16 +600,21 @@ let pb, chart, allReports = [], currentRange = 7;
 // INIT
 // =========================================================
 document.addEventListener('DOMContentLoaded', () => {
-  // #78 DOMContentLoaded
-  // Wait for PocketBase to load
+  let errorWecker; // Wir geben dem Wecker einen Namen
+
   const initInterval = setInterval(() => {
     if (typeof PocketBase !== 'undefined' && typeof ApexCharts !== 'undefined') {
       clearInterval(initInterval);
+      clearTimeout(errorWecker); // WICHTIG: Hier schalten wir den Wecker ab, weil alles geklappt hat!
       initApp();
     }
   }, 50);
-  // Timeout after 8s
-  setTimeout(() => { clearInterval(initInterval); showToast('Skript-Ladefehler', true); }, 8000);
+  
+  // Der Wecker klingelt nur noch, wenn er nicht vorher abgeschaltet wurde
+  errorWecker = setTimeout(() => { 
+    clearInterval(initInterval); 
+    showToast('Skript-Ladefehler (Prüfe Adblocker)', true); 
+  }, 8000);
 });
 
 async function initApp() {
