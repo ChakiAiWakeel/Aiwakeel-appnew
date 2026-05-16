@@ -11,14 +11,14 @@
 <meta property="og:description" content="Dein KI-Agent optimiert Google Ads vollautomatisch. Setup in 5 Minuten.">
 <meta property="og:image" content="https://aiwakeel.ai/og-image.jpg">
 <meta property="og:url" content="https://aiwakeel.ai">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AiWakeel">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.json">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
-
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; connect-src n8n.aiwakeel.ai ads.aiwakeel.ai; img-src 'self' data:; frame-ancestors 'none';">
 <title>AiWakeel Setup – Zero Touch Automation</title>
 
@@ -50,6 +50,54 @@ document.documentElement.style.setProperty('--font-sans',"'DM Sans',system-ui,-a
   --success:#4CAF50;--error:rgba(255,80,80,0.8);
 }
 
+/* #7 3D CARD TILT */
+.card{transform-style:preserve-3d;transform:perspective(1200px) rotateX(0) rotateY(0)}
+.card.tilt-active{transition:transform .1s linear}
+.card.tilt-reset{transition:transform .6s cubic-bezier(0.22,1,0.36,1)}
+
+/* #9 ANIMATED GRADIENT SHIFT */
+@keyframes gradBgShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+body::before{background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,168,76,0.07) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 80% 110%,rgba(201,168,76,0.04) 0%,transparent 55%);background-size:200% 200%;animation:gradBgShift 30s ease infinite}
+
+/* #14 BUDGET SLIDER GLOW */
+input[type=range]{background-image:linear-gradient(var(--gold),var(--gold));filter:drop-shadow(0 0 4px rgba(201,168,76,.3))}
+
+/* #17 SUCCESS RING PULSE */
+@keyframes ringPulse{0%,100%{box-shadow:0 0 30px rgba(201,168,76,.25)}50%{box-shadow:0 0 50px rgba(201,168,76,.5),0 0 0 8px rgba(201,168,76,.06)}}
+.success-ring{animation:ringPop .6s cubic-bezier(0.34,1.56,0.64,1) forwards,ringPulse 2.5s ease 0.7s infinite}
+
+/* #7 3D CARD TILT */
+.card{transform-style:preserve-3d}
+.card.tilt-active{transition:transform .1s linear}
+.card.tilt-reset{transition:transform .6s cubic-bezier(0.22,1,0.36,1)}
+
+/* #9 ANIMATED GRADIENT SHIFT */
+@keyframes gradBgShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+body::before{background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,168,76,0.07) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 80% 110%,rgba(201,168,76,0.04) 0%,transparent 55%);background-size:200% 200%;animation:gradBgShift 30s ease infinite}
+
+/* #11 BUDGET SLIDER GLOW */
+input[type=range]{-webkit-appearance:none;width:100%;height:2px;background:var(--border);border-radius:2px;outline:none;background-image:linear-gradient(var(--gold),var(--gold));background-size:0% 100%;background-repeat:no-repeat;filter:drop-shadow(0 0 3px rgba(201,168,76,.25))}
+
+/* #6 PRESET BUTTON LABELS */
+.budget-preset-label{font-size:8px;display:block;color:var(--text-dim);letter-spacing:.08em;text-transform:uppercase;margin-top:3px}
+
+/* #3 COMPETITION METER */
+.competition-meter-wrap{margin-top:14px;position:relative;z-index:1}
+.competition-meter-label{display:flex;justify-content:space-between;font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.competition-meter-bar{height:3px;background:var(--border2);border-radius:3px;overflow:hidden;position:relative}
+.competition-meter-fill{height:100%;background:linear-gradient(90deg,rgba(255,80,80,.6),var(--gold),#4CAF50);border-radius:3px;transition:width .6s cubic-bezier(0.22,1,0.36,1)}
+.competition-meter-you{position:absolute;top:-4px;width:2px;height:11px;background:var(--gold);border-radius:1px;transition:left .6s cubic-bezier(0.22,1,0.36,1)}
+.competition-meter-enemy{position:absolute;top:-4px;width:2px;height:11px;background:rgba(255,80,80,.7);border-radius:1px}
+
+/* #1 BUDGET COMMENT */
+.budget-comment{margin-top:10px;padding:10px 14px;border-radius:2px;font-size:11px;line-height:1.55;transition:all .4s ease;position:relative;z-index:1}
+.budget-comment.warn{background:rgba(255,80,80,.06);border:1px solid rgba(255,80,80,.18);color:var(--error)}
+.budget-comment.ok{background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);color:var(--gold-light)}
+.budget-comment.great{background:rgba(76,175,80,.06);border:1px solid rgba(76,175,80,.2);color:#81c784}
+
+/* #29 SOCIAL PROOF DISCLAIMER */
+.social-proof-disclaimer{font-size:8px;color:var(--text-dim);text-align:center;margin-top:4px;font-style:italic;opacity:.6}
+
 /* SCROLLBAR */
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:var(--obsidian)}
@@ -63,7 +111,7 @@ html{overflow-x:hidden;width:100%;scrollbar-width:thin;scrollbar-color:var(--gol
 button,input,select,a,[role=button]{touch-action:manipulation}
 button,[role=button],.plan-card,.step-dot,.testi-filter,.testi-dot{user-select:none;-webkit-user-select:none}
 
-body{background:var(--obsidian);color:var(--text);font-family:var(--font-sans);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 14px max(60px,env(safe-area-inset-bottom));position:relative;overflow-x:hidden;width:100%;opacity:0;transition:opacity 0s}
+body{background:var(--obsidian);color:var(--text);font-family:var(--font-sans);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 14px max(60px,env(safe-area-inset-bottom));position:relative;overflow-x:hidden;width:100%;opacity:0;transition:opacity 0s;overscroll-behavior-y:contain}
 body.ready{opacity:1;transition:opacity 0.6s ease}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,168,76,0.07) 0%,transparent 60%);pointer-events:none;z-index:0}
 body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.7}
@@ -511,6 +559,8 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
 </head>
 <body>
 
+<noscript><style>body{opacity:1!important}</style><div style="position:fixed;inset:0;background:#080808;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:999999;font-family:Georgia,serif;color:#C9A84C;text-align:center;padding:24px"><div style="font-size:32px;letter-spacing:.2em">AiWakeel</div><div style="height:1px;width:60px;background:#C9A84C;margin:4px auto"></div><p style="font-size:12px;color:rgba(240,237,232,.5);max-width:320px;line-height:1.6">Bitte aktiviere JavaScript in deinem Browser um das Setup zu starten.</p></div></noscript>
+<noscript><style>body{opacity:1!important}</style><div style="position:fixed;inset:0;background:#080808;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:999999;font-family:Georgia,serif;color:#C9A84C;text-align:center;padding:24px"><div style="font-size:32px;letter-spacing:.2em">AiWakeel</div><div style="height:1px;width:60px;background:#C9A84C;margin:4px auto"></div><p style="font-size:12px;color:rgba(240,237,232,.5);max-width:300px;line-height:1.6">Bitte aktiviere JavaScript in deinem Browser um das Setup zu starten.</p></div></noscript>
 <canvas id="particle-canvas"></canvas>
 <div id="intro-overlay">
   <div class="intro-logo">AiWakeel</div>
@@ -576,6 +626,7 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
       <span class="live-num" id="live-num">7</span>
       <span>Agenten gerade aktiv</span>
     </div>
+    <p class="social-proof-disclaimer">Illustrative Beispiele · Keine Echtzeit-Daten</p>
     <div class="logo">
       <div class="logo-text glitch">AiWakeel</div>
       <div class="logo-sub">Intelligent Ad Management</div>
@@ -719,7 +770,7 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
       <div id="plan-premium" class="plan-card" onclick="selectPlan('premium',99,149,event)" role="radio" aria-checked="false" tabindex="0">
         <div class="plan-check" aria-hidden="true">&#10003;</div>
         <div class="plan-row">
-          <span class="plan-name">&#10022; Maison <span class="plan-badge" id="recommended-badge" style="display:none">Empfohlen</span></span>
+          <span class="plan-name">&#10022; Maison <span class="plan-badge" id="recommended-badge">Empfohlen</span></span>
           <!-- #4 Consistent price: 99€/mo -->
           <span class="plan-price" style="color:var(--gold)">99&euro; <small>/mtl.</small><span class="plan-per-day">≈ 3,30&euro; / Tag</span></span>
         </div>
@@ -729,10 +780,22 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
           <div class="wa-header"><div class="wa-avatar">&#129302;</div><div><div class="wa-name">AiWakeel Agent</div><div class="wa-online">&#9679; Online</div></div></div>
           <div class="wa-typing" id="wa-typing"><div class="wa-dot"></div><div class="wa-dot"></div><div class="wa-dot"></div></div>
           <div class="wa-bubble" id="wa-bubble"></div>
+          <div style="text-align:right;margin-top:6px"><button onclick="typewriterWA()" style="background:none;border:none;color:rgba(255,255,255,.3);font-size:9px;cursor:pointer;letter-spacing:.06em;font-family:var(--font-sans)">↺ Replay</button></div>
         </div>
       </div>
 
-      <div style="font-size:10px;margin:22px 0 12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em">Google Ads Budget</div>
+      <div style="font-size:10px;margin:22px 0 10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em">Google Ads Budget</div>
+      <div class="budget-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+        <button class="budget-btn" onclick="quickBudget(500)" style="background:transparent;border:1px solid var(--border2);color:var(--text-muted);padding:10px 6px;font-size:11px;cursor:pointer;transition:all .3s;font-family:var(--font-sans);border-radius:2px" aria-label="Budget 500 Euro">
+          <span>500€</span><span class="budget-preset-label">Starter</span>
+        </button>
+        <button class="budget-btn" onclick="quickBudget(1000)" style="background:transparent;border:1px solid var(--border2);color:var(--text-muted);padding:10px 6px;font-size:11px;cursor:pointer;transition:all .3s;font-family:var(--font-sans);border-radius:2px" aria-label="Budget 1000 Euro">
+          <span>1.000€</span><span class="budget-preset-label">Wachstum</span>
+        </button>
+        <button class="budget-btn" onclick="quickBudget(2500)" style="background:transparent;border:1px solid var(--border2);color:var(--text-muted);padding:10px 6px;font-size:11px;cursor:pointer;transition:all .3s;font-family:var(--font-sans);border-radius:2px" aria-label="Budget 2500 Euro">
+          <span>2.500€</span><span class="budget-preset-label">Dominanz</span>
+        </button>
+      </div>
       <div class="budget-hero">
         <div class="budget-amount" id="budget-display">300&euro;</div>
         <div class="budget-period">pro Monat</div>
@@ -750,6 +813,27 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
         </div>
         <div class="slider-marks"><span>100&euro;</span><span>750&euro;</span><span>1.500&euro;</span><span>2.500&euro;</span><span>3.000&euro;</span></div>
       </div>
+      <!-- #1 Budget realistischer Kommentar -->
+      <div class="budget-comment warn" id="budget-comment">⚠ Sehr niedrig – Konkurrenz dominiert. Kaum Sichtbarkeit möglich.</div>
+      <!-- #3 Competition Meter -->
+      <div class="competition-meter-wrap">
+        <div class="competition-meter-label">
+          <span>&#9632; Du</span>
+          <span id="competition-label">Deine Position vs. Konkurrenz</span>
+          <span style="color:rgba(255,80,80,.7)">&#9632; Ø Konkurrenz</span>
+        </div>
+        <div class="competition-meter-bar">
+          <div class="competition-meter-fill" style="width:100%"></div>
+          <div class="competition-meter-you" id="comp-you" style="left:10%"></div>
+          <div class="competition-meter-enemy" id="comp-enemy" style="left:65%"></div>
+        </div>
+      </div>
+      <!-- #5 Jahresersparnis vs Agentur -->
+      <div id="agency-savings" style="margin-top:12px;padding:10px 14px;background:rgba(76,175,80,.05);border:1px solid rgba(76,175,80,.15);border-radius:2px;font-size:11px;color:#81c784;display:none">
+        ✓ Du sparst ca. <strong id="savings-amount">17.400€</strong>/Jahr gegenüber einer Google Ads Agentur
+      </div>
+      <!-- #31 Budget-Disclaimer -->
+      <p style="font-size:9px;color:var(--text-dim);margin-top:8px;font-style:italic;text-align:center">Prognosen sind Schätzwerte. Keine Garantie auf tatsächliche Ergebnisse.</p>
       <button class="btn-primary" id="btn-step3-next" onclick="goToStep(4)" disabled><span>Zusammenfassung</span></button>
       <button class="btn-back" onclick="goToStep(2,true)">&larr; Zurück</button>
     </div>
@@ -768,11 +852,10 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
         <div><div class="summary-total-label">Heute fällig</div><div style="font-size:9px;color:var(--text-dim);margin-top:3px">Setup + erste Rate</div></div>
         <div style="text-align:right"><div class="summary-total-num" id="sum-total">—</div><div class="summary-total-sub" id="sum-total-sub">dann — / Monat</div></div>
       </div>
-       <div style="margin:20px 0;display:flex;gap:10px;font-size:11px;color:var(--text-muted)">
+            <div style="margin:20px 0;display:flex;gap:10px;font-size:11px;color:var(--text-muted)">
         <input type="checkbox" id="check-legal" onchange="validateFinal()" style="accent-color:var(--gold);margin-top:2px;flex-shrink:0" aria-label="Unternehmerstatus, AGB und Datenschutz akzeptieren">
         <span>Ich bestätige ausdrücklich, dass ich als Unternehmer (§ 14 BGB) handle, und akzeptiere die <a href="javascript:void(0)" onclick="showLegal('agb')" style="color:var(--gold)">AGB</a> sowie den <a href="javascript:void(0)" onclick="showLegal('privacy')" style="color:var(--gold)">Datenschutz</a>. Ein gesetzliches Widerrufsrecht besteht nicht.</span>
       </div>
-
       <div class="slide-to-activate" id="slider-activate" style="display:none" role="button" aria-label="Ziehen oder Leertaste drücken zum Aktivieren" tabindex="0">
         <div class="slide-bg" id="slide-bg"></div>
         <div class="slide-track-text" id="slide-text">&larr; Ziehen zum Aktivieren &rarr;</div>
@@ -796,6 +879,9 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
       <div id="step5-whatsapp" style="display:none"><p style="font-size:11px;color:var(--text-muted);margin-bottom:14px">Du erhältst in Kürze eine WhatsApp Nachricht vom Agenten.</p></div>
       <div id="step5-classic" style="display:none"><p style="font-size:11px;color:var(--text-muted);margin-top:14px">&#128231; Dein erster Report kommt per E-Mail innerhalb von 24 Stunden.</p></div>
       <p style="font-size:11px;color:var(--text-muted);margin-top:20px">Agenten verwalten &amp; pausieren im <a href="dashboard.html" rel="noopener" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,168,76,.3)">Kunden-Dashboard &rarr;</a></p>
+      <div id="first-opt-countdown" style="margin-top:16px;padding:12px 16px;background:var(--surface2);border:1px solid var(--border2);border-radius:2px;font-size:10px;color:var(--text-dim);letter-spacing:.08em">
+        &#9711; Erste KI-Optimierung: <span id="opt-countdown-val" style="color:var(--gold);font-family:var(--font-serif);font-size:14px">—</span>
+      </div>
     </div>
   </div>
 
@@ -870,7 +956,6 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
       <a href="javascript:void(0)" onclick="showLegal('impressum')">Impressum</a>
       <a href="javascript:void(0)" onclick="showLegal('privacy')">Datenschutz</a>
       <a href="javascript:void(0)" onclick="showLegal('agb')">AGB</a>
-      <a href="javascript:void(0)" onclick="showLegal('widerruf')">Widerruf</a>
       <a href="javascript:void(0)" onclick="showLegal('cookies')">Cookies</a>
       <a href="#faq">FAQ</a>
     </div>
@@ -930,7 +1015,12 @@ async function fetchWithTimeout(url, opts, ms=10000, retries=2) {
     const ctrl = new AbortController();
     const id = setTimeout(() => ctrl.abort(), ms);
     try { const r = await fetch(url,{...opts,signal:ctrl.signal}); clearTimeout(id); return r; }
-    catch(e) { clearTimeout(id); if (i===retries) throw e; await new Promise(r=>setTimeout(r,800*(i+1))); }
+    catch(e) {
+      clearTimeout(id);
+      if (i===retries) throw e;
+      // #23 Exponential backoff: 800ms, 1600ms, 3200ms
+      await new Promise(r=>setTimeout(r, 800 * Math.pow(2, i)));
+    }
   }
 }
 
@@ -1109,6 +1199,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initTopBar();
   initCardGlow();
   initMetricCountup();
+  init3DCardTilt();
+  initSocialProofTicker();
+  injectCompareCTA();
+  updateBudgetIntelligence(state.budget || 300); // #1 init budget comment
 
   if (state.currentStep > 1) {
     showSavedBanner();
@@ -1258,7 +1352,17 @@ function initScrollDimming() {
   const card=document.getElementById('main-card'),header=document.getElementById('page-header');let ticking=false;
   window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(()=>{const pct=Math.min(window.scrollY/160,1);if(header)header.style.filter=pct>0?`brightness(${1-pct*.25})`:'';if(card)card.classList.toggle('scrolled',window.scrollY>80);ticking=false;});ticking=true;}},{passive:true});
 }
-function createRipple(e,el){const r=document.createElement('span');r.className='ripple-el';const rect=el.getBoundingClientRect();const size=Math.max(rect.width,rect.height);r.style.width=r.style.height=size+'px';const cx=(e.clientX||rect.left+rect.width/2)-rect.left;const cy=(e.clientY||rect.top+rect.height/2)-rect.top;r.style.left=(cx-size/2)+'px';r.style.top=(cy-size/2)+'px';el.appendChild(r);setTimeout(()=>r.remove(),700);}
+// #29 Touch-safe ripple
+function createRipple(e,el){
+  const r=document.createElement('span');r.className='ripple-el';
+  const rect=el.getBoundingClientRect();const size=Math.max(rect.width,rect.height);
+  r.style.width=r.style.height=size+'px';
+  // Handle both mouse and touch events
+  const clientX = e.touches ? e.touches[0]?.clientX ?? rect.left+rect.width/2 : (e.clientX||rect.left+rect.width/2);
+  const clientY = e.touches ? e.touches[0]?.clientY ?? rect.top+rect.height/2 : (e.clientY||rect.top+rect.height/2);
+  r.style.left=(clientX-rect.left-size/2)+'px';r.style.top=(clientY-rect.top-size/2)+'px';
+  el.appendChild(r);setTimeout(()=>r.remove(),700);
+}
 
 // =========================================================
 // BUDGET ANIMATION
@@ -1321,52 +1425,59 @@ function initKeyboardNav() {
     dot.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&dot.classList.contains('done')){e.preventDefault();goToStep(i+1,true);}});
   });
 }
-function initTestiSwipe() {
-  const track=document.getElementById('testi-track');let sx=0,dragging=false;
-  track.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;dragging=true;},{passive:true});
-  track.addEventListener('touchend',e=>{if(!dragging)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>50){const vis=[...track.querySelectorAll('.testi-card:not(.hidden)')];tIdx=dx<0?Math.min(tIdx+1,vis.length-1):Math.max(tIdx-1,0);scrollT(tIdx);resetT();}dragging=false;},{passive:true});
-}
+// initTestiSwipe defined separately below – #18 removed duplicate
 // =========================================================
-// STRIPE RETURN & AUTO-REDIRECT
+// STRIPE RETURN (#1 2s countdown, #2 better text, #6 collision guard,
+// #20 beforeunload clear, #21 location.replace, #22 tab visibility, #28 aria-live)
 // =========================================================
+let _stripeReturnHandled = false;
 function checkStripeReturn() {
   document.getElementById('oauth-loading').classList.remove('show');
   const p = new URLSearchParams(window.location.search);
   const pay = p.get('payment');
-  
+  if (!pay) return;
+  if (_stripeReturnHandled) return; // #6 collision guard
+  _stripeReturnHandled = true;
+
   if (pay === 'success') {
-    // 1. Zeige Schritt 5 (Erfolgs-Screen mit Konfetti)
+    // #20 clear beforeunload immediately
+    window.onbeforeunload = null;
     goToStep(5, false, true);
     window.history.replaceState({}, document.title, window.location.pathname);
-    
-    // 2. Passe den Text an, um den Auto-Redirect anzukündigen
+
+    // Add countdown element with aria-live
     const step5 = document.getElementById('step-5');
-    const oldLink = step5.querySelector('p:last-of-type');
-    if (oldLink) oldLink.style.display = 'none'; // Verstecke den alten manuellen Link
-    
-    const countdownEl = document.createElement('div');
-    countdownEl.style.cssText = "font-size:10px; color:var(--gold); margin-top:24px; letter-spacing:0.15em; text-transform:uppercase; animation: fadeInUp .4s ease;";
-    step5.appendChild(countdownEl);
-    
-    // 3. Countdown & Weiterleitung
-    let seconds = 4;
-    countdownEl.innerHTML = `Weiterleitung zum Elite-Dashboard in ${seconds}s...`;
-    
-    const interval = setInterval(() => {
-        seconds--;
-        if (seconds > 0) {
-            countdownEl.innerHTML = `Weiterleitung zum Elite-Dashboard in ${seconds}s...`;
-        } else {
-            clearInterval(interval);
-            countdownEl.innerHTML = `Lade Dashboard <span class="spinner" style="width:12px;height:12px;border-width:1.5px;margin-left:6px;vertical-align:middle"></span>`;
-            
-            // Weicher Übergang
-            document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity .5s ease';
-            setTimeout(() => { window.location.href = 'dashboard.html'; }, 500);
-        }
+    const cdWrap = document.createElement('div');
+    cdWrap.setAttribute('aria-live', 'polite'); // #28
+    cdWrap.style.cssText = 'font-size:10px;color:var(--gold);margin-top:20px;letter-spacing:.12em;text-transform:uppercase;animation:fadeInUp .4s ease';
+    step5.appendChild(cdWrap);
+
+    // #1 2 seconds countdown with better copy
+    let secs = 2;
+    const updateCd = () => {
+      cdWrap.textContent = secs > 0
+        ? `✦ Dein Agent startet gleich – Dashboard in ${secs}s`
+        : '✦ Dashboard wird geladen …';
+    };
+    updateCd();
+    // #22 pause when tab hidden
+    let cdInterval = setInterval(() => {
+      if (document.hidden) return;
+      secs--;
+      updateCd();
+      if (secs < 0) {
+        clearInterval(cdInterval);
+        document.body.style.opacity = '0';
+        document.body.style.transition = 'opacity .5s ease';
+        // #21 use replace instead of href
+        setTimeout(() => window.location.replace('dashboard.html'), 500);
+      }
     }, 1000);
-    
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && secs <= 0) window.location.replace('dashboard.html');
+    });
+
   } else if (pay === 'cancelled') {
     showToast('Zahlung abgebrochen – jederzeit erneut versuchen.', 'info');
     window.history.replaceState({}, document.title, window.location.pathname);
@@ -1505,10 +1616,47 @@ function formatWhatsapp() {
 // =========================================================
 // STEP 3
 // =========================================================
+// #23 RAF THROTTLE for budget slider
+let _rafBudget;
 function updateBudget(val) {
-  const n=parseInt(val);animateBudget(n);state.budget=n;saveState();
-  const sl=document.getElementById('budget-slider');sl.value=val;sl.style.backgroundSize=((n-100)/2900*100).toFixed(2)+'% 100%';
-  positionTooltip(n);const tt=document.getElementById('slider-tooltip');if(tt)tt.textContent=n+'€';
+  cancelAnimationFrame(_rafBudget);
+  _rafBudget = requestAnimationFrame(() => {
+    const n=parseInt(val);animateBudget(n);state.budget=n;saveState();
+    const sl=document.getElementById('budget-slider');if(sl){sl.value=val;sl.style.backgroundSize=((n-100)/2900*100).toFixed(2)+'% 100%';}
+    positionTooltip(n);const tt=document.getElementById('slider-tooltip');if(tt)tt.textContent=n+'€';
+    updateBudgetIntelligence(n); // #1 #2 #3 #4 #5
+  });
+}
+
+function quickBudget(val) {
+  const sl = document.getElementById('budget-slider');
+  if (sl) { sl.value = val; updateBudget(val); }
+}
+
+// #1 #2 #3 #4 #5 BUDGET INTELLIGENCE
+function updateBudgetIntelligence(budget) {
+  const comment = document.getElementById('budget-comment');
+  if (comment) {
+    let txt, cls;
+    if (budget < 200) { txt = '⚠ Sehr niedrig – Konkurrenz dominiert. Kaum Sichtbarkeit möglich.'; cls = 'warn'; }
+    else if (budget < 500) { txt = 'Solide Basis – erste Leads möglich, aber Konkurrenz hat Vorteil.'; cls = 'ok'; }
+    else if (budget < 1500) { txt = '✦ Optimaler Bereich – dominante Sichtbarkeit in deiner Nische.'; cls = 'great'; }
+    else { txt = '🏆 Marktführer-Budget – Konkurrenz wird aktiv verdrängt.'; cls = 'great'; }
+    const industry = (state.industry || '').toLowerCase();
+    const isImmo = /immo|real|makler|wohn/.test(industry);
+    const isBeauty = /beauty|klinik|clinic|kosmet|ästhet|dental|zahn/.test(industry);
+    if (isImmo && budget < 500) txt = '⚠ Immobilien-CPCs: 3–8€. Bei ' + budget + '€ ≈ ' + Math.round(budget/5) + ' Klicks/Monat. Empfehlung: min. 500€.';
+    else if (isBeauty && budget < 200) txt = '⚠ Beauty-CPCs: 0,80–2€. Ab 200€ gute Sichtbarkeit möglich.';
+    comment.textContent = txt; comment.className = 'budget-comment ' + cls;
+  }
+  const you = Math.min(Math.round((budget/3000)*80+5), 85);
+  const youEl = document.getElementById('comp-you');
+  const lbl = document.getElementById('competition-label');
+  if (youEl) youEl.style.left = you + '%';
+  if (lbl) { const diff = you-65; lbl.textContent = diff>=0?`Du bist ${diff}% stärker als Ø`:`Konkurrenz ist ${Math.abs(diff)}% stärker`; lbl.style.color=diff>=0?'#81c784':'rgba(255,80,80,.7)'; }
+  const agencyEl = document.getElementById('agency-savings');
+  const savEl = document.getElementById('savings-amount');
+  if (agencyEl && savEl) { const sav=(1500-(state.monthlyFee||49))*12; savEl.textContent=sav.toLocaleString('de-DE')+'€'; agencyEl.style.display=sav>0?'block':'none'; }
 }
 
 function selectPlan(id,fee,setup,event) {
@@ -1525,74 +1673,69 @@ function selectPlan(id,fee,setup,event) {
 // =========================================================
 // STEP 4
 // =========================================================
-// =========================================================
-// STEP 4
-// =========================================================
 function validateFinal(){document.getElementById('slider-activate').style.display=document.getElementById('check-legal').checked?'block':'none';}
 
-let _launching = false;
+let _launching=false;
 async function launch() {
-  if (_launching) return;
-  _launching = true;
-  document.getElementById('slide-done').classList.add('show');
-  document.getElementById('slide-text').classList.add('hidden');
-  haptic([60, 40, 100]);
-
+  if(_launching)return;_launching=true;
+  document.getElementById('slide-done').classList.add('show');document.getElementById('slide-text').classList.add('hidden');haptic([60,40,100]);
   try {
-    const res = await fetchWithTimeout(CONFIG.N8N_LAUNCH, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId: state.userId, domain: state.domain, industry: state.industry,
-        phone: state.phone, email: state.email, whatsapp: state.whatsapp,
-        budget: state.budget, plan: state.plan, monthlyFee: state.monthlyFee,
-        setupFee: state.setupFee, ads_customer_id: state.ads_customer_id,
-        ads_budget_id: state.ads_budget_id, agent_status: 'active',
-        onboarding_completed: true, utm_source: state.utmSource, utm_medium: state.utmMedium
-      })
-    }, 15000);
-
+    const res=await fetchWithTimeout(CONFIG.N8N_LAUNCH,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:state.userId,domain:state.domain,industry:state.industry,phone:state.phone,email:state.email,whatsapp:state.whatsapp,budget:state.budget,plan:state.plan,monthlyFee:state.monthlyFee,setupFee:state.setupFee,ads_customer_id:state.ads_customer_id,ads_budget_id:state.ads_budget_id,agent_status:'active',onboarding_completed:true,utm_source:state.utmSource,utm_medium:state.utmMedium})},15000);
     const data = await safeJson(res);
 
-    // Abfangen der "Kunde existiert bereits" Meldung
+    // #3 user_exists: longer toast + login CTA
     if (data.error === 'user_exists') {
       _launching = false;
       document.getElementById('slide-done').classList.remove('show');
       document.getElementById('slide-text').classList.remove('hidden');
-      showToast(data.message, 'error');
+      // Show persistent error with login button
+      const errBox = document.createElement('div');
+      errBox.style.cssText = 'margin-top:14px;padding:14px;background:rgba(255,80,80,.06);border:1px solid rgba(255,80,80,.2);border-radius:2px;font-size:12px;color:var(--error);line-height:1.6';
+      errBox.innerHTML = `Dieses Konto existiert bereits.<br><a href="login.html" style="color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,168,76,.3);font-size:11px">→ Zum Dashboard einloggen</a>`;
+      const slide = document.getElementById('slider-activate');
+      slide.parentNode.insertBefore(errBox, slide.nextSibling);
       return;
     }
 
     const url = data.url || data.checkoutUrl;
-    
-    // STRICT CHECK: Nur wenn ein echter Link kommt, geht es weiter
-    if (url && url.startsWith('https://')) {
-      window.onbeforeunload = null;
-      window.location.href = url;
-    } else {
-      // FEHLER-FALL: Workflow in n8n ist abgestürzt (z.B. Google Ads inaktiv)
+
+    // #4 Better missing_checkout error
+    if (!url || !url.startsWith('https://')) {
       throw new Error('missing_checkout_url');
     }
 
-  } catch (err) {
-    _launching = false;
-    document.getElementById('slide-done').classList.remove('show');
-    document.getElementById('slide-text').classList.remove('hidden');
-    
-    if (err.message === 'missing_checkout_url') {
-        showToast('Setup fehlgeschlagen: Bitte prüfe, ob dein Google Ads Konto vollständig aktiviert ist.', 'error');
-    } else {
-        showToast(err.name === 'AbortError' ? 'Zeitüberschreitung – bitte erneut versuchen' : 'Verbindungsfehler – bitte erneut versuchen', 'error');
-    }
+    window.onbeforeunload = null;
+    window.location.href = url;
+  }catch(err){
+    _launching=false;document.getElementById('slide-done').classList.remove('show');document.getElementById('slide-text').classList.remove('hidden');
+    const msg = err.name==='AbortError'
+      ? 'Zeitüberschreitung – bitte erneut versuchen'
+      : err.message==='missing_checkout_url'
+        ? 'Fast geschafft! Bitte vervollständige zuerst dein Google Ads Konto und versuche es erneut.'
+        : 'Verbindungsfehler – bitte erneut versuchen';
+    showToast(msg, 'error');
   }
 }
 
+// =========================================================
 // SLIDE
 // =========================================================
 function initSlide() {
   const thumb=document.getElementById('slide-thumb'),track=document.getElementById('slider-activate');
   let drag=false,tPos=0,dStartX=0;const tw=()=>track.offsetWidth-64;
-  const move=cx=>{tPos=Math.max(0,Math.min(cx-dStartX,tw()));thumb.style.left=(4+tPos)+'px';const pct=tPos/tw();document.getElementById('slide-bg').style.width=(pct*100)+'%';document.getElementById('slide-text').classList.toggle('hidden',pct>.08);if(pct>=.95)complete();};
+  const move=cx=>{
+    tPos=Math.max(0,Math.min(cx-dStartX,tw()));
+    thumb.style.left=(4+tPos)+'px';
+    const pct=tPos/tw();
+    document.getElementById('slide-bg').style.width=(pct*100)+'%';
+    document.getElementById('slide-text').classList.toggle('hidden',pct>.08);
+    // #11 Magnetic snap at 85%
+    if(pct>=.85){
+      tPos=tw();thumb.style.transition='left .2s cubic-bezier(0.22,1,0.36,1)';
+      thumb.style.left=(4+tPos)+'px';document.getElementById('slide-bg').style.width='100%';
+      complete();
+    }
+  };
   const reset=()=>{drag=false;tPos=0;thumb.style.transition='left .3s ease';thumb.style.left='4px';document.getElementById('slide-bg').style.width='0%';document.getElementById('slide-text').classList.remove('hidden');cleanup();};
   const complete=()=>{drag=false;cleanup();launch();};
   const onMove=e=>{if(drag)move(e.clientX);};const onUp=()=>{if(drag)reset();};
@@ -1617,7 +1760,7 @@ function goToStep(n,isBack=false,skipScroll=false) {
   for(let i=1;i<=4;i++){const dot=document.getElementById('dot-'+i),line=document.getElementById('line-'+i);dot.className='step-dot'+(i<n?' done':i===n?' active':'');dot.textContent=i<n?'✓':['I','II','III','IV'][i-1];dot.setAttribute('tabindex',i<n?'0':'-1');if(line)line.className='step-line'+(i<n?' done':'');}
   document.querySelectorAll('.step-dot.done').forEach((d,i)=>{d.onclick=()=>goToStep(i+1,true);});
   const label=document.getElementById('step-label');if(label&&n<=4)label.textContent=`Schritt ${n} von 4`;else if(label)label.textContent='';
-  if(n>=3)document.getElementById('recommended-badge').style.display='inline';
+  // recommended-badge always visible (no longer hidden by default)
   // #40 Load domains when navigating to step 2
   if(n===2&&state.userId&&state.google_ads_connected&&!_domainFetchLock){
     fetchUserDomains(state.userId);
@@ -1640,13 +1783,14 @@ function goToStep(n,isBack=false,skipScroll=false) {
     document.getElementById('step5-whatsapp').style.display=state.plan==='premium'?'block':'none';
     document.getElementById('step5-classic').style.display=state.plan==='classic'?'block':'none';
     step5Celebration();
-    // #32 clear exitShown on completion so user can see it again if re-onboarding
+    startOptCountdown(); // #16
     sessionStorage.removeItem('exitShown');
     sessionStorage.setItem('awCompleted','1');
     sessionStorage.removeItem('awState');
     window.onbeforeunload=null;
   }
   if(n>prev&&n<5){const msgs={2:'Google verbunden ✓',3:'Daten gespeichert ✓',4:'Plan gewählt ✓'};if(msgs[n])showStepFeedback(msgs[n]);}
+  triggerStepTypewriter(n); // #8
   if(!skipScroll)window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -1659,6 +1803,113 @@ function step5Celebration(){
   haptic([80,50,100]);
 }
 
+// #19 tTimer in closure – already in global scope but correctly managed per resetT()
+// Testimonials use tIdx/tTimer as module-level vars – OK
+
+// =========================================================
+// #7 3D CARD TILT
+// =========================================================
+function init3DCardTilt() {
+  const card = document.getElementById('main-card');
+  if (!card || window.matchMedia('(hover:none)').matches) return; // skip on touch
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = (e.clientX - cx) / rect.width;
+    const dy = (e.clientY - cy) / rect.height;
+    // max 1.8 degrees
+    const rx = -dy * 1.8, ry = dx * 1.8;
+    card.classList.add('tilt-active');
+    card.classList.remove('tilt-reset');
+    card.style.transform = `perspective(1200px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.classList.remove('tilt-active');
+    card.classList.add('tilt-reset');
+    card.style.transform = 'perspective(1200px) rotateX(0) rotateY(0)';
+  });
+}
+
+// =========================================================
+// #16 FIRST OPTIMIZATION COUNTDOWN
+// =========================================================
+function startOptCountdown() {
+  const el = document.getElementById('opt-countdown-val');
+  if (!el) return;
+  const update = () => {
+    const now = new Date();
+    const target = new Date();
+    target.setHours(7, 0, 0, 0);
+    if (now >= target) target.setDate(target.getDate() + 1);
+    const diff = target - now;
+    const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
+    const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+    el.textContent = `${h}:${m} Stunden`;
+  };
+  update();
+  setInterval(() => { if (!document.hidden) update(); }, 60000);
+}
+
+// =========================================================
+// #8 TYPEWRITER EFFECT ON STEP TITLES (subtle, on step transition)
+// =========================================================
+function typewriterTitle(el) {
+  if (!el) return;
+  const text = el.textContent;
+  el.textContent = '';
+  el.style.opacity = '1';
+  let i = 0;
+  const iv = setInterval(() => {
+    el.textContent = text.slice(0, ++i);
+    if (i >= text.length) clearInterval(iv);
+  }, 28);
+}
+
+// =========================================================
+// #30 SIMPLE ROI TICKER (social proof, simulated)
+// =========================================================
+function initSocialProofTicker() {
+  const names = ['Khalid · Dubai','Sara · Frankfurt','Muhammed · Wien','Layla · Zürich','Ibrahim · München','Nour · Hamburg'];
+  const actions = ['hat sich angemeldet','hat den Agenten gestartet','hat ein neues Keyword gefunden','hat sein Budget erhöht'];
+  let ticker;
+  const show = () => {
+    const name = names[Math.floor(Math.random() * names.length)];
+    const action = actions[Math.floor(Math.random() * actions.length)];
+    const mins = Math.floor(Math.random() * 55) + 5;
+    const el = document.getElementById('live-num');
+    if (!el) return;
+    const container = el.closest('.live-counter');
+    if (!container) return;
+    const t = document.createElement('div');
+    t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--border);padding:10px 16px;font-size:10px;color:var(--text-muted);border-radius:2px;z-index:9990;opacity:0;transition:all .4s cubic-bezier(0.22,1,0.36,1);white-space:nowrap;max-width:320px;text-align:center';
+    t.innerHTML = `<span style="color:var(--gold)">✦ ${name}</span> ${action} · vor ${mins}min`;
+    document.body.appendChild(t);
+    requestAnimationFrame(() => { t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)'; });
+    setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(-10px)'; setTimeout(() => t.remove(), 400); }, 4000);
+  };
+  // Show first after 20s, then every 45-90s
+  setTimeout(() => { show(); ticker = setInterval(show, 45000 + Math.random() * 45000); }, 20000);
+}
+
+// =========================================================
+// #32 COMPARE TABLE CTA BUTTON (injected after table)
+// =========================================================
+function injectCompareCTA() {
+  const wrap = document.querySelector('.compare-wrap');
+  if (!wrap) return;
+  const btn = document.createElement('button');
+  btn.style.cssText = 'width:100%;margin-top:16px;padding:14px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-size:10px;text-transform:uppercase;letter-spacing:.18em;cursor:pointer;font-family:var(--font-sans);transition:all .3s;position:relative;overflow:hidden';
+  btn.innerHTML = '<span style="position:relative;z-index:1">Jetzt starten – Setup in 5 Minuten &rarr;</span>';
+  btn.addEventListener('mouseenter', () => btn.style.background = 'var(--gold-dim)');
+  btn.addEventListener('mouseleave', () => btn.style.background = 'transparent');
+  btn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  wrap.appendChild(btn);
+}
+
+// =========================================================
+// #8 TYPEWRITER on goToStep (hook into step transition)
+// =========================================================
 function showToast(msg,type='error'){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.className='show '+type;clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),4500);}
 function haptic(p=50){try{if(navigator.vibrate)navigator.vibrate(p);}catch{}}
 
@@ -1689,91 +1940,45 @@ function showLegal(type){
       ${h3('Angaben gemäß § 5 TMG')}
       ${p('<strong style="color:var(--text)">Canatay Cakmak</strong><br>CanTurSoft (Kleingewerbe)<br>Dompfaffenweg 51a<br>50829 Köln<br>Deutschland')}
       ${h3('Kontakt')}
-      ${p('Telefon: +49 172 7419318<br>E-Mail: kontakt@aiwakeel.ai<br>Website: aiwakeel.ai')}
-      ${h3('Kleingewerbe – Steuerliche Angaben')}
-      ${p('Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. Eine USt-IdNr. liegt nicht vor.')}
-      ${h3('Verantwortlich gemäß § 55 Abs. 2 RStV')}
-      ${p('Canatay Cakmak, Dompfaffenweg 51a, 50829 Köln')}
-      ${h3('Streitschlichtung')}
-      ${p('EU-Streitschlichtungsplattform: <a href="https://ec.europa.eu/consumers/odr" style="color:var(--gold)">https://ec.europa.eu/consumers/odr</a>. Wir sind nicht verpflichtet, an Streitbeilegungsverfahren teilzunehmen.')}
+      ${p('Telefon: +49 172 7419318<br>E-Mail: agent@aiwakeel.ai<br>Website: aiwakeel.ai')}
+      ${h3('Umsatzsteuer')}
+      ${p('Gemäß § 19 UStG wird keine Umsatzsteuer berechnet und ausgewiesen (Kleinunternehmerregelung).')}
+      ${h3('EU-Streitschlichtung')}
+      ${p('Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr" target="_blank" style="color:var(--gold)">https://ec.europa.eu/consumers/odr</a>.<br>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.')}
     `),
     privacy:s('Datenschutzerklärung',`
       ${h3('1. Verantwortlicher')}
-      ${p('Canatay Cakmak · CanTurSoft · Dompfaffenweg 51a · 50829 Köln<br>E-Mail: kontakt@aiwakeel.ai · Tel: +49 172 7419318')}
-      ${h3('2. Hosting')}
-      ${p('<strong style="color:var(--text)">IONOS SE</strong>, Elgendorfer Str. 57, 56410 Montabaur. Rechenzentrum Frankfurt. AVV nach Art. 28 DSGVO liegt vor. Server-Logfiles (IP, Datum, Seite, Browser): Speicherdauer 7 Tage. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.')}
-      ${h3('3. Google Fonts (nur mit Einwilligung)')}
-      ${p('Google Ireland Limited, Dublin 4. IP-Übermittlung. Keine eigenen Cookies. Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO. Widerruf: Cookie-Button unten links.')}
-      ${h3('4. Google OAuth & APIs')}
-      ${p('Über Google OAuth 2.0 (Google Ireland Limited) werden Google-Konto-ID, E-Mail, Search Console Daten und Google Ads Kontodaten verarbeitet. Keine Passwörter gespeichert. Token nur serverseitig in n8n. Rechtsgrundlage: Art. 6 Abs. 1 lit. a und b DSGVO.')}
-      ${h3('5. n8n – Domain-Abfrage und Workflow-Automatisierung')}
-      ${p('Selbst gehostete n8n-Instanz auf IONOS Frankfurt. Nach Google-Login wird Ihre User-ID an n8n übermittelt, um verifizierte Search Console Domains abzufragen (Webhook: /get-user-domains). Ferner werden alle Onboarding-Daten (Domain, Branche, E-Mail, Telefon, Plan, Budget) über n8n verarbeitet. Daten verlassen Deutschland nicht. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.')}
-      ${h3('6. Consent-Logging')}
-      ${p('Bei Cookie-Einwilligung wird der Zeitstempel und die Entscheidung (ja/nein) an unseren n8n-Server zur DSGVO-Nachweisbarkeit übermittelt. Kein Browser-Fingerprint oder User-Agent wird gespeichert. Rechtsgrundlage: Art. 6 Abs. 1 lit. c DSGVO.')}
-      ${h3('7. Stripe (Zahlung)')}
-      ${p('Stripe Payments Europe Ltd., Dublin. Zahlungsdaten werden direkt von Stripe verarbeitet. AVV liegt vor. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO. Datenschutzerklärung: <a href="https://stripe.com/de/privacy" style="color:var(--gold)">stripe.com/de/privacy</a>')}
-      ${h3('8. PocketBase (Datenspeicher)')}
-      ${p('Selbst gehostete PocketBase-Instanz auf IONOS Frankfurt. Speicherdauer: Vertragsdauer + 3 Jahre. Rechtsgrundlage: Art. 6 Abs. 1 lit. b und c DSGVO.')}
-      ${h3('9. WATI (WhatsApp, nur Maison-Plan)')}
-      ${p('WATI (Clare.AI Ltd.) zur WhatsApp-Kommunikation. WhatsApp-Nummer wird an WATI übermittelt. Rechtsgrundlage: Art. 6 Abs. 1 lit. a und b DSGVO.')}
-      ${h3('10. Ihre Rechte')}
-      ${p('Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung (Art. 18), Datenübertragbarkeit (Art. 20), Widerspruch (Art. 21), Widerruf (Art. 7 Abs. 3). Kontakt: kontakt@aiwakeel.ai')}
-      ${h3('11. Beschwerderecht')}
-      ${p('LDI NRW, Kavalleriestr. 2–4, 40213 Düsseldorf, <a href="https://www.ldi.nrw.de" style="color:var(--gold)">www.ldi.nrw.de</a>')}
-      ${h3('Stand: Juni 2026')}
+      ${p('Canatay Cakmak, Dompfaffenweg 51a, 50829 Köln (agent@aiwakeel.ai). Ein Datenschutzbeauftragter ist gesetzlich nicht vorgeschrieben und nicht benannt.')}
+      ${h3('2. Datenverarbeitung & Hosting')}
+      ${p('Wir verarbeiten E-Mail, Name, Telefonnummer und Google-Konto-IDs zur Vertragserfüllung (Art. 6 Abs. 1 lit. b DSGVO). Das Hosting erfolgt über die IONOS SE (Rechenzentrum Frankfurt) mit einem gültigen AV-Vertrag nach Art. 28 DSGVO.')}
+      ${h3('3. Google APIs')}
+      ${p('Über Google OAuth 2.0 werden Search Console und Google Ads Daten verarbeitet. Keine Passwörter gespeichert. Token nur serverseitig in n8n. Rechtsgrundlage: Art. 6 Abs. 1 lit. a und b DSGVO.')}
+      ${h3('4. Externe Dienstleister')}
+      ${p('<strong style="color:var(--text)">Stripe:</strong> Stripe Payments Europe Ltd. zur Zahlungsabwicklung.<br><strong style="color:var(--text)">PocketBase & n8n:</strong> Selbst gehostet auf IONOS Frankfurt zur Workflow-Automatisierung und Datenspeicherung.<br><strong style="color:var(--text)">WATI:</strong> (Nur Maison-Plan) Zur WhatsApp-Kommunikation.')}
+      ${h3('5. Ihre Rechte')}
+      ${p('Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung (Art. 18), Datenübertragbarkeit (Art. 20), Widerspruch (Art. 21). Kontakt: agent@aiwakeel.ai')}
     `),
-    agb:s('Allgemeine Geschäftsbedingungen',`
-      ${h3('§ 1 Geltungsbereich')}
-      ${p('Diese AGB gelten für alle Verträge zwischen Canatay Cakmak · CanTurSoft (Anbieter) und dem Kunden über die Nutzung von AiWakeel (aiwakeel.ai).')}
-      ${h3('§ 2 Leistungsbeschreibung')}
-      ${p('KI-gestützter Google Ads Automatisierungsdienst als SaaS. Verfügbarkeitsziel: 99% / Monat.')}
-      ${h3('§ 3 Vertragsschluss')}
-      ${p('Vertrag kommt mit erster Stripe-Zahlung zustande. Bestätigung per E-Mail.')}
-      ${h3('§ 4 Preise und Zahlungsbedingungen')}
-      ${p('<strong style="color:var(--text)">Atelier-Plan:</strong> 49€ / Monat zzgl. einmaligem Setup 99€.<br><strong style="color:var(--text)">Maison-Plan:</strong> 99€ / Monat zzgl. einmaligem Setup 149€.<br><br>Gemäß § 19 UStG wird keine Umsatzsteuer erhoben. Google Ads Budget wird separat bei Google abgebucht. Zahlung monatlich im Voraus über Stripe.')}
-      ${h3('§ 5 Kündigung')}
-      ${p('Monatlich kündbar zum Monatsende über Stripe-Kundenportal oder per E-Mail an kontakt@aiwakeel.ai.')}
-      ${h3('§ 6 Pflichten des Kunden')}
-      ${p('Wahrheitsgemäße Angaben, aktiver Google Ads Account, Werbebudget bereitstellen, Google-Zugang aufrechterhalten. Kein Einsatz für illegale Zwecke.')}
-      ${h3('§ 7 Pausierung')}
-      ${p('Jederzeit über Dashboard möglich. Servicegebühr läuft weiter. Pausierung ist kein Ersatz für Kündigung.')}
-      ${h3('§ 8 Haftung')}
-      ${p('Unbeschränkt bei Vorsatz/grober Fahrlässigkeit. Bei leichter Fahrlässigkeit max. 3 Monatsgebühren. Keine Garantie für bestimmte Kampagnenergebnisse.')}
-      ${h3('§ 9 Änderungen')}
-      ${p('Änderungen mit 30 Tagen Vorlauf per E-Mail. Kein Widerspruch = Akzeptanz.')}
-      ${h3('§ 10 Recht & Gerichtsstand')}
-      ${p('Deutsches Recht. Gerichtsstand Köln für Kaufleute.')}
-      ${h3('§ 11 Salvatorische Klausel')}
-      ${p('Unwirksame Einzelbestimmungen berühren Wirksamkeit der übrigen nicht.')}
-      ${h3('Stand: Juni 2026')}
-    `),
-    widerruf:s('Widerrufsbelehrung',`
-      ${h3('Widerrufsrecht')}
-      ${p('Sie haben das Recht, binnen 14 Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen. Die Frist beginnt am Tag des Vertragsschlusses.')}
-      ${h3('Ausübung')}
-      ${p('Canatay Cakmak · CanTurSoft · Dompfaffenweg 51a · 50829 Köln · kontakt@aiwakeel.ai · +49 172 7419318')}
-      ${h3('Folgen des Widerrufs')}
-      ${p('Rückzahlung aller erhaltenen Zahlungen binnen 14 Tagen auf gleichem Zahlungsweg.')}
-      ${h3('⚠ Erlöschen des Widerrufsrechts')}
-      ${p('<strong style="color:var(--gold)">Gemäß § 356 Abs. 5 BGB erlischt das Widerrufsrecht vorzeitig,</strong> wenn der Anbieter die Dienstleistung vollständig erbracht hat und mit der Ausführung erst begonnen hat, nachdem Sie ausdrücklich zugestimmt und Ihre Kenntnis über den Verlust des Widerrufsrechts bei vollständiger Vertragserfüllung bestätigt haben.<br><br>Durch Aktivierung des Agenten via Slider und Bestätigung der AGB stimmen Sie ausdrücklich zu, dass der Anbieter unverzüglich beginnt, und bestätigen, dass Sie Ihr Widerrufsrecht verlieren.')}
-      ${h3('Muster-Widerrufsformular')}
-      ${p('An: Canatay Cakmak · CanTurSoft · Dompfaffenweg 51a · 50829 Köln · kontakt@aiwakeel.ai<br><br>Hiermit widerrufe ich den Vertrag über: AiWakeel Ads Agent Service<br>Bestellt am: ___ · Name: ___ · Anschrift: ___ · Datum: ___')}
-      ${h3('Stand: Juni 2026')}
+    agb:s('Allgemeine Geschäftsbedingungen (B2B)',`
+      ${h3('§ 1 Geltungsbereich & B2B-Status')}
+      ${p('Diese AGB gelten für alle Verträge zwischen Canatay Cakmak (CanTurSoft) und dem Kunden. <strong style="color:var(--gold)">Unser Angebot richtet sich ausschließlich an Unternehmer (§ 14 BGB)</strong>, juristische Personen des öffentlichen Rechts oder öffentlich-rechtliche Sondervermögen. Verbraucher (§ 13 BGB) sind von der Nutzung ausgeschlossen. <strong style="color:var(--text)">Ein gesetzliches Widerrufsrecht besteht daher nicht.</strong>')}
+      ${h3('§ 2 Leistung & Preise')}
+      ${p('Wir stellen eine KI-gestützte SaaS-Lösung zur Google Ads Automatisierung zur Verfügung. Alle Preise (Atelier 49€, Maison 99€, Setup) verstehen sich als Endpreise. Gemäß § 19 UStG wird keine Umsatzsteuer ausgewiesen. Das Google Ads Budget wird separat über Google abgerechnet.')}
+      ${h3('§ 3 Haftung')}
+      ${p('Wir haften unbeschränkt bei Vorsatz und grober Fahrlässigkeit. Bei leichter Fahrlässigkeit haften wir nur bei Verletzung wesentlicher Vertragspflichten (Kardinalpflichten), beschränkt auf den vertragstypischen, vorhersehbaren Schaden und maximal auf die Höhe von drei Monatsgebühren.')}
+      ${h3('§ 4 Untersuchungs- und Rügepflicht')}
+      ${p('Für Kaufleute gelten die gesetzlichen Untersuchungs- und Rügepflichten gemäß § 377 HGB.')}
+      ${h3('§ 5 Vertragslaufzeit & Kündigung')}
+      ${p('Das Abonnement ist monatlich kündbar. Die Kündigung kann jederzeit im Dashboard über das Stripe-Kundenportal erfolgen.')}
     `),
     cookies:s('Cookie-Richtlinie',`
       ${h3('1. Technisch notwendig')}
-      ${p('<strong style="color:var(--text)">sessionStorage:</strong> Onboarding-Daten, Domain-Cache, Sitzungsdauer. Bis Tab-Schließung. Art. 6 Abs. 1 lit. b DSGVO.<br><br><strong style="color:var(--text)">localStorage (Consent):</strong> Cookie-Entscheidung + Zeitstempel. 12 Monate. Art. 6 Abs. 1 lit. c DSGVO. Kein Browser-Fingerprint oder User-Agent gespeichert.')}
+      ${p('<strong style="color:var(--text)">sessionStorage:</strong> Onboarding-Daten, Domain-Cache, Sitzungsdauer. Bis Tab-Schließung. Art. 6 Abs. 1 lit. b DSGVO.<br><br><strong style="color:var(--text)">localStorage (Consent):</strong> Cookie-Entscheidung + Zeitstempel. 12 Monate. Art. 6 Abs. 1 lit. c DSGVO. Kein Browser-Fingerprint gespeichert.')}
       ${h3('2. Optional (nur mit Einwilligung)')}
-      ${p('<strong style="color:var(--text)">Google Fonts:</strong> Google Ireland Limited, Dublin 4. IP-Übermittlung. Keine Cookies. Widerruf: Cookie-Button.<br><br><strong style="color:var(--text)">Google OAuth:</strong> Google Ireland Limited. Authentifizierungscookies nach Google-Richtlinie. Art. 6 Abs. 1 lit. a und b DSGVO.<br><br><strong style="color:var(--text)">Stripe:</strong> Stripe Payments Europe Ltd., Dublin. Betrugsschutz-Cookies. Art. 6 Abs. 1 lit. b DSGVO.')}
-      ${h3('3. Keine Werbe-Cookies')}
-      ${p('Kein Tracking, keine Analyse, keine Werbenetzwerke.')}
-      ${h3('4. Widerruf')}
-      ${p('Jederzeit über „🍪 Cookies"-Button unten links. Bereits übermittelte Daten: Kontrolle liegt bei Google/Stripe.')}
-      ${h3('5. Kontakt')}
-      ${p('kontakt@aiwakeel.ai · Canatay Cakmak, CanTurSoft, Dompfaffenweg 51a, 50829 Köln')}
-      ${h3('Stand: Juni 2026')}
-    `)}
-  ;
+      ${p('<strong style="color:var(--text)">Google Fonts:</strong> IP-Übermittlung, keine Cookies.<br><strong style="color:var(--text)">Google OAuth:</strong> Authentifizierungscookies.<br><strong style="color:var(--text)">Stripe:</strong> Betrugsschutz-Cookies.')}
+      ${h3('3. Widerruf')}
+      ${p('Jederzeit über den "Cookies"-Button unten links widerrufbar.')}
+    `)
+  };
   if(!c[type])return;
   document.getElementById('modal-text').innerHTML=c[type];
   document.getElementById('legal-modal').style.display='block';
