@@ -389,7 +389,7 @@ async function loadDashboardData(user) {
     }
   } catch(e) {
     console.error("Data Fetch Error:", e);
-    showToast('Fehler bei der Datenverbindung', true);
+    showToast('PB Fehler: ' + e.status + ' | ' + e.message, true);
   } finally { _loadLock = false; }
 }
 
