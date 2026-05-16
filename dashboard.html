@@ -787,13 +787,16 @@ function animateMetric(id, target, isInt = true) {
 function updateBudgetProgress(user) {
   const budget = user.budget || 0;
   if (!budget) return;
-  // Estimate spend: days passed this month / 30 * budget
-  const now = new Date();
-  const daysPassed = now.getDate();
-  const spent = Math.min(Math.round((daysPassed / 30) * budget), budget);
-  const pct = Math.round((spent / budget) * 100);
+  
+  // Hier liest das Dashboard jetzt das neue Feld aus, das n8n befüllt
+  const spent = Math.min(user.current_spend || 0, budget);
+  
+  // Prozentrechnung für den Fortschrittsbalken
+  const pct = budget > 0 ? Math.round((spent / budget) * 100) : 0;
+  
   document.getElementById('budget-progress-fill').style.width = pct + '%';
-  document.getElementById('budget-spent-label').textContent = `${spent}€ von ${budget}€ verbraucht`;
+  // toFixed(2) sorgt dafür, dass auch Cent-Beträge (z.B. 45.30€) sauber angezeigt werden
+  document.getElementById('budget-spent-label').textContent = `${spent.toFixed(2)}€ von ${budget}€ verbraucht`;
   document.getElementById('budget-pct-label').textContent = pct + '%';
 }
 
