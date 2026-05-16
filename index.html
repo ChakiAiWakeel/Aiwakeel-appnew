@@ -768,10 +768,11 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
         <div><div class="summary-total-label">Heute fällig</div><div style="font-size:9px;color:var(--text-dim);margin-top:3px">Setup + erste Rate</div></div>
         <div style="text-align:right"><div class="summary-total-num" id="sum-total">—</div><div class="summary-total-sub" id="sum-total-sub">dann — / Monat</div></div>
       </div>
-      <div style="margin:20px 0;display:flex;gap:10px;font-size:11px;color:var(--text-muted)">
-        <input type="checkbox" id="check-legal" onchange="validateFinal()" style="accent-color:var(--gold);margin-top:2px;flex-shrink:0" aria-label="AGB, Datenschutz und Widerruf akzeptieren">
-        <span>Ich akzeptiere die <a href="javascript:void(0)" onclick="showLegal('agb')" style="color:var(--gold)">AGB</a>, <a href="javascript:void(0)" onclick="showLegal('privacy')" style="color:var(--gold)">Datenschutz</a> und <a href="javascript:void(0)" onclick="showLegal('widerruf')" style="color:var(--gold)">Widerruf</a>. Mit Beginn der Dienstleistung erlischt das Widerrufsrecht.</span>
+       <div style="margin:20px 0;display:flex;gap:10px;font-size:11px;color:var(--text-muted)">
+        <input type="checkbox" id="check-legal" onchange="validateFinal()" style="accent-color:var(--gold);margin-top:2px;flex-shrink:0" aria-label="Unternehmerstatus, AGB und Datenschutz akzeptieren">
+        <span>Ich bestätige ausdrücklich, dass ich als Unternehmer (§ 14 BGB) handle, und akzeptiere die <a href="javascript:void(0)" onclick="showLegal('agb')" style="color:var(--gold)">AGB</a> sowie den <a href="javascript:void(0)" onclick="showLegal('privacy')" style="color:var(--gold)">Datenschutz</a>. Ein gesetzliches Widerrufsrecht besteht nicht.</span>
       </div>
+
       <div class="slide-to-activate" id="slider-activate" style="display:none" role="button" aria-label="Ziehen oder Leertaste drücken zum Aktivieren" tabindex="0">
         <div class="slide-bg" id="slide-bg"></div>
         <div class="slide-track-text" id="slide-text">&larr; Ziehen zum Aktivieren &rarr;</div>
