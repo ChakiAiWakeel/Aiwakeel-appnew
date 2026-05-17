@@ -1,32 +1,23 @@
-<!-- AiWakeel Dashboard v3.0 | CanTurSoft © 2026 -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <!-- #35 #92 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <!-- #16 -->
   <meta name="theme-color" content="#080808">
-  <!-- #80 #81 -->
   <meta name="description" content="AiWakeel Kunden-Dashboard – KI-gestützte Google Ads Verwaltung.">
   <meta name="robots" content="noindex, nofollow">
-  <!-- #92 -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="AiWakeel">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <!-- #94 -->
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <!-- manifest.json intentionally omitted until file exists -->
-  <!-- #10 CSP -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' cdnjs.cloudflare.com cdn.jsdelivr.net; style-src 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; connect-src 'self' https://ads.aiwakeel.ai https://n8n.aiwakeel.ai https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: blob:;">
   <title>AiWakeel · Elite Dashboard</title>
 
-  <!-- #6 Font-Variablen immer setzen, Dateien nur nach Consent -->
   <script>
   (function(){
     document.documentElement.style.setProperty('--font-serif',"'Cormorant Garamond',Georgia,'Times New Roman',serif");
@@ -41,13 +32,11 @@
         document.head.appendChild(fl);
       }
     } catch(e){}
-    // #3 Hide body immediately before auth check
     document.documentElement.style.opacity = '0';
   })();
   </script>
 
-  <!-- PocketBase SDK - latest version for server 0.36.x -->
-  <script src="https://cdn.jsdelivr.net/npm/pocketbase/dist/pocketbase.umd.js" crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/pocketbase@0.21.1/dist/pocketbase.umd.js" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.2/dist/apexcharts.min.js" crossorigin="anonymous" defer></script>
 
   <style>
@@ -61,10 +50,8 @@
       --error:rgba(255,80,80,0.8); --success:#4CAF50;
     }
 
-    /* #1 CANVAS PARTICLES */
     #db-particle-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.45}
 
-    /* #2 CINEMATIC INTRO */
     #db-intro{position:fixed;inset:0;background:var(--obsidian);z-index:999999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;transition:opacity .7s ease,transform .7s ease}
     #db-intro.fade-out{opacity:0;transform:scale(1.04);pointer-events:none}
     .db-intro-logo{font-family:var(--font-serif);font-size:32px;font-weight:300;letter-spacing:.2em;color:var(--gold);opacity:0;animation:fadeUp .6s ease .15s forwards}
@@ -75,63 +62,38 @@
     @keyframes growLine{from{width:0}to{width:50px}}
     @keyframes spinFadeIn{to{opacity:1}}
 
-    /* #3 SCROLL REVEAL */
     .reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
     .reveal.revealed{opacity:1;transform:translateY(0)}
     .reveal-delay-1{transition-delay:.08s}.reveal-delay-2{transition-delay:.16s}.reveal-delay-3{transition-delay:.24s}
 
-    /* #5 ANIMATED BACKGROUND GRADIENT */
     @keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
     body::before{background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,168,76,0.07) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(201,168,76,0.03) 0%,transparent 50%);background-size:200% 200%;animation:gradientShift 12s ease infinite}
 
-    /* #6 CHART FADE-IN */
     #chart-container-box{animation:none}
     #chart-container-box.chart-loaded{animation:chartFadeIn .6s ease forwards}
     @keyframes chartFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-    /* #8 BUDGET DISPLAY TRANSITION */
     #current-budget-display{transition:all .4s cubic-bezier(0.22,1,0.36,1)}
-
-    /* #10 TOGGLE ACTIVE GLOW */
     .switch.active{box-shadow:0 0 0 4px rgba(201,168,76,.12),0 0 16px rgba(201,168,76,.2)}
-
-    /* #11 STATUS BADGE TRANSITION */
     #status-text{transition:color .3s ease,border-color .3s ease,background .3s ease}
-
-    /* #15 FOOTER LINKS HOVER */
     .footer-links a{transition:color .3s}
     .footer-links a:hover{color:var(--gold)}
-
-    /* #63 ARIA TOAST role already set, add visual */
     #toast{border-radius:2px}
-
-    /* #3 SCROLL REVEAL on cards */
     .card{will-change:transform}
-
-    /* #9 will-change on switch */
     .switch,.switch-circle{will-change:transform,background}
-
-    /* #61 ACCESSIBLE SWITCH */
     #agent-toggle:focus-visible{outline:1px solid var(--gold);outline-offset:4px;border-radius:20px}
-
-    /* #7 METRIC TOOLTIP already done via .metric-tip – ensure text wraps */
     .metric-tip::after{max-width:160px;white-space:normal;text-align:center;line-height:1.4}
 
-    /* CHART FADE */
     #chart{opacity:0;transition:opacity .5s ease}
     #chart.visible{opacity:1}
 
-    /* #15 GOLD SCROLLBAR */
     ::-webkit-scrollbar{width:4px;height:4px}
     ::-webkit-scrollbar-track{background:var(--obsidian)}
     ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,transparent,var(--gold),transparent);border-radius:2px}
     html{scrollbar-width:thin;scrollbar-color:var(--gold) var(--obsidian)}
 
-    /* #9 CUSTOM FOCUS RING */
     :focus-visible{outline:1px solid var(--gold);outline-offset:3px;border-radius:2px}
-
     *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    /* #39 touch-action on all interactive */
     button,input,a,[role=button],.switch{touch-action:manipulation;user-select:none;-webkit-user-select:none}
 
     body{
@@ -141,13 +103,10 @@
     }
     body.ready{opacity:1 !important}
     body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,168,76,0.07) 0%,transparent 60%);pointer-events:none;z-index:0}
-    /* #51 NOISE OVERLAY */
     body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.7}
 
-    /* #56 SCROLL PROGRESS */
     #scroll-progress{position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-light));z-index:9999;pointer-events:none;transition:width .1s linear}
 
-    /* #12 LOADING SCREEN */
     #loading-screen{position:fixed;inset:0;background:var(--obsidian);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;transition:opacity .6s ease,transform .6s ease}
     #loading-screen.fade-out{opacity:0;transform:scale(1.03);pointer-events:none}
     .loading-logo{font-family:var(--font-serif);font-size:32px;font-weight:300;letter-spacing:0.2em;color:var(--gold);opacity:0;animation:fadeUp .6s ease .2s forwards}
@@ -161,7 +120,6 @@
     @keyframes shimmer{0%,100%{background-position:200% 0}50%{background-position:-200% 0}}
     @keyframes pulseBorder{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.25)}50%{box-shadow:0 0 0 5px rgba(201,168,76,0)}}
 
-    /* HEADER */
     .header{
       padding:20px 24px;display:flex;justify-content:space-between;align-items:center;
       border-bottom:1px solid var(--border2);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
@@ -169,7 +127,6 @@
       transition:box-shadow .3s ease;
     }
     .header.scrolled{box-shadow:0 4px 30px rgba(0,0,0,.6),0 1px 0 rgba(201,168,76,.1)}
-    /* #28 Logo shimmer line */
     .logo-wrap{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
     .logo-text{font-family:var(--font-serif);font-size:22px;color:var(--gold);letter-spacing:0.15em;font-weight:300;text-transform:uppercase}
     .logo-line-dash{width:40px;height:1px;background:linear-gradient(90deg,transparent,var(--gold-light),var(--gold),var(--gold-light),transparent);background-size:200% 100%;animation:shimmer 3s ease-in-out infinite}
@@ -180,14 +137,11 @@
     }
     .logout-btn:hover{border-color:rgba(255,80,80,.4);color:var(--error)}
 
-    /* MAIN */
     .main-content{flex:1;max-width:500px;margin:0 auto;padding:40px 16px;position:relative;z-index:1;width:100%}
 
-    /* GREETING */
     .greeting h1{font-family:var(--font-serif);font-size:32px;font-weight:300;margin-bottom:4px;text-transform:capitalize}
     .greeting p{color:var(--text-muted);font-size:13px;font-style:italic;font-family:var(--font-serif);margin-bottom:32px}
 
-    /* CARDS */
     .card{
       background:var(--surface);border:1px solid var(--border);padding:28px;
       margin-bottom:20px;position:relative;
@@ -195,33 +149,26 @@
       transition:border-color .3s,box-shadow .3s;
     }
     .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-    /* #55 card hover */
     .card:hover{border-color:rgba(201,168,76,.26);box-shadow:0 40px 100px rgba(0,0,0,.7),0 0 28px rgba(201,168,76,.06),0 0 0 1px rgba(201,168,76,.08)}
 
-    /* #13 SKELETON */
     .skeleton{background:linear-gradient(90deg,var(--surface2) 25%,rgba(201,168,76,.06) 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.4s ease infinite;border-radius:2px}
 
-    /* METRICS */
     .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
     .metric-box{
       background:var(--surface2);padding:22px 10px;border:1px solid var(--border2);
       text-align:center;position:relative;overflow:hidden;
     }
-    /* #57 metric shimmer on load */
     .metric-box::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(201,168,76,.05) 50%,transparent 70%);background-size:200% 100%;animation:shimmer 3s ease-in-out infinite;pointer-events:none}
     .metric-val{display:block;font-family:var(--font-serif);font-size:34px;color:var(--gold);line-height:1;margin-bottom:6px;transition:all .3s}
     .metric-label{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px}
-    /* #58 LIVE DOT on metrics */
     .metric-live{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:4px}
     .live-dot-sm{width:5px;height:5px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);animation:livePulse 1.8s ease infinite}
     .live-label{font-size:8px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase}
 
-    /* #108 METRIC TOOLTIP */
     .metric-tip{position:relative;cursor:help}
     .metric-tip::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border);padding:5px 10px;font-size:9px;color:var(--text-muted);white-space:nowrap;opacity:0;transition:opacity .2s;z-index:10;pointer-events:none;border-radius:2px;font-family:var(--font-sans)}
     .metric-tip:hover::after{opacity:1}
 
-    /* SWITCH - #27 larger tap target */
     .switch-wrap{min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center}
     .switch{width:48px;height:26px;background:#111;border-radius:20px;position:relative;cursor:pointer;border:1px solid var(--border2);transition:background .4s,border-color .4s}
     .switch.active{background:var(--gold);border-color:var(--gold)}
@@ -229,11 +176,9 @@
     .switch-circle{position:absolute;top:3px;left:3px;width:18px;height:18px;background:white;border-radius:50%;transition:transform .3s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 1px 4px rgba(0,0,0,.4)}
     .switch.active .switch-circle{transform:translateX(22px)}
 
-    /* #59 STATUS BADGE PULSE */
     #status-text{animation:none}
     #status-text.active-pulse{animation:pulseBorder 2s ease infinite}
 
-    /* BUDGET */
     .budget-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:15px}
     .budget-btn{
       background:transparent;border:1px solid var(--border2);color:var(--text-muted);
@@ -243,29 +188,24 @@
     .budget-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--gold),#A8893A);transform:translateY(100%);transition:transform .3s;z-index:0}
     .budget-btn span{position:relative;z-index:1}
     .budget-btn:hover{border-color:var(--gold);color:var(--gold)}
-    /* #18 ACTIVE BUDGET STATE */
     .budget-btn.current{border-color:var(--gold);color:var(--gold);background:var(--gold-dim)}
     .custom-input{
       width:100%;background:var(--surface2);border:1px solid var(--border2);
       padding:14px;color:var(--text);font-family:var(--font-sans);font-size:13px;
       outline:none;margin-top:15px;transition:border-color .3s;
-      /* #36 hide number spinners */
       -moz-appearance:textfield;appearance:textfield;
     }
     .custom-input::-webkit-inner-spin-button,.custom-input::-webkit-outer-spin-button{-webkit-appearance:none}
     .custom-input:focus{border-color:var(--gold)}
 
-    /* #44 BUDGET WARNING */
     .budget-warning{background:rgba(255,80,80,.06);border:1px solid rgba(255,80,80,.2);padding:10px 14px;margin-top:12px;font-size:11px;color:var(--error);display:none;border-radius:2px}
     .budget-warning.show{display:block;animation:fadeInUp .3s ease}
 
-    /* #70 BUDGET PROGRESS */
     .budget-progress-wrap{margin-top:16px}
     .budget-progress-label{display:flex;justify-content:space-between;font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
     .budget-progress-bar{height:2px;background:var(--border2);border-radius:2px;overflow:hidden}
     .budget-progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:2px;transition:width .6s ease;width:0%}
 
-    /* CHART */
     .chart-controls{display:flex;gap:10px;justify-content:center;margin-top:15px}
     .chart-toggle-btn{
       background:var(--surface2);border:1px solid var(--border2);color:var(--text-dim);
@@ -273,29 +213,25 @@
       transition:all .3s;font-family:var(--font-sans);
     }
     .chart-toggle-btn.active{color:var(--gold);border-color:var(--gold)}
-    /* #72 TIME RANGE BUTTONS */
     .chart-range{display:flex;gap:6px;justify-content:flex-end;margin-bottom:10px}
     .range-btn{background:none;border:1px solid var(--border2);color:var(--text-dim);padding:4px 10px;font-size:9px;cursor:pointer;font-family:var(--font-sans);letter-spacing:.08em;text-transform:uppercase;transition:all .3s}
     .range-btn.active{border-color:rgba(201,168,76,.4);color:var(--gold)}
 
-    /* HISTORY */
     .history-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border2);font-size:12px;animation:fadeInUp .3s ease}
+    .history-item:last-child{border-bottom:none}
     .history-date{color:var(--text-dim);font-size:10px;margin-top:2px}
     .history-amount{color:var(--gold);font-family:var(--font-serif);font-size:16px}
     .history-clicks{color:var(--text-dim);font-size:10px;text-align:right;margin-top:2px}
 
-    /* #42 #43 NEXT/LAST OPTIMIZATION */
     .opt-info{display:flex;justify-content:space-between;margin-top:16px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border2)}
     .opt-item{text-align:center}
     .opt-val{font-family:var(--font-serif);font-size:14px;color:var(--gold);display:block}
     .opt-label{font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:2px}
 
-    /* #45 PLAN BADGE */
     .plan-badge-wrap{display:flex;align-items:center;gap:8px;margin-bottom:16px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border2)}
     .plan-badge-label{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.12em}
     .plan-badge-val{font-family:var(--font-serif);font-size:14px;color:var(--gold);margin-left:auto}
 
-    /* #40 STRIPE PORTAL BUTTON */
     .stripe-portal-btn{
       width:100%;margin-top:14px;padding:12px;background:transparent;
       border:1px solid var(--border2);color:var(--text-muted);font-size:10px;
@@ -304,7 +240,6 @@
     }
     .stripe-portal-btn:hover{border-color:rgba(100,91,255,.4);color:#8a84ff}
 
-    /* #99 UPGRADE BANNER */
     #upgrade-banner{
       background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.04));
       border:1px solid rgba(201,168,76,.25);padding:16px 20px;margin-bottom:20px;
@@ -316,7 +251,6 @@
     .upgrade-btn{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:8px 18px;font-size:9px;text-transform:uppercase;letter-spacing:.15em;cursor:pointer;font-family:var(--font-sans);transition:all .3s}
     .upgrade-btn:hover{background:var(--gold-dim)}
 
-    /* #105 NOTIFICATIONS SECTION */
     .notif-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border2);animation:fadeInUp .3s ease}
     .notif-item:last-child{border-bottom:none}
     .notif-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px}
@@ -327,7 +261,6 @@
     .notif-time{font-size:9px;color:var(--text-dim);margin-top:2px}
     #notif-empty{font-size:11px;color:var(--text-dim);text-align:center;padding:20px 0;font-style:italic;font-family:var(--font-serif)}
 
-    /* #102 ONBOARDING CHECKLIST */
     .check-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border2);font-size:12px}
     .check-item:last-child{border-bottom:none}
     .check-icon{width:18px;height:18px;border-radius:50%;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0}
@@ -336,7 +269,6 @@
     .check-label{color:var(--text-muted)}
     .check-label.done{color:var(--text-dim);text-decoration:line-through}
 
-    /* #101 SUPPORT + #104 FEEDBACK BUTTONS */
     .support-row{display:flex;gap:10px;margin-top:14px}
     .support-btn{
       flex:1;padding:10px;background:transparent;border:1px solid var(--border2);
@@ -346,7 +278,6 @@
     }
     .support-btn:hover{border-color:rgba(201,168,76,.3);color:var(--gold)}
 
-    /* #96 PULL TO REFRESH */
     #ptr-indicator{
       position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-60px);
       background:var(--surface);border:1px solid var(--border);padding:8px 18px;
@@ -356,7 +287,6 @@
     #ptr-indicator.visible{opacity:1}
     #ptr-indicator.show{transform:translateX(-50%) translateY(0);opacity:1}
 
-    /* TOAST */
     #toast{
       position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(20px);
       background:var(--surface);border:1px solid var(--gold);color:var(--gold);
@@ -369,7 +299,6 @@
     #toast.error{border-color:var(--error);color:var(--error)}
     #toast.success{border-color:rgba(76,175,80,.4);color:var(--success)}
 
-    /* #41 CONFIRM DIALOG */
     #confirm-dialog{
       position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:20000;display:none;
       align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(10px);
@@ -385,7 +314,6 @@
     .confirm-ok{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:12px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;font-family:var(--font-sans);transition:all .3s}
     .confirm-ok:hover{background:var(--gold-dim)}
 
-    /* SCORE RING */
     .score-ring-wrap{display:flex;flex-direction:column;align-items:center;margin:16px 0}
     .score-ring-svg{transform:rotate(-90deg)}
     .score-ring-bg{fill:none;stroke:var(--border2);stroke-width:4}
@@ -393,25 +321,19 @@
     .score-ring-text{font-family:var(--font-serif);font-size:22px;color:var(--gold);text-align:center}
     .score-ring-label{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.12em;margin-top:4px;text-align:center}
 
-    /* TODAY VS YESTERDAY */
     .metric-delta{font-size:9px;margin-top:3px;letter-spacing:.04em}
     .metric-delta.up{color:var(--success)}.metric-delta.down{color:var(--error)}.metric-delta.neutral{color:var(--text-dim)}
 
-    /* LIVE KEYWORD TICKER */
     #keyword-ticker{font-size:10px;color:var(--text-dim);letter-spacing:.06em;overflow:hidden;white-space:nowrap;margin-top:4px;font-style:italic;min-height:14px}
 
-    /* REALTIME DOT */
     .realtime-status{display:flex;align-items:center;gap:6px;font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-top:6px}
     .realtime-dot{width:6px;height:6px;border-radius:50%;background:var(--text-dim)}
     .realtime-dot.connected{background:var(--success);box-shadow:0 0 6px var(--success);animation:livePulse 2s ease infinite}
 
-    /* BUDGET FORECAST */
     .budget-forecast{font-size:10px;color:var(--text-dim);margin-top:8px;font-style:italic;padding:8px 12px;background:var(--surface2);border-radius:2px;border:1px solid var(--border2)}
 
-    /* STRIPE PLAN INFO */
     .stripe-plan-info{font-size:10px;color:var(--text-dim);margin-bottom:8px;padding:8px 12px;background:var(--surface2);border-radius:2px;border:1px solid var(--border2)}
 
-    /* ACCOUNT DELETE + DATA RIGHTS */
     .danger-zone{margin-top:20px;padding:16px;border:1px solid rgba(255,80,80,.2);background:rgba(255,80,80,.04);border-radius:2px}
     .danger-zone-title{font-size:10px;color:var(--error);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
     .danger-btn{width:100%;padding:10px;background:transparent;border:1px solid rgba(255,80,80,.3);color:var(--error);font-size:10px;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;font-family:var(--font-sans);transition:all .3s;margin-bottom:8px;border-radius:2px}
@@ -425,20 +347,17 @@
     .data-rights-btn{width:100%;padding:9px;background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:9px;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;font-family:var(--font-sans);transition:all .3s;margin-top:10px;border-radius:2px}
     .data-rights-btn:hover{border-color:rgba(201,168,76,.3);color:var(--gold)}
 
-    /* FOOTER */
     .footer{
       width:100%;text-align:center;padding:max(60px,env(safe-area-inset-bottom)) 0 max(40px,env(safe-area-inset-bottom));
       border-top:1px solid var(--border2);margin-top:40px;
       background:rgba(5,5,5,.5);position:relative;
     }
-    /* #62 footer fade */
     .footer::before{content:'';position:absolute;bottom:100%;left:0;right:0;height:80px;background:linear-gradient(to top,rgba(5,5,5,.5),transparent);pointer-events:none}
     .footer-links{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
     .footer-links a{color:var(--text-dim);font-size:9px;text-decoration:none;text-transform:uppercase;letter-spacing:1.8px;transition:color .3s;cursor:pointer}
     .footer-links a:hover{color:var(--gold)}
     .footer-copy{font-size:8px;color:rgba(240,237,232,.18);text-transform:uppercase;letter-spacing:3px}
 
-    /* MODAL */
     .modal{
       position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:30000;display:none;
       padding:40px 20px;backdrop-filter:blur(10px);overflow-y:auto;
@@ -449,22 +368,17 @@
     }
     .modal-content::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
 
-    /* #98 LANDSCAPE */
     @media(orientation:landscape) and (max-height:500px){
       .main-content{padding:20px 16px}
       .greeting h1{font-size:24px}
       .card{padding:18px}
     }
-    /* #97 Chart min-width */
     #chart{min-width:0;overflow:hidden}
-
-    /* #36 Number input */
     input[type=number]{-moz-appearance:textfield;appearance:textfield}
   </style>
 </head>
 <body>
 
-<!-- #12 LOADING SCREEN -->
 <div id="loading-screen">
   <div class="loading-logo">AiWakeel</div>
   <div class="loading-line"></div>
@@ -473,7 +387,6 @@
 
 <canvas id="db-particle-canvas"></canvas>
 
-<!-- #2 CINEMATIC INTRO -->
 <div id="db-intro">
   <div class="db-intro-logo">AiWakeel</div>
   <div class="db-intro-line"></div>
@@ -481,13 +394,9 @@
   <div class="db-intro-spinner"></div>
 </div>
 
-<!-- #56 SCROLL PROGRESS -->
 <div id="scroll-progress"></div>
-
-<!-- #96 PULL TO REFRESH -->
 <div id="ptr-indicator">↓ Loslassen zum Aktualisieren</div>
 
-<!-- #41 CONFIRM DIALOG -->
 <div id="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirm-heading">
   <div class="confirm-box">
     <div class="confirm-title" id="confirm-heading">Agent pausieren?</div>
@@ -501,7 +410,6 @@
 
 <div id="toast" role="status" aria-live="polite"></div>
 
-<!-- LEGAL MODAL -->
 <div id="legal-modal" class="modal" onclick="closeModal(event)" role="dialog" aria-modal="true">
   <div class="modal-content">
     <span style="position:absolute;top:15px;right:20px;color:var(--gold);cursor:pointer;font-size:24px" onclick="closeModal(null)" aria-label="Schließen">&times;</span>
@@ -514,13 +422,11 @@
     <div class="logo-text">AiWakeel</div>
     <div class="logo-line-dash"></div>
   </div>
-  <!-- #46 LOGOUT CONFIRMATION -->
   <button class="logout-btn" onclick="confirmLogout()">Abmelden</button>
 </header>
 
 <div class="main-content" id="main-content">
 
-  <!-- #99 UPGRADE BANNER (shown for Atelier users) -->
   <div id="upgrade-banner" role="complementary" aria-label="Upgrade-Angebot" class="reveal">
     <div class="upgrade-title">&#10022; Maison freischalten</div>
     <p class="upgrade-text">WhatsApp-Direktsteuerung, Echtzeit-Alerts und tägliche Berichte direkt auf dein Handy. Upgrade auf Maison für nur 50€ mehr pro Monat.</p>
@@ -532,9 +438,7 @@
     <p>Intelligence in Every Impression.</p>
   </div>
 
-  <!-- AGENT CARD -->
   <div class="card">
-    <!-- #45 PLAN BADGE -->
     <div class="plan-badge-wrap">
       <span class="plan-badge-label">Aktiver Plan</span>
       <span class="plan-badge-val" id="plan-display">—</span>
@@ -545,7 +449,6 @@
       <div id="status-text" style="font-size:9px;text-transform:uppercase;padding:4px 12px;border:1px solid var(--gold);color:var(--gold);letter-spacing:2px">Aktiv</div>
     </div>
 
-    <!-- #42 #43 NEXT / LAST OPTIMIZATION -->
     <div class="opt-info">
       <div class="opt-item">
         <span class="opt-val" id="last-opt">—</span>
@@ -562,15 +465,12 @@
       <div>
         <div style="font-size:14px">KI-Optimierung</div>
         <small id="status-sub" style="color:var(--text-dim);font-size:10px;text-transform:uppercase">Real-Time Control</small>
-        <!-- Realtime connection indicator -->
         <div class="realtime-status">
           <div class="realtime-dot" id="realtime-dot"></div>
           <span id="realtime-label">Verbinde …</span>
         </div>
-        <!-- Live keyword ticker -->
         <div id="keyword-ticker">—</div>
       </div>
-      <!-- #27 larger tap target -->
       <div class="switch-wrap">
         <div id="agent-toggle" class="switch" onclick="requestToggleAgent()" role="switch" aria-checked="false" aria-label="Agent aktivieren/pausieren" tabindex="0">
           <div class="switch-circle"></div>
@@ -604,7 +504,6 @@
         <div class="metric-delta neutral" id="imps-delta">—</div>
       </div>
     </div>
-    <!-- Optimization Score Ring -->
     <div class="score-ring-wrap" id="score-ring-wrap" style="display:none">
       <svg class="score-ring-svg" width="90" height="90" viewBox="0 0 90 90">
         <circle class="score-ring-bg" cx="45" cy="45" r="40"/>
@@ -615,13 +514,11 @@
     </div>
   </div>
 
-  <!-- BUDGET CARD -->
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
       <h2 style="font-family:var(--font-serif);font-size:24px;font-weight:300">Monats-Budget</h2>
       <div id="current-budget-display" style="font-family:var(--font-serif);color:var(--gold);font-size:26px">0€</div>
     </div>
-    <!-- #44 BUDGET WARNING -->
     <div class="budget-warning" id="budget-warning">⚠ Budget ist 0€ – der Agent kann keine Kampagnen schalten.</div>
     <div class="budget-grid">
       <button class="budget-btn" onclick="updateBudget(500)" aria-label="Budget auf 500 Euro setzen"><span>500€</span></button>
@@ -629,11 +526,9 @@
       <button class="budget-btn" onclick="updateBudget(2500)" aria-label="Budget auf 2500 Euro setzen"><span>2.500€</span></button>
     </div>
     <div style="position:relative">
-      <!-- #37 inputmode numeric -->
       <input type="number" id="custom-budget" class="custom-input" placeholder="Individueller Betrag (€)" inputmode="numeric" min="1" max="50000" aria-label="Individuelles Budget eingeben">
       <button onclick="saveCustomBudget()" style="position:absolute;right:15px;top:30px;background:none;border:none;color:var(--gold);font-size:10px;text-transform:uppercase;cursor:pointer;font-family:var(--font-sans);letter-spacing:.1em" aria-label="Budget speichern">Speichern</button>
     </div>
-    <!-- #70 BUDGET PROGRESS BAR -->
     <div class="budget-progress-wrap">
       <div class="budget-progress-label">
         <span id="budget-spent-label">Verbraucht diesen Monat</span>
@@ -641,21 +536,16 @@
       </div>
       <div class="budget-progress-bar"><div class="budget-progress-fill" id="budget-progress-fill"></div></div>
     </div>
-    <!-- Stripe plan info -->
     <div class="stripe-plan-info" id="stripe-plan-info">Dein Plan: <strong id="stripe-plan-name">—</strong> · <span id="stripe-plan-price">—</span>/Monat</div>
-    <!-- #40 STRIPE PORTAL -->
     <button class="stripe-portal-btn" onclick="openStripePortal()" aria-label="Abo im Stripe Portal verwalten">
       <span style="font-size:13px">&#128274;</span> Abo verwalten / kündigen
     </button>
-    <!-- Budget forecast -->
     <div class="budget-forecast" id="budget-forecast">Prognose wird berechnet …</div>
   </div>
 
-  <!-- PERFORMANCE CHART CARD -->
   <div class="card" style="background:transparent;border:none;box-shadow:none;padding:0">
     <div style="font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:2px;margin-bottom:15px">Performance Analyse</div>
     <div id="chart-container-box" style="background:var(--surface);border:1px solid var(--border);padding:20px 10px">
-      <!-- #72 TIME RANGE -->
       <div class="chart-range">
         <button class="range-btn active" onclick="setRange(7,this)">7T</button>
         <button class="range-btn" onclick="setRange(14,this)">14T</button>
@@ -669,25 +559,21 @@
     </div>
   </div>
 
-  <!-- NOTIFICATIONS CARD -->
   <div class="card" style="margin-top:20px">
     <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:300;margin-bottom:20px">Benachrichtigungen</h2>
     <div id="notif-list"><div id="notif-empty">Keine neuen Benachrichtigungen</div></div>
   </div>
 
-  <!-- HISTORY CARD -->
   <div class="card" style="margin-top:20px">
     <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:300;margin-bottom:20px">Kampagnen-Historie</h2>
     <div id="history-list"><div class="skeleton" style="height:44px;margin-bottom:10px"></div><div class="skeleton" style="height:44px"></div></div>
   </div>
 
-  <!-- ONBOARDING CHECKLIST -->
   <div class="card" style="margin-top:20px" id="checklist-card">
     <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:300;margin-bottom:20px">Einrichtungs-Status</h2>
     <div id="checklist-list"></div>
   </div>
 
-  <!-- SUPPORT & FEEDBACK -->
   <div class="card" style="margin-top:20px">
     <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:300;margin-bottom:16px">Support</h2>
     <div class="support-row">
@@ -703,7 +589,6 @@
     </div>
   </div>
 
-  <!-- DATA RIGHTS (DSGVO Art. 15, 17, 20) -->
   <div class="card" style="margin-top:20px">
     <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:300;margin-bottom:16px">Meine Daten</h2>
     <div class="data-rights-section">
@@ -718,7 +603,6 @@
         &#8681; Daten exportieren (JSON) · Art. 20 DSGVO
       </button>
     </div>
-    <!-- Danger Zone -->
     <div class="danger-zone">
       <div class="danger-zone-title">⚠ Account-Verwaltung</div>
       <button class="danger-btn" onclick="requestAccountDeletion()" aria-label="Account und alle Daten löschen">
@@ -727,7 +611,9 @@
     </div>
   </div>
 
-</div> class="footer">
+</div>
+
+<footer class="footer">
   <div class="footer-links">
     <a onclick="showLegal('impressum')" role="button" tabindex="0">Impressum</a>
     <a onclick="showLegal('privacy')" role="button" tabindex="0">Datenschutz</a>
@@ -740,7 +626,7 @@
 
 <script>
 // =========================================================
-// CONFIG (#82)
+// CONFIG
 // =========================================================
 const CFG = {
   PB_URL: 'https://ads.aiwakeel.ai',
@@ -752,39 +638,31 @@ const CFG = {
   COLLECTION_USERS: 'users'
 };
 
-// Wait for deferred scripts
 let pb, chart, allReports = [], currentRange = 7;
 
 // =========================================================
 // INIT
 // =========================================================
 document.addEventListener('DOMContentLoaded', () => {
-  // #78 DOMContentLoaded
-  // Wait for PocketBase to load
   const initInterval = setInterval(() => {
     if (typeof PocketBase !== 'undefined' && typeof ApexCharts !== 'undefined') {
       clearInterval(initInterval);
       initApp();
     }
   }, 50);
-  // Timeout after 8s
-  setTimeout(() => { clearInterval(initInterval); showToast('Skript-Ladefehler', true); }, 8000);
+  setTimeout(() => { clearInterval(initInterval); if(typeof pb === 'undefined') showToast('Skript-Ladefehler', true); }, 8000);
 });
 
 async function initApp() {
   pb = new PocketBase(CFG.PB_URL);
-
-  // PocketBase 0.22+ uses authStore.record, older uses authStore.model
   const authRecord = pb.authStore.record || pb.authStore.model;
 
-  // #1 #11 Auth check with null-guard
   if (!authRecord || !pb.authStore.isValid) {
     document.documentElement.style.opacity = '0';
     setTimeout(() => { window.location.href = 'login.html'; }, 300);
     return;
   }
 
-  // #2 Verify token server-side
   try {
     await pb.collection(CFG.COLLECTION_USERS).authRefresh();
   } catch(e) {
@@ -793,20 +671,16 @@ async function initApp() {
     return;
   }
 
-  // PocketBase 0.22+ uses authStore.record, older uses authStore.model
   const user = pb.authStore.record || pb.authStore.model;
 
-  // Show body
   document.documentElement.style.opacity = '';
   document.body.classList.add('ready');
 
-  // Hide loading screen
   setTimeout(() => {
     const ls = document.getElementById('loading-screen');
     if (ls) { ls.classList.add('fade-out'); setTimeout(() => ls.remove(), 700); }
   }, 900);
 
-  // #14 Time-based greeting
   const hour = new Date().getHours();
   const greet = hour < 12 ? 'Guten Morgen' : hour < 18 ? 'Guten Tag' : 'Guten Abend';
   let displayName = 'User';
@@ -817,27 +691,21 @@ async function initApp() {
   }
   document.getElementById('user-name').textContent = `${greet}, ${displayName}`;
 
-  // #45 Plan display
   const plan = user.plan || 'atelier';
   document.getElementById('plan-display').textContent = plan === 'premium' ? '✦ Maison' : 'Atelier';
 
-  // #99 Upgrade banner for Atelier users
   if (plan !== 'premium') document.getElementById('upgrade-banner').style.display = 'block';
 
-  // Agent status
   const isActive = user.agent_status === 'active';
   updateUI(isActive);
 
-  // #44 Budget warning
   const budget = user.budget || 0;
   document.getElementById('current-budget-display').textContent = `${budget}€`;
   if (!budget || budget === 0) document.getElementById('budget-warning').classList.add('show');
   highlightActiveBudget(budget);
 
-  // #42 #43 Optimization times
   updateOptTimes();
 
-  // Load data
   await loadDashboardData(user);
   await loadHistory(user);
   loadChecklist(user);
@@ -845,21 +713,19 @@ async function initApp() {
   renderDataPanel(user);
   renderStripePlanInfo(user);
   renderBudgetForecast(user);
-  initScrollReveal();
 
-  // Inits
   initScrollProgress();
   initHeaderScroll();
   initPullToRefresh(user);
-  initAutoRefresh(user);
+  initTabFocusRefresh(user);
+  initTokenRefresh();
   initInactivityLogout();
   initKeyboard();
-  initDashParticles();   // #1
-  initDashIntro();       // #2
-  initScrollReveal();    // #3
-  initChartReveal();     // #6
+  initDashParticles();
+  initDashIntro();
+  initScrollReveal();
+  initChartReveal();
 
-  // Add reveal classes to all cards dynamically
   document.querySelectorAll('.card,.card-wrap').forEach((el, i) => {
     if (!el.classList.contains('reveal')) {
       el.classList.add('reveal');
@@ -871,7 +737,6 @@ async function initApp() {
     document.getElementById('upgrade-banner').classList.add('reveal');
   }
 
-  // #75 PocketBase Realtime
   try {
     pb.collection(CFG.COLLECTION_REPORTS).subscribe('*', (e) => {
       if (e.record.user === user.id) loadDashboardData(user);
@@ -883,7 +748,7 @@ async function initApp() {
 }
 
 // =========================================================
-// #42 #43 OPTIMIZATION TIMES
+// OPTIMIZATION TIMES
 // =========================================================
 function updateOptTimes() {
   const now = new Date();
@@ -894,23 +759,19 @@ function updateOptTimes() {
   const isToday = next.getDate() === new Date(Date.now() + 86400000).getDate() ? 'Morgen' : 'Heute';
   document.getElementById('next-opt').textContent = `${isToday} 07:00`;
 
-  // Last optimization: if before 7am today, yesterday 07:00, else today 07:00
   const lastOpt = now.getHours() >= 7 ? 'Heute 07:00' : 'Gestern 07:00';
   document.getElementById('last-opt').textContent = lastOpt;
 }
 
 // =========================================================
-// DASHBOARD DATA (#21 animated metrics, #68 CPC, #85 race fix)
+// DASHBOARD DATA
 // =========================================================
 let _loadLock = false;
 async function loadDashboardData(user) {
   if (_loadLock) return;
   _loadLock = true;
   try {
-    // Remove beforeSend if previously set
     pb.beforeSend = null;
-
-    // Simplest possible query for PocketBase v0.36.x
     const records = await pb.collection('daily_reports').getList(1, 30, {
       sort: '-created'
     });
@@ -918,23 +779,19 @@ async function loadDashboardData(user) {
 
     if (allReports.length > 0) {
       const latest = allReports[0];
-      // #21 Animated metrics
       animateMetric('clicks-val', latest.clicks || 0);
       animateMetric('pos-val', parseFloat(latest.position || 0).toFixed(1), false);
       animateMetric('cpc-val', (latest.current_cpc || 0).toFixed(2) + '€', false);
       animateMetric('imps-val', latest.impressions || 0);
 
-      // Show optimized keyword in status line
       const statusSub = document.getElementById('status-sub');
       if (statusSub && latest.keyword && latest.keyword !== 'N/A') {
         statusSub.textContent = `Optimiert für: ${latest.keyword}`;
       }
-      // New: keyword ticker, score ring, deltas
       updateKeywordTicker(latest.best_keyword || latest.keyword);
       renderScoreRing(latest.optimization_score);
       renderDeltas(allReports);
 
-      // Remove skeletons
       ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
         document.getElementById(id).classList.remove('skeleton');
         document.getElementById(id).style.height = '';
@@ -943,27 +800,24 @@ async function loadDashboardData(user) {
       renderChart(allReports.slice().reverse(), currentRange);
     } else {
       document.getElementById('chart').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);font-size:10px;letter-spacing:2px">WARTE AUF DATEN-SYNC...</div>';
-      document.querySelector('.chart-controls').style.display = 'none';
+      if(document.querySelector('.chart-controls')) document.querySelector('.chart-controls').style.display = 'none';
       ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
         const el = document.getElementById(id);
-        el.classList.remove('skeleton'); el.textContent = '—'; el.style.height = '';
+        if(el) { el.classList.remove('skeleton'); el.textContent = '—'; el.style.height = ''; }
       });
     }
 
-    // #70 Budget progress (mock: use random spend for demo)
     updateBudgetProgress(user);
   } catch(e) {
     const detail = e?.response?.message || e?.data?.message || e?.message || String(e);
     showToast('PB Fehler: ' + detail, true);
-    console.error('Full PB error:', JSON.stringify(e));
     ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
       const el = document.getElementById(id);
-      el.classList.remove('skeleton'); el.textContent = 'Fehler'; el.style.height = '';
+      if(el) { el.classList.remove('skeleton'); el.textContent = 'Fehler'; el.style.height = ''; }
     });
   } finally { _loadLock = false; }
 }
 
-// #21 METRIC COUNTUP
 function animateMetric(id, target, isInt = true) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -982,11 +836,9 @@ function animateMetric(id, target, isInt = true) {
   requestAnimationFrame(step);
 }
 
-// #70 Budget progress
 function updateBudgetProgress(user) {
   const budget = user.budget || 0;
   if (!budget) return;
-  // Estimate spend: days passed this month / 30 * budget
   const now = new Date();
   const daysPassed = now.getDate();
   const spent = Math.min(Math.round((daysPassed / 30) * budget), budget);
@@ -997,7 +849,7 @@ function updateBudgetProgress(user) {
 }
 
 // =========================================================
-// CHART (#53 gold tooltip, #54 label color, #72 time range)
+// CHART
 // =========================================================
 function renderChart(data, days = 7) {
   const sliced = data.slice(-days);
@@ -1013,14 +865,12 @@ function renderChart(data, days = 7) {
     stroke: { curve: 'smooth', width: [2, 2] },
     fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: [0.35, 0], opacityTo: [0, 0] } },
     grid: { show: false },
-    // #54 Fixed x-axis label color
     xaxis: {
       categories: sliced.map(r => new Date(r.created).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' })),
       labels: { style: { colors: Array(sliced.length).fill('rgba(240,237,232,0.28)'), fontSize: '9px', fontFamily: 'DM Sans, system-ui' } }
     },
     yaxis: { show: false },
     dataLabels: { enabled: false },
-    // #53 Gold tooltip
     tooltip: {
       theme: 'dark',
       style: { fontSize: '11px', fontFamily: 'DM Sans, system-ui' },
@@ -1059,15 +909,8 @@ function toggleSeries(name) {
   if (chart) chart.toggleSeries(name);
 }
 
-function setRange(days, btn) {
-  currentRange = days;
-  document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  if (allReports.length) renderChart(allReports.slice().reverse(), days);
-}
-
 // =========================================================
-// HISTORY (#22 real data, #47 clicks + ROI)
+// HISTORY
 // =========================================================
 async function loadHistory(user) {
   try {
@@ -1091,13 +934,10 @@ async function loadHistory(user) {
         </div>
       </div>`).join('');
   } catch(e) {
-    document.getElementById('history-list').innerHTML = '<div style="color:var(--text-dim);font-size:11px;padding:12px 0">Historiendaten nicht verfügbar.</div>';
+    if(document.getElementById('history-list')) document.getElementById('history-list').innerHTML = '<div style="color:var(--text-dim);font-size:11px;padding:12px 0">Historiendaten nicht verfügbar.</div>';
   }
 }
 
-// =========================================================
-// #105 NOTIFICATIONS
-// =========================================================
 function loadNotifications(user) {
   const list = document.getElementById('notif-list');
   const notifs = [];
@@ -1106,7 +946,7 @@ function loadNotifications(user) {
   if (user.plan !== 'premium') notifs.push({ type:'info', text:'Upgrade auf Maison verfügbar – WhatsApp-Berichte und Echtzeit-Alerts.', time:'Angebot' });
 
   if (!notifs.length) return;
-  document.getElementById('notif-empty')?.remove();
+  if(document.getElementById('notif-empty')) document.getElementById('notif-empty').remove();
   list.innerHTML = notifs.map(n => `
     <div class="notif-item">
       <div class="notif-dot ${n.type}"></div>
@@ -1114,9 +954,6 @@ function loadNotifications(user) {
     </div>`).join('');
 }
 
-// =========================================================
-// #102 ONBOARDING CHECKLIST
-// =========================================================
 function loadChecklist(user) {
   const items = [
     { label: 'Google Account verbunden', done: !!user.google_ads_connected },
@@ -1127,23 +964,24 @@ function loadChecklist(user) {
     { label: 'Erster Report empfangen', done: !!(user.first_report_sent) }
   ];
   const all = items.every(i => i.done);
-  if (all) { document.getElementById('checklist-card').style.display = 'none'; return; }
-  document.getElementById('checklist-list').innerHTML = items.map(i => `
-    <div class="check-item">
-      <div class="check-icon ${i.done ? 'done' : 'pending'}">${i.done ? '✓' : '○'}</div>
-      <span class="check-label ${i.done ? 'done' : ''}">${i.label}</span>
-    </div>`).join('');
+  if (all) { if(document.getElementById('checklist-card')) document.getElementById('checklist-card').style.display = 'none'; return; }
+  if(document.getElementById('checklist-list')) {
+    document.getElementById('checklist-list').innerHTML = items.map(i => `
+      <div class="check-item">
+        <div class="check-icon ${i.done ? 'done' : 'pending'}">${i.done ? '✓' : '○'}</div>
+        <span class="check-label ${i.done ? 'done' : ''}">${i.label}</span>
+      </div>`).join('');
+  }
 }
 
 // =========================================================
-// TOGGLE AGENT (#41 confirm, #60 haptic, #7 no sensitive IDs, #83 timeout)
+// TOGGLE AGENT
 // =========================================================
 let _pendingToggle = false;
 
 function requestToggleAgent() {
   const isActive = document.getElementById('agent-toggle').classList.contains('active');
   if (isActive) {
-    // #41 Confirmation before pausing
     document.getElementById('confirm-dialog').classList.add('show');
     _pendingToggle = true;
   } else {
@@ -1170,7 +1008,6 @@ async function executeToggle() {
   try {
     await pb.collection(CFG.COLLECTION_USERS).update(user.id, { agent_status: nextStatus });
 
-    // #83 Fetch with timeout – #8 with auth header – #7 no sensitive IDs in payload
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), 10000);
     fetch(CFG.N8N_TOGGLE, {
@@ -1182,7 +1019,6 @@ async function executeToggle() {
 
     updateUI(!isCurrentlyActive);
     showToast(nextStatus === 'active' ? '✦ Agent gestartet' : 'Agent pausiert');
-    // #19 micro-interaction on activation
     if (nextStatus === 'active') showCelebration();
   } catch(e) {
     showToast('Fehler beim Speichern', true);
@@ -1195,6 +1031,7 @@ function updateUI(isActive) {
   const t = document.getElementById('agent-toggle');
   const s = document.getElementById('status-text');
   const sub = document.getElementById('status-sub');
+  if(!t || !s || !sub) return;
   t.classList.toggle('active', isActive);
   t.setAttribute('aria-checked', String(isActive));
   s.textContent = isActive ? 'Aktiv' : 'Pausiert';
@@ -1208,7 +1045,6 @@ function updateUI(isActive) {
   }
 }
 
-// #19 Celebration on agent start
 function showCelebration() {
   const colors = ['#C9A84C','#E8C97A','#F0EDE8'];
   for (let i = 0; i < 20; i++) {
@@ -1222,7 +1058,7 @@ function showCelebration() {
 }
 
 // =========================================================
-// BUDGET (#31 no reload, #87 rate limit)
+// BUDGET
 // =========================================================
 let _budgetLock = false;
 async function updateBudget(amt) {
@@ -1231,7 +1067,6 @@ async function updateBudget(amt) {
   setTimeout(() => _budgetLock = false, 2000);
   try {
     await pb.collection(CFG.COLLECTION_USERS).update((pb.authStore.record || pb.authStore.model).id, { budget: amt });
-    // #8 Animate budget display instead of instant swap
     const currentVal = parseInt(document.getElementById('current-budget-display').textContent) || 0;
     const dur = 500, start = performance.now();
     const animBudget = ts => {
@@ -1264,16 +1099,10 @@ async function saveCustomBudget() {
   else showToast('Ungültiger Betrag', true);
 }
 
-// =========================================================
-// #40 STRIPE PORTAL
-// =========================================================
 function openStripePortal() {
   window.open(CFG.STRIPE_PORTAL_URL + '?prefilled_email=' + encodeURIComponent((pb.authStore.record || pb.authStore.model)?.email || ''), '_blank', 'noopener');
 }
 
-// =========================================================
-// #101 SUPPORT · #104 FEEDBACK
-// =========================================================
 function openSupport(type) {
   if (type === 'whatsapp') window.open('https://wa.me/491727419318?text=Hallo%20AiWakeel%20Support', '_blank', 'noopener');
   else if (type === 'email') window.open('mailto:kontakt@aiwakeel.ai?subject=Dashboard%20Support', '_blank', 'noopener');
@@ -1283,9 +1112,6 @@ function openFeedback() {
   setTimeout(() => window.open('mailto:kontakt@aiwakeel.ai?subject=Feedback%20AiWakeel', '_blank', 'noopener'), 800);
 }
 
-// =========================================================
-// LOGOUT (#46 confirm, #61 fade, #91 history)
-// =========================================================
 function confirmLogout() {
   document.getElementById('confirm-heading').textContent = 'Wirklich abmelden?';
   document.getElementById('confirm-text').textContent = 'Deine Session wird beendet. Alle laufenden Prozesse bleiben aktiv.';
@@ -1294,36 +1120,38 @@ function confirmLogout() {
 }
 function doLogout() {
   haptic(30);
-  // #91 replace history so back-button doesn't bring user back
   window.history.replaceState(null, '', window.location.pathname);
-  // #61 fade out
   document.body.style.opacity = '0';
   document.body.style.transition = 'opacity .4s ease';
   setTimeout(() => { pb.authStore.clear(); window.location.replace('login.html'); }, 400);
 }
 
 // =========================================================
-// #2 AUTO TOKEN REFRESH + #2 INACTIVITY LOGOUT
+// TOKEN REFRESH & TAB REFRESH
 // =========================================================
-async function initAutoRefresh() {
+async function initTokenRefresh() {
   setInterval(async () => {
     try { if (pb?.authStore?.isValid) await pb.collection(CFG.COLLECTION_USERS).authRefresh(); }
     catch(e) { doLogout(); }
-  }, 4 * 60 * 1000); // Every 4 min
+  }, 4 * 60 * 1000);
+}
+
+function initTabFocusRefresh(user) {
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) loadDashboardData(user);
+  });
 }
 
 function initInactivityLogout() {
   let timer;
-  const reset = () => { clearTimeout(timer); timer = setTimeout(doLogout, 30 * 60 * 1000); }; // 30 min
+  const reset = () => { clearTimeout(timer); timer = setTimeout(doLogout, 30 * 60 * 1000); };
   ['mousemove','keydown','touchstart','click'].forEach(ev => window.addEventListener(ev, reset, { passive: true }));
   reset();
 }
 
-// =========================================================
-// SCROLL PROGRESS (#56) + HEADER SCROLL (#20)
-// =========================================================
 function initScrollProgress() {
   const bar = document.getElementById('scroll-progress');
+  if(!bar) return;
   window.addEventListener('scroll', () => {
     const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
     bar.style.width = Math.min(pct, 100) + '%';
@@ -1331,14 +1159,13 @@ function initScrollProgress() {
 }
 function initHeaderScroll() {
   const h = document.getElementById('main-header');
+  if(!h) return;
   window.addEventListener('scroll', () => h.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
 }
 
-// =========================================================
-// #96 PULL TO REFRESH
-// =========================================================
 function initPullToRefresh(user) {
   const ptr = document.getElementById('ptr-indicator');
+  if(!ptr) return;
   let startY = 0, pulling = false;
   document.addEventListener('touchstart', e => { if (window.scrollY === 0) { startY = e.touches[0].clientY; pulling = true; } }, { passive: true });
   document.addEventListener('touchmove', e => {
@@ -1360,18 +1187,6 @@ function initPullToRefresh(user) {
   }, { passive: true });
 }
 
-// =========================================================
-// #33 AUTO REFRESH on tab focus
-// =========================================================
-function initAutoRefresh(user) {
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) loadDashboardData(user);
-  });
-}
-
-// =========================================================
-// KEYBOARD (#9)
-// =========================================================
 function initKeyboard() {
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
@@ -1384,24 +1199,26 @@ function initKeyboard() {
   });
 }
 
-// =========================================================
-// HAPTIC (#60)
-// =========================================================
 function haptic(p = 40) { try { if (navigator.vibrate) navigator.vibrate(p); } catch {} }
 
-// =========================================================
-// TOAST
-// =========================================================
 function showToast(msg, isError = false, isSuccess = false) {
   const t = document.getElementById('toast');
+  if(!t) return;
   t.textContent = msg;
   t.className = isError ? 'error show' : isSuccess ? 'success show' : 'show';
   clearTimeout(t._timer);
   t._timer = setTimeout(() => t.classList.remove('show'), 3200);
 }
 
+function setRange(days, btn) {
+  currentRange = days;
+  document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (allReports.length) renderChart(allReports.slice().reverse(), days);
+}
+
 // =========================================================
-// LEGAL TEXTS (full, DSGVO-compliant - #9)
+// LEGAL TEXTS
 // =========================================================
 function showLegal(type) {
   const s = (t,b) => `<h2 style="color:var(--gold);margin-bottom:18px;font-family:var(--font-serif);font-size:22px;font-weight:300;letter-spacing:.04em">${t}</h2>${b}`;
@@ -1495,29 +1312,20 @@ function closeModal(e) {
   if (!e || e.target.classList.contains('modal')) document.getElementById('legal-modal').style.display = 'none';
 }
 
-// =========================================================
-// REALTIME CONNECTION INDICATOR
-// =========================================================
 function updateRealtimeDot(connected) {
   const dot = document.getElementById('realtime-dot');
   const lbl = document.getElementById('realtime-label');
   if (!dot || !lbl) return;
   dot.className = 'realtime-dot' + (connected ? ' connected' : '');
-  lbl.textContent = connected ? 'Echtzeit aktiv' : 'Verbindung getrennt';
+  lbl.textContent = connected ? 'Echtzeit active' : 'Verbindung getrennt';
 }
 
-// =========================================================
-// LIVE KEYWORD TICKER
-// =========================================================
 function updateKeywordTicker(keyword) {
   const el = document.getElementById('keyword-ticker');
   if (!el || !keyword || keyword === 'N/A') return;
   el.textContent = '✦ Optimiert: ' + keyword;
 }
 
-// =========================================================
-// SCORE RING (optimization_score 0-100)
-// =========================================================
 function renderScoreRing(score) {
   if (!score && score !== 0) return;
   const wrap = document.getElementById('score-ring-wrap');
@@ -1532,9 +1340,6 @@ function renderScoreRing(score) {
   fill.style.stroke = pct >= 70 ? 'var(--success)' : pct >= 40 ? 'var(--gold)' : 'var(--error)';
 }
 
-// =========================================================
-// DELTA METRICS (today vs yesterday)
-// =========================================================
 function renderDeltas(reports) {
   if (reports.length < 2) return;
   const today = reports[0], yesterday = reports[1];
@@ -1556,9 +1361,6 @@ function renderDeltas(reports) {
   });
 }
 
-// =========================================================
-// BUDGET FORECAST
-// =========================================================
 function renderBudgetForecast(user) {
   const el = document.getElementById('budget-forecast'); if (!el) return;
   const budget = user.budget || 0;
@@ -1579,9 +1381,6 @@ function renderBudgetForecast(user) {
   }
 }
 
-// =========================================================
-// STRIPE PLAN INFO
-// =========================================================
 function renderStripePlanInfo(user) {
   const el = document.getElementById('stripe-plan-name');
   const pr = document.getElementById('stripe-plan-price');
@@ -1591,9 +1390,6 @@ function renderStripePlanInfo(user) {
   pr.textContent = isPremium ? '99€' : '49€';
 }
 
-// =========================================================
-// DATA RIGHTS PANEL
-// =========================================================
 function renderDataPanel(user) {
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || '—'; };
   set('data-email', user.email);
@@ -1604,9 +1400,6 @@ function renderDataPanel(user) {
   set('data-created', user.created ? new Date(user.created).toLocaleDateString('de-DE') : '—');
 }
 
-// =========================================================
-// DATA EXPORT (DSGVO Art. 20)
-// =========================================================
 function exportUserData() {
   const user = pb.authStore.record || pb.authStore.model;
   const exportData = {
@@ -1640,13 +1433,9 @@ function exportUserData() {
   showToast('✦ Daten exportiert', false, true);
 }
 
-// =========================================================
-// ACCOUNT DELETION (DSGVO Art. 17)
-// =========================================================
 function requestAccountDeletion() {
   document.getElementById('confirm-heading').textContent = 'Account wirklich löschen?';
-  document.getElementById('confirm-text').textContent =
-    'Alle deine Daten, Reports und das laufende Abo werden unwiderruflich gelöscht. Diese Aktion kann nicht rückgängig gemacht werden. (Art. 17 DSGVO)';
+  document.getElementById('confirm-text').textContent = 'Alle deine Daten, Reports und das laufende Abo werden unwiderruflich gelöscht. Diese Aktion kann nicht rückgängig gemacht werden. (Art. 17 DSGVO)';
   document.getElementById('confirm-ok-btn').style.borderColor = 'var(--error)';
   document.getElementById('confirm-ok-btn').style.color = 'var(--error)';
   document.getElementById('confirm-ok-btn').onclick = () => { closeConfirm(false); executeAccountDeletion(); };
@@ -1657,47 +1446,37 @@ async function executeAccountDeletion() {
   const user = pb.authStore.record || pb.authStore.model;
   showToast('Löschung wird verarbeitet …');
   try {
-    // Send deletion request to n8n (cancels Stripe, removes PB record, sends confirmation email)
     await fetch('https://n8n.aiwakeel.ai/webhook/delete-account', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId: user.id, email: user.email })
     });
-    // Logout immediately
     pb.authStore.clear();
     document.body.style.opacity = '0';
     document.body.style.transition = 'opacity .5s ease';
-    setTimeout(() => {
-      window.location.replace('https://aiwakeel.ai?deleted=1');
-    }, 600);
+    setTimeout(() => { window.location.replace('https://aiwakeel.ai?deleted=1'); }, 600);
   } catch(e) {
     showToast('Fehler – bitte schreibe an kontakt@aiwakeel.ai', true);
   }
 }
 
-// =========================================================
-// SCROLL REVEAL (if not already defined)
-// =========================================================
 function initScrollReveal() {
   if (!('IntersectionObserver' in window)) {
     document.querySelectorAll('.reveal').forEach(el => el.classList.add('revealed')); return;
   }
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); obs.unobserve(e.target); } });
-  }, { threshold: 0.08 });
+  }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
   document.querySelectorAll('.card,.reveal').forEach(el => {
     const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight) el.classList.add('reveal', 'revealed');
-    else { el.classList.add('reveal'); obs.observe(el); }
+    if (rect.top < window.innerHeight) el.classList.add('revealed');
+    else obs.observe(el);
   });
 }
 const confStyle = document.createElement('style');
 confStyle.textContent = '@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(200px) rotate(720deg);opacity:0}}';
 document.head.appendChild(confStyle);
 
-// =========================================================
-// #1 DASHBOARD CANVAS PARTICLES
-// =========================================================
 function initDashParticles() {
   const canvas = document.getElementById('db-particle-canvas');
   if (!canvas) return;
@@ -1726,9 +1505,6 @@ function initDashParticles() {
   draw();
 }
 
-// =========================================================
-// #2 DASHBOARD CINEMATIC INTRO
-// =========================================================
 function initDashIntro() {
   const intro = document.getElementById('db-intro');
   if (!intro) return;
@@ -1740,29 +1516,6 @@ function initDashIntro() {
   }, 1500);
 }
 
-// =========================================================
-// #3 SCROLL REVEAL
-// =========================================================
-function initScrollReveal() {
-  if (!('IntersectionObserver' in window)) {
-    document.querySelectorAll('.reveal').forEach(el => el.classList.add('revealed'));
-    return;
-  }
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('revealed'); obs.unobserve(e.target); }
-    });
-  }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
-  document.querySelectorAll('.reveal').forEach(el => {
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight) el.classList.add('revealed');
-    else obs.observe(el);
-  });
-}
-
-// =========================================================
-// #6 CHART CONTAINER PRE-HIDE (fade-in handled in renderChart)
-// =========================================================
 function initChartReveal() {
   const box = document.getElementById('chart-container-box');
   if (box) { box.style.opacity = '0'; box.style.transition = 'opacity .6s ease'; }
