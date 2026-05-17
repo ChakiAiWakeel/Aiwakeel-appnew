@@ -957,7 +957,7 @@ async function closeConfirm(confirmed) {
 }
 
 async function executeToggle() {
-  const user = pb.authStore.model;
+  const user = pb.authStore.record || pb.authStore.model;
   const toggleBtn = document.getElementById('agent-toggle');
   if (toggleBtn.classList.contains('processing')) return;
   const isCurrentlyActive = toggleBtn.classList.contains('active');
@@ -969,19 +969,23 @@ async function executeToggle() {
   try {
     await pb.collection(CFG.COLLECTION_USERS).update(user.id, { agent_status: nextStatus });
 
-    // #83 Fetch with timeout – #8 with auth header – #7 no sensitive IDs in payload
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), 10000);
+    
+    // HIER MIT DER ERWEITERTEN PAYLOAD (userId + customer_id + status)
     fetch(CFG.N8N_TOGGLE, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-User-Token': pb.authStore.token.slice(0, 16) },
-      body: JSON.stringify({ userId: user.id, status: nextStatus }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        userId: user.id, 
+        customer_id: user.ads_customer_id, 
+        status: nextStatus 
+      }),
       signal: ctrl.signal
     }).then(() => clearTimeout(tid)).catch(() => clearTimeout(tid));
 
     updateUI(!isCurrentlyActive);
     showToast(nextStatus === 'active' ? '✦ Agent gestartet' : 'Agent pausiert');
-    // #19 micro-interaction on activation
     if (nextStatus === 'active') showCelebration();
   } catch(e) {
     showToast('Fehler beim Speichern', true);
@@ -989,6 +993,7 @@ async function executeToggle() {
     toggleBtn.classList.remove('processing');
   }
 }
+
 
 function updateUI(isActive) {
   const t = document.getElementById('agent-toggle');
