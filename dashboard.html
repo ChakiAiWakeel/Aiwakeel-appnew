@@ -1,4 +1,4 @@
-<!-- AiWakeel Dashboard v2.0 | CanTurSoft © 2026 -->
+<!-- AiWakeel Dashboard v3.0 | CanTurSoft © 2026 -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -11,15 +11,19 @@
   <meta name="description" content="AiWakeel Kunden-Dashboard – KI-gestützte Google Ads Verwaltung.">
   <meta name="robots" content="noindex, nofollow">
   <!-- #92 -->
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="AiWakeel">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- #94 -->
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <!-- #93 -->
-  <link rel="manifest" href="/manifest.json">
+  <!-- manifest.json intentionally omitted until file exists -->
   <!-- #10 CSP -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' cdnjs.cloudflare.com cdn.jsdelivr.net; style-src 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; connect-src ads.aiwakeel.ai n8n.aiwakeel.ai; img-src 'self' data:; frame-ancestors 'none';">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline' cdnjs.cloudflare.com cdn.jsdelivr.net; style-src 'unsafe-inline' fonts.googleapis.com; font-src fonts.gstatic.com data:; connect-src 'self' https://ads.aiwakeel.ai https://n8n.aiwakeel.ai https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: blob:;">
   <title>AiWakeel · Elite Dashboard</title>
 
   <!-- #6 Font-Variablen immer setzen, Dateien nur nach Consent -->
@@ -42,9 +46,9 @@
   })();
   </script>
 
-  <!-- #4 #5 Scripts loaded after DOM – deferred -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pocketbase/0.21.1/pocketbase.umd.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
+  <!-- PocketBase SDK - latest version for server 0.36.x -->
+  <script src="https://cdn.jsdelivr.net/npm/pocketbase/dist/pocketbase.umd.js" crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.45.2/dist/apexcharts.min.js" crossorigin="anonymous" defer></script>
 
   <style>
     :root {
@@ -56,6 +60,66 @@
       --text:#F0EDE8; --text-muted:rgba(240,237,232,0.42); --text-dim:rgba(240,237,232,0.22);
       --error:rgba(255,80,80,0.8); --success:#4CAF50;
     }
+
+    /* #1 CANVAS PARTICLES */
+    #db-particle-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.45}
+
+    /* #2 CINEMATIC INTRO */
+    #db-intro{position:fixed;inset:0;background:var(--obsidian);z-index:999999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;transition:opacity .7s ease,transform .7s ease}
+    #db-intro.fade-out{opacity:0;transform:scale(1.04);pointer-events:none}
+    .db-intro-logo{font-family:var(--font-serif);font-size:32px;font-weight:300;letter-spacing:.2em;color:var(--gold);opacity:0;animation:fadeUp .6s ease .15s forwards}
+    .db-intro-line{width:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:growLine .7s ease .4s forwards}
+    .db-intro-sub{font-size:9px;letter-spacing:.35em;color:var(--text-dim);text-transform:uppercase;opacity:0;animation:fadeUp .4s ease .8s forwards}
+    .db-intro-spinner{width:22px;height:22px;border:1px solid rgba(201,168,76,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .9s linear infinite;margin-top:6px;opacity:0;animation:spinFadeIn .3s ease .7s forwards,spin .9s .7s linear infinite}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes growLine{from{width:0}to{width:50px}}
+    @keyframes spinFadeIn{to{opacity:1}}
+
+    /* #3 SCROLL REVEAL */
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
+    .reveal.revealed{opacity:1;transform:translateY(0)}
+    .reveal-delay-1{transition-delay:.08s}.reveal-delay-2{transition-delay:.16s}.reveal-delay-3{transition-delay:.24s}
+
+    /* #5 ANIMATED BACKGROUND GRADIENT */
+    @keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+    body::before{background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,168,76,0.07) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(201,168,76,0.03) 0%,transparent 50%);background-size:200% 200%;animation:gradientShift 12s ease infinite}
+
+    /* #6 CHART FADE-IN */
+    #chart-container-box{animation:none}
+    #chart-container-box.chart-loaded{animation:chartFadeIn .6s ease forwards}
+    @keyframes chartFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+    /* #8 BUDGET DISPLAY TRANSITION */
+    #current-budget-display{transition:all .4s cubic-bezier(0.22,1,0.36,1)}
+
+    /* #10 TOGGLE ACTIVE GLOW */
+    .switch.active{box-shadow:0 0 0 4px rgba(201,168,76,.12),0 0 16px rgba(201,168,76,.2)}
+
+    /* #11 STATUS BADGE TRANSITION */
+    #status-text{transition:color .3s ease,border-color .3s ease,background .3s ease}
+
+    /* #15 FOOTER LINKS HOVER */
+    .footer-links a{transition:color .3s}
+    .footer-links a:hover{color:var(--gold)}
+
+    /* #63 ARIA TOAST role already set, add visual */
+    #toast{border-radius:2px}
+
+    /* #3 SCROLL REVEAL on cards */
+    .card{will-change:transform}
+
+    /* #9 will-change on switch */
+    .switch,.switch-circle{will-change:transform,background}
+
+    /* #61 ACCESSIBLE SWITCH */
+    #agent-toggle:focus-visible{outline:1px solid var(--gold);outline-offset:4px;border-radius:20px}
+
+    /* #7 METRIC TOOLTIP already done via .metric-tip – ensure text wraps */
+    .metric-tip::after{max-width:160px;white-space:normal;text-align:center;line-height:1.4}
+
+    /* CHART FADE */
+    #chart{opacity:0;transition:opacity .5s ease}
+    #chart.visible{opacity:1}
 
     /* #15 GOLD SCROLLBAR */
     ::-webkit-scrollbar{width:4px;height:4px}
@@ -321,6 +385,46 @@
     .confirm-ok{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:12px;font-size:10px;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;font-family:var(--font-sans);transition:all .3s}
     .confirm-ok:hover{background:var(--gold-dim)}
 
+    /* SCORE RING */
+    .score-ring-wrap{display:flex;flex-direction:column;align-items:center;margin:16px 0}
+    .score-ring-svg{transform:rotate(-90deg)}
+    .score-ring-bg{fill:none;stroke:var(--border2);stroke-width:4}
+    .score-ring-fill{fill:none;stroke:var(--gold);stroke-width:4;stroke-linecap:round;stroke-dasharray:251;stroke-dashoffset:251;transition:stroke-dashoffset 1.2s cubic-bezier(0.22,1,0.36,1)}
+    .score-ring-text{font-family:var(--font-serif);font-size:22px;color:var(--gold);text-align:center}
+    .score-ring-label{font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.12em;margin-top:4px;text-align:center}
+
+    /* TODAY VS YESTERDAY */
+    .metric-delta{font-size:9px;margin-top:3px;letter-spacing:.04em}
+    .metric-delta.up{color:var(--success)}.metric-delta.down{color:var(--error)}.metric-delta.neutral{color:var(--text-dim)}
+
+    /* LIVE KEYWORD TICKER */
+    #keyword-ticker{font-size:10px;color:var(--text-dim);letter-spacing:.06em;overflow:hidden;white-space:nowrap;margin-top:4px;font-style:italic;min-height:14px}
+
+    /* REALTIME DOT */
+    .realtime-status{display:flex;align-items:center;gap:6px;font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-top:6px}
+    .realtime-dot{width:6px;height:6px;border-radius:50%;background:var(--text-dim)}
+    .realtime-dot.connected{background:var(--success);box-shadow:0 0 6px var(--success);animation:livePulse 2s ease infinite}
+
+    /* BUDGET FORECAST */
+    .budget-forecast{font-size:10px;color:var(--text-dim);margin-top:8px;font-style:italic;padding:8px 12px;background:var(--surface2);border-radius:2px;border:1px solid var(--border2)}
+
+    /* STRIPE PLAN INFO */
+    .stripe-plan-info{font-size:10px;color:var(--text-dim);margin-bottom:8px;padding:8px 12px;background:var(--surface2);border-radius:2px;border:1px solid var(--border2)}
+
+    /* ACCOUNT DELETE + DATA RIGHTS */
+    .danger-zone{margin-top:20px;padding:16px;border:1px solid rgba(255,80,80,.2);background:rgba(255,80,80,.04);border-radius:2px}
+    .danger-zone-title{font-size:10px;color:var(--error);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+    .danger-btn{width:100%;padding:10px;background:transparent;border:1px solid rgba(255,80,80,.3);color:var(--error);font-size:10px;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;font-family:var(--font-sans);transition:all .3s;margin-bottom:8px;border-radius:2px}
+    .danger-btn:last-child{margin-bottom:0}
+    .danger-btn:hover{background:rgba(255,80,80,.08);border-color:var(--error)}
+    .data-rights-section{margin-top:14px;padding:14px;background:var(--surface2);border:1px solid var(--border2);border-radius:2px}
+    .data-rights-title{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);margin-bottom:10px}
+    .data-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border2);font-size:11px}
+    .data-row:last-child{border-bottom:none}
+    .data-key{color:var(--text-dim)}.data-val{color:var(--text);font-family:var(--font-serif);font-size:13px}
+    .data-rights-btn{width:100%;padding:9px;background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:9px;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;font-family:var(--font-sans);transition:all .3s;margin-top:10px;border-radius:2px}
+    .data-rights-btn:hover{border-color:rgba(201,168,76,.3);color:var(--gold)}
+
     /* FOOTER */
     .footer{
       width:100%;text-align:center;padding:max(60px,env(safe-area-inset-bottom)) 0 max(40px,env(safe-area-inset-bottom));
@@ -367,6 +471,16 @@
   <div class="loading-spinner"></div>
 </div>
 
+<canvas id="db-particle-canvas"></canvas>
+
+<!-- #2 CINEMATIC INTRO -->
+<div id="db-intro">
+  <div class="db-intro-logo">AiWakeel</div>
+  <div class="db-intro-line"></div>
+  <div class="db-intro-sub">Elite Dashboard</div>
+  <div class="db-intro-spinner"></div>
+</div>
+
 <!-- #56 SCROLL PROGRESS -->
 <div id="scroll-progress"></div>
 
@@ -407,9 +521,9 @@
 <div class="main-content" id="main-content">
 
   <!-- #99 UPGRADE BANNER (shown for Atelier users) -->
-  <div id="upgrade-banner" role="complementary" aria-label="Upgrade-Angebot">
+  <div id="upgrade-banner" role="complementary" aria-label="Upgrade-Angebot" class="reveal">
     <div class="upgrade-title">&#10022; Maison freischalten</div>
-    <p class="upgrade-text">WhatsApp-Direktsteuerung, Echtzeit-Alerts und tägliche Berichte direkt auf dein Handy. Upgrade auf Maison für nur 30€ mehr pro Monat.</p>
+    <p class="upgrade-text">WhatsApp-Direktsteuerung, Echtzeit-Alerts und tägliche Berichte direkt auf dein Handy. Upgrade auf Maison für nur 50€ mehr pro Monat.</p>
     <button class="upgrade-btn" onclick="openStripePortal()">Jetzt upgraden &rarr;</button>
   </div>
 
@@ -448,6 +562,13 @@
       <div>
         <div style="font-size:14px">KI-Optimierung</div>
         <small id="status-sub" style="color:var(--text-dim);font-size:10px;text-transform:uppercase">Real-Time Control</small>
+        <!-- Realtime connection indicator -->
+        <div class="realtime-status">
+          <div class="realtime-dot" id="realtime-dot"></div>
+          <span id="realtime-label">Verbinde …</span>
+        </div>
+        <!-- Live keyword ticker -->
+        <div id="keyword-ticker">—</div>
       </div>
       <!-- #27 larger tap target -->
       <div class="switch-wrap">
@@ -462,23 +583,35 @@
         <span id="clicks-val" class="metric-val skeleton" style="height:34px;display:block">&nbsp;</span>
         <span class="metric-label">Klicks (24h)</span>
         <div class="metric-live"><div class="live-dot-sm"></div><span class="live-label">Live</span></div>
+        <div class="metric-delta neutral" id="clicks-delta">—</div>
       </div>
       <div class="metric-box metric-tip" data-tip="Durchschnittliche Google-Suchposition (niedriger = besser)" aria-label="Durchschnittliche Position">
         <span id="pos-val" class="metric-val skeleton" style="height:34px;display:block">&nbsp;</span>
         <span class="metric-label">Ø Position</span>
         <div class="metric-live"><div class="live-dot-sm"></div><span class="live-label">Live</span></div>
+        <div class="metric-delta neutral" id="pos-delta">—</div>
       </div>
     </div>
-    <!-- #68 CPC METRIC -->
     <div class="metrics" style="margin-top:12px">
       <div class="metric-box metric-tip" data-tip="Durchschnittlicher Klickpreis heute" aria-label="CPC">
         <span id="cpc-val" class="metric-val skeleton" style="height:34px;display:block;font-size:26px">&nbsp;</span>
         <span class="metric-label">Ø CPC heute</span>
+        <div class="metric-delta neutral" id="cpc-delta">—</div>
       </div>
       <div class="metric-box metric-tip" data-tip="Impressionen der letzten 24 Stunden" aria-label="Impressionen">
         <span id="imps-val" class="metric-val skeleton" style="height:34px;display:block;font-size:26px">&nbsp;</span>
         <span class="metric-label">Impressionen (24h)</span>
+        <div class="metric-delta neutral" id="imps-delta">—</div>
       </div>
+    </div>
+    <!-- Optimization Score Ring -->
+    <div class="score-ring-wrap" id="score-ring-wrap" style="display:none">
+      <svg class="score-ring-svg" width="90" height="90" viewBox="0 0 90 90">
+        <circle class="score-ring-bg" cx="45" cy="45" r="40"/>
+        <circle class="score-ring-fill" id="score-ring-fill" cx="45" cy="45" r="40"/>
+      </svg>
+      <div class="score-ring-text" id="score-ring-text">—</div>
+      <div class="score-ring-label">Optimierungs-Score</div>
     </div>
   </div>
 
@@ -508,10 +641,14 @@
       </div>
       <div class="budget-progress-bar"><div class="budget-progress-fill" id="budget-progress-fill"></div></div>
     </div>
+    <!-- Stripe plan info -->
+    <div class="stripe-plan-info" id="stripe-plan-info">Dein Plan: <strong id="stripe-plan-name">—</strong> · <span id="stripe-plan-price">—</span>/Monat</div>
     <!-- #40 STRIPE PORTAL -->
     <button class="stripe-portal-btn" onclick="openStripePortal()" aria-label="Abo im Stripe Portal verwalten">
       <span style="font-size:13px">&#128274;</span> Abo verwalten / kündigen
     </button>
+    <!-- Budget forecast -->
+    <div class="budget-forecast" id="budget-forecast">Prognose wird berechnet …</div>
   </div>
 
   <!-- PERFORMANCE CHART CARD -->
@@ -566,9 +703,31 @@
     </div>
   </div>
 
-</div>
+  <!-- DATA RIGHTS (DSGVO Art. 15, 17, 20) -->
+  <div class="card" style="margin-top:20px">
+    <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:300;margin-bottom:16px">Meine Daten</h2>
+    <div class="data-rights-section">
+      <div class="data-rights-title">Gespeicherte Informationen (Art. 15 DSGVO)</div>
+      <div class="data-row"><span class="data-key">E-Mail</span><span class="data-val" id="data-email">—</span></div>
+      <div class="data-row"><span class="data-key">Plan</span><span class="data-val" id="data-plan">—</span></div>
+      <div class="data-row"><span class="data-key">Budget</span><span class="data-val" id="data-budget">—</span></div>
+      <div class="data-row"><span class="data-key">Agent-Status</span><span class="data-val" id="data-agent">—</span></div>
+      <div class="data-row"><span class="data-key">Google Ads ID</span><span class="data-val" id="data-ads-id">—</span></div>
+      <div class="data-row"><span class="data-key">Mitglied seit</span><span class="data-val" id="data-created">—</span></div>
+      <button class="data-rights-btn" onclick="exportUserData()" aria-label="Daten exportieren (Art. 20 DSGVO)">
+        &#8681; Daten exportieren (JSON) · Art. 20 DSGVO
+      </button>
+    </div>
+    <!-- Danger Zone -->
+    <div class="danger-zone">
+      <div class="danger-zone-title">⚠ Account-Verwaltung</div>
+      <button class="danger-btn" onclick="requestAccountDeletion()" aria-label="Account und alle Daten löschen">
+        Account &amp; alle Daten löschen · Art. 17 DSGVO
+      </button>
+    </div>
+  </div>
 
-<footer class="footer">
+</div> class="footer">
   <div class="footer-links">
     <a onclick="showLegal('impressum')" role="button" tabindex="0">Impressum</a>
     <a onclick="showLegal('privacy')" role="button" tabindex="0">Datenschutz</a>
@@ -588,7 +747,7 @@ const CFG = {
   N8N_TOGGLE: 'https://n8n.aiwakeel.ai/webhook/toggle-agent',
   N8N_STRIPE_PORTAL: 'https://n8n.aiwakeel.ai/webhook/stripe-portal',
   N8N_CONSENT_LOG: 'https://n8n.aiwakeel.ai/webhook/consent-log',
-  STRIPE_PORTAL_URL: 'https://billing.stripe.com/p/login/6oUcN46fW9mpgvd1lQbII00',
+  STRIPE_PORTAL_URL: 'https://billing.stripe.com/p/login/aiwakeel',
   COLLECTION_REPORTS: 'daily_reports',
   COLLECTION_USERS: 'users'
 };
@@ -600,29 +759,26 @@ let pb, chart, allReports = [], currentRange = 7;
 // INIT
 // =========================================================
 document.addEventListener('DOMContentLoaded', () => {
-  let errorWecker; // Wir geben dem Wecker einen Namen
-
+  // #78 DOMContentLoaded
+  // Wait for PocketBase to load
   const initInterval = setInterval(() => {
     if (typeof PocketBase !== 'undefined' && typeof ApexCharts !== 'undefined') {
       clearInterval(initInterval);
-      clearTimeout(errorWecker); // WICHTIG: Hier schalten wir den Wecker ab, weil alles geklappt hat!
       initApp();
     }
   }, 50);
-  
-  // Der Wecker klingelt nur noch, wenn er nicht vorher abgeschaltet wurde
-  errorWecker = setTimeout(() => { 
-    clearInterval(initInterval); 
-    showToast('Skript-Ladefehler (Prüfe Adblocker)', true); 
-  }, 8000);
+  // Timeout after 8s
+  setTimeout(() => { clearInterval(initInterval); showToast('Skript-Ladefehler', true); }, 8000);
 });
 
 async function initApp() {
   pb = new PocketBase(CFG.PB_URL);
 
+  // PocketBase 0.22+ uses authStore.record, older uses authStore.model
+  const authRecord = pb.authStore.record || pb.authStore.model;
+
   // #1 #11 Auth check with null-guard
-  if (!pb.authStore.model || !pb.authStore.isValid) {
-    // #3 fade out before redirect
+  if (!authRecord || !pb.authStore.isValid) {
     document.documentElement.style.opacity = '0';
     setTimeout(() => { window.location.href = 'login.html'; }, 300);
     return;
@@ -637,7 +793,8 @@ async function initApp() {
     return;
   }
 
-  const user = pb.authStore.model;
+  // PocketBase 0.22+ uses authStore.record, older uses authStore.model
+  const user = pb.authStore.record || pb.authStore.model;
 
   // Show body
   document.documentElement.style.opacity = '';
@@ -685,6 +842,10 @@ async function initApp() {
   await loadHistory(user);
   loadChecklist(user);
   loadNotifications(user);
+  renderDataPanel(user);
+  renderStripePlanInfo(user);
+  renderBudgetForecast(user);
+  initScrollReveal();
 
   // Inits
   initScrollProgress();
@@ -693,11 +854,32 @@ async function initApp() {
   initAutoRefresh(user);
   initInactivityLogout();
   initKeyboard();
+  initDashParticles();   // #1
+  initDashIntro();       // #2
+  initScrollReveal();    // #3
+  initChartReveal();     // #6
+
+  // Add reveal classes to all cards dynamically
+  document.querySelectorAll('.card,.card-wrap').forEach((el, i) => {
+    if (!el.classList.contains('reveal')) {
+      el.classList.add('reveal');
+      if (i % 3 === 1) el.classList.add('reveal-delay-1');
+      if (i % 3 === 2) el.classList.add('reveal-delay-2');
+    }
+  });
+  if (document.getElementById('upgrade-banner')) {
+    document.getElementById('upgrade-banner').classList.add('reveal');
+  }
 
   // #75 PocketBase Realtime
-  pb.collection(CFG.COLLECTION_REPORTS).subscribe('*', (e) => {
-    if (e.record.user === user.id) loadDashboardData(user);
-  });
+  try {
+    pb.collection(CFG.COLLECTION_REPORTS).subscribe('*', (e) => {
+      if (e.record.user === user.id) loadDashboardData(user);
+    });
+    updateRealtimeDot(true);
+  } catch(e) {
+    updateRealtimeDot(false);
+  }
 }
 
 // =========================================================
@@ -725,7 +907,13 @@ async function loadDashboardData(user) {
   if (_loadLock) return;
   _loadLock = true;
   try {
-    const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 30, { filter: `user = "${user.id}"` });
+    // Remove beforeSend if previously set
+    pb.beforeSend = null;
+
+    // Simplest possible query for PocketBase v0.36.x
+    const records = await pb.collection('daily_reports').getList(1, 30, {
+      sort: '-created'
+    });
     allReports = records.items;
 
     if (allReports.length > 0) {
@@ -733,8 +921,18 @@ async function loadDashboardData(user) {
       // #21 Animated metrics
       animateMetric('clicks-val', latest.clicks || 0);
       animateMetric('pos-val', parseFloat(latest.position || 0).toFixed(1), false);
-      animateMetric('cpc-val', (latest.cpc || 0).toFixed(2) + '€', false);
+      animateMetric('cpc-val', (latest.current_cpc || 0).toFixed(2) + '€', false);
       animateMetric('imps-val', latest.impressions || 0);
+
+      // Show optimized keyword in status line
+      const statusSub = document.getElementById('status-sub');
+      if (statusSub && latest.keyword && latest.keyword !== 'N/A') {
+        statusSub.textContent = `Optimiert für: ${latest.keyword}`;
+      }
+      // New: keyword ticker, score ring, deltas
+      updateKeywordTicker(latest.best_keyword || latest.keyword);
+      renderScoreRing(latest.optimization_score);
+      renderDeltas(allReports);
 
       // Remove skeletons
       ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
@@ -755,8 +953,9 @@ async function loadDashboardData(user) {
     // #70 Budget progress (mock: use random spend for demo)
     updateBudgetProgress(user);
   } catch(e) {
-    // #77 Proper error
-    showToast('Fehler beim Laden der Daten', true);
+    const detail = e?.response?.message || e?.data?.message || e?.message || String(e);
+    showToast('PB Fehler: ' + detail, true);
+    console.error('Full PB error:', JSON.stringify(e));
     ['clicks-val','pos-val','cpc-val','imps-val'].forEach(id => {
       const el = document.getElementById(id);
       el.classList.remove('skeleton'); el.textContent = 'Fehler'; el.style.height = '';
@@ -787,16 +986,13 @@ function animateMetric(id, target, isInt = true) {
 function updateBudgetProgress(user) {
   const budget = user.budget || 0;
   if (!budget) return;
-  
-  // Hier liest das Dashboard jetzt das neue Feld aus, das n8n befüllt
-  const spent = Math.min(user.current_spend || 0, budget);
-  
-  // Prozentrechnung für den Fortschrittsbalken
-  const pct = budget > 0 ? Math.round((spent / budget) * 100) : 0;
-  
+  // Estimate spend: days passed this month / 30 * budget
+  const now = new Date();
+  const daysPassed = now.getDate();
+  const spent = Math.min(Math.round((daysPassed / 30) * budget), budget);
+  const pct = Math.round((spent / budget) * 100);
   document.getElementById('budget-progress-fill').style.width = pct + '%';
-  // toFixed(2) sorgt dafür, dass auch Cent-Beträge (z.B. 45.30€) sauber angezeigt werden
-  document.getElementById('budget-spent-label').textContent = `${spent.toFixed(2)}€ von ${budget}€ verbraucht`;
+  document.getElementById('budget-spent-label').textContent = `${spent}€ von ${budget}€ verbraucht`;
   document.getElementById('budget-pct-label').textContent = pct + '%';
 }
 
@@ -844,11 +1040,16 @@ function renderChart(data, days = 7) {
   };
 
   if (chart) { chart.destroy(); chart = null; }
-  // #85 Race condition fix
   const el = document.querySelector('#chart');
   if (!el) return;
   chart = new ApexCharts(el, options);
-  chart.render();
+  chart.render().then(() => {
+    setTimeout(() => {
+      el.classList.add('visible');
+      const box = document.getElementById('chart-container-box');
+      if (box) { box.style.opacity = '1'; box.classList.add('chart-loaded'); }
+    }, 200);
+  });
 }
 
 function toggleSeries(name) {
@@ -870,8 +1071,8 @@ function setRange(days, btn) {
 // =========================================================
 async function loadHistory(user) {
   try {
-    const records = await pb.collection(CFG.COLLECTION_REPORTS).getList(1, 10, {
-      filter: `user = "${user.id}"`, sort: '-created'
+    const records = await pb.collection('daily_reports').getList(1, 10, {
+      sort: '-created'
     });
     const list = document.getElementById('history-list');
     if (!records.items.length) {
@@ -886,7 +1087,7 @@ async function loadHistory(user) {
         </div>
         <div style="text-align:right">
           <div class="history-amount">${(r.clicks||0).toLocaleString('de-DE')} Klicks</div>
-          <div class="history-clicks">Ø ${(r.position||0).toFixed(1)} Pos · ${(r.cpc||0).toFixed(2)}€ CPC</div>
+          <div class="history-clicks">Ø ${(r.position||0).toFixed(1)} Pos · ${(r.current_cpc||0).toFixed(2)}€ CPC · CTR: ${((r.ctr||0)*100).toFixed(1)}%</div>
         </div>
       </div>`).join('');
   } catch(e) {
@@ -957,7 +1158,7 @@ async function closeConfirm(confirmed) {
 }
 
 async function executeToggle() {
-  const user = pb.authStore.model;
+  const user = pb.authStore.record || pb.authStore.model;
   const toggleBtn = document.getElementById('agent-toggle');
   if (toggleBtn.classList.contains('processing')) return;
   const isCurrentlyActive = toggleBtn.classList.contains('active');
@@ -974,7 +1175,7 @@ async function executeToggle() {
     const tid = setTimeout(() => ctrl.abort(), 10000);
     fetch(CFG.N8N_TOGGLE, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-User-Token': pb.authStore.token.slice(0, 16) },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId: user.id, status: nextStatus }),
       signal: ctrl.signal
     }).then(() => clearTimeout(tid)).catch(() => clearTimeout(tid));
@@ -1029,9 +1230,17 @@ async function updateBudget(amt) {
   _budgetLock = true;
   setTimeout(() => _budgetLock = false, 2000);
   try {
-    await pb.collection(CFG.COLLECTION_USERS).update(pb.authStore.model.id, { budget: amt });
-    // #31 Update display without reload
-    document.getElementById('current-budget-display').textContent = `${amt}€`;
+    await pb.collection(CFG.COLLECTION_USERS).update((pb.authStore.record || pb.authStore.model).id, { budget: amt });
+    // #8 Animate budget display instead of instant swap
+    const currentVal = parseInt(document.getElementById('current-budget-display').textContent) || 0;
+    const dur = 500, start = performance.now();
+    const animBudget = ts => {
+      const p = Math.min((ts - start) / dur, 1), ease = 1 - Math.pow(1-p, 3);
+      document.getElementById('current-budget-display').textContent = Math.round(currentVal + (amt - currentVal) * ease) + '€';
+      if (p < 1) requestAnimationFrame(animBudget);
+      else document.getElementById('current-budget-display').textContent = amt + '€';
+    };
+    requestAnimationFrame(animBudget);
     if (amt === 0) document.getElementById('budget-warning').classList.add('show');
     else document.getElementById('budget-warning').classList.remove('show');
     highlightActiveBudget(amt);
@@ -1059,7 +1268,7 @@ async function saveCustomBudget() {
 // #40 STRIPE PORTAL
 // =========================================================
 function openStripePortal() {
-  window.open(CFG.STRIPE_PORTAL_URL + '?prefilled_email=' + encodeURIComponent(pb.authStore.model?.email || ''), '_blank', 'noopener');
+  window.open(CFG.STRIPE_PORTAL_URL + '?prefilled_email=' + encodeURIComponent((pb.authStore.record || pb.authStore.model)?.email || ''), '_blank', 'noopener');
 }
 
 // =========================================================
@@ -1216,31 +1425,41 @@ function showLegal(type) {
       ${h3('2. Hosting')}
       ${p('IONOS SE, Elgendorfer Str. 57, 56410 Montabaur. Rechenzentrum Frankfurt. AVV nach Art. 28 DSGVO liegt vor.')}
       ${h3('3. PocketBase (Authentifizierung & Datenspeicher)')}
-      ${p('Selbst gehostete PocketBase-Instanz auf IONOS-Server Frankfurt. Verarbeitete Daten: E-Mail, Name, Agent-Status, Budget, Google-Konto-IDs. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.')}
-      ${h3('4. Google Fonts (nur mit Einwilligung)')}
+      ${p('Selbst gehostete PocketBase-Instanz auf IONOS-Server Frankfurt. Verarbeitete Daten: E-Mail, Name, Agent-Status, Budget, Google-Konto-IDs, tägliche Performance-Reports. Speicherdauer: Vertragsdauer + 3 Jahre. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.')}
+      ${h3('4. PocketBase Realtime (WebSocket)')}
+      ${p('Das Dashboard nutzt eine WebSocket-Verbindung zu PocketBase (wss://ads.aiwakeel.ai) für Echtzeit-Datensynchronisation. Dabei werden keine personenbezogenen Daten an Dritte übermittelt. Die Verbindung besteht nur während aktiver Dashboard-Nutzung. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.')}
+      ${h3('5. Google Fonts (nur mit Einwilligung)')}
       ${p('Google Ireland Limited, Gordon House, Dublin 4. IP-Übermittlung. Keine Cookies. Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO. Widerruf jederzeit möglich.')}
-      ${h3('5. Google OAuth & APIs')}
+      ${h3('6. Google OAuth & APIs')}
       ${p('Verbindung zu Google Ads und Search Console über offizielle OAuth 2.0. Keine Passwörter gespeichert. Token nur serverseitig in n8n. Rechtsgrundlage: Art. 6 Abs. 1 lit. a und b DSGVO.')}
-      ${h3('6. Stripe')}
+      ${h3('7. Stripe')}
       ${p('Stripe Payments Europe Ltd., Dublin. Zahlungsverarbeitung. AVV liegt vor. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.')}
-      ${h3('7. Ihre Rechte')}
+      ${h3('8. Datenexport (Art. 20 DSGVO)')}
+      ${p('Sie können jederzeit über den Bereich „Meine Daten" einen vollständigen Export Ihrer gespeicherten Daten im JSON-Format herunterladen.')}
+      ${h3('9. Löschung (Art. 17 DSGVO)')}
+      ${p('Sie können jederzeit die Löschung Ihres Accounts und aller gespeicherten Daten über den Bereich „Meine Daten" beantragen. Die Löschung erfolgt innerhalb von 72 Stunden. Stripe-Abos werden gleichzeitig gekündigt.')}
+      ${h3('10. Ihre Rechte')}
       ${p('Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung (Art. 18), Datenübertragbarkeit (Art. 20), Widerspruch (Art. 21). Kontakt: kontakt@aiwakeel.ai')}
-      ${h3('8. Beschwerderecht')}
+      ${h3('11. Beschwerderecht')}
       ${p('LDI NRW, Kavalleriestr. 2–4, 40213 Düsseldorf, <a href="https://www.ldi.nrw.de" style="color:var(--gold)">www.ldi.nrw.de</a>')}
+      ${h3('Stand: Juni 2026')}
     `),
     agb: s('AGB', `
       ${h3('§ 1 Geltungsbereich')}
       ${p('Diese AGB gelten für alle Verträge zwischen Canatay Cakmak · CanTurSoft und dem Kunden über die Nutzung von AiWakeel.')}
       ${h3('§ 2 Leistung')}
       ${p('KI-gestützte Google Ads Automatisierung als SaaS. Verfügbarkeitsziel: 99% / Monat.')}
-      ${h3('§ 3 Preise')}
-      ${p('Atelier: 29€/mtl. + 49€ Setup. Maison: 59€/mtl. + 79€ Setup. Gemäß § 19 UStG keine MwSt. Google Ads Budget separat bei Google.')}
+      ${h3('§ 3 Preise und Zahlungsbedingungen')}
+      ${p('<strong style="color:var(--text)">Atelier-Plan:</strong> 49€ / Monat zzgl. einmaligem Setup 99€.<br><strong style="color:var(--text)">Maison-Plan:</strong> 99€ / Monat zzgl. einmaligem Setup 149€.<br>Gemäß § 19 UStG wird keine Umsatzsteuer erhoben. Google Ads Budget wird separat bei Google abgebucht. Zahlung monatlich im Voraus über Stripe.')}
       ${h3('§ 4 Kündigung')}
       ${p('Monatlich kündbar zum Monatsende über das Stripe-Kundenportal oder per E-Mail an kontakt@aiwakeel.ai.')}
-      ${h3('§ 5 Haftung')}
+      ${h3('§ 5 Datenlöschung bei Kündigung')}
+      ${p('Bei Kündigung werden alle personenbezogenen Daten nach 3 Jahren gelöscht. Auf Antrag des Nutzers erfolgt eine sofortige Löschung gemäß Art. 17 DSGVO über den Dashboard-Bereich „Meine Daten".')}
+      ${h3('§ 6 Haftung')}
       ${p('Unbeschränkt bei Vorsatz/grober Fahrlässigkeit. Bei leichter Fahrlässigkeit nur bei Kardinalpflichtverletzung, max. 3 Monatsgebühren. Keine Garantie für spez. Kampagnenergebnisse.')}
-      ${h3('§ 6 Anwendbares Recht')}
+      ${h3('§ 7 Anwendbares Recht')}
       ${p('Deutsches Recht. Gerichtsstand Köln für Kaufleute.')}
+      ${h3('Stand: Juni 2026')}
     `),
     widerruf: s('Widerrufsbelehrung', `
       ${h3('Widerrufsrecht')}
@@ -1249,18 +1468,22 @@ function showLegal(type) {
       ${p('Canatay Cakmak · CanTurSoft · Dompfaffenweg 51a · 50829 Köln · kontakt@aiwakeel.ai · +49 172 7419318')}
       ${h3('⚠ Erlöschen des Widerrufsrechts')}
       ${p('<strong style="color:var(--gold)">Gemäß § 356 Abs. 5 BGB erlischt das Widerrufsrecht,</strong> sobald der Anbieter die Dienstleistung vollständig erbracht hat und Sie der Ausführung ausdrücklich zugestimmt und Ihre Kenntnis über den Verlust des Widerrufsrechts bestätigt haben.')}
-      ${h3('Folgen')}
-      ${p('Rückzahlung innerhalb von 14 Tagen auf gleichem Zahlungsweg.')}
+      ${h3('Folgen des Widerrufs')}
+      ${p('Rückzahlung aller erhaltenen Zahlungen innerhalb von 14 Tagen auf gleichem Zahlungsweg.')}
+      ${h3('Stand: Juni 2026')}
     `),
     cookies: s('Cookie-Richtlinie', `
       ${h3('1. Technisch notwendig')}
-      ${p('<strong style="color:var(--text)">sessionStorage:</strong> Onboarding-Daten, Sitzungsdauer. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.<br><strong style="color:var(--text)">localStorage:</strong> Cookie-Consent mit Zeitstempel, 12 Monate. Rechtsgrundlage: Art. 6 Abs. 1 lit. c DSGVO.')}
-      ${h3('2. Optional (nur mit Einwilligung)')}
-      ${p('<strong style="color:var(--text)">Google Fonts:</strong> Google Ireland Limited. IP-Übermittlung, keine Cookies. Widerruf jederzeit.<br><strong style="color:var(--text)">Google OAuth:</strong> Google Ireland Limited. Authentifizierungscookies nach Google-Richtlinie.<br><strong style="color:var(--text)">Stripe:</strong> Stripe Payments Europe Ltd. Betrugsschutz-Cookies, Session bis 2 Jahre.')}
-      ${h3('3. Keine Werbe-Cookies')}
+      ${p('<strong style="color:var(--text)">localStorage (Consent):</strong> Cookie-Entscheidung + Zeitstempel. 12 Monate. Art. 6 Abs. 1 lit. c DSGVO.<br><strong style="color:var(--text)">PocketBase Auth-Token:</strong> Authentifizierungstoken im localStorage. Sitzungsdauer. Art. 6 Abs. 1 lit. b DSGVO.')}
+      ${h3('2. WebSocket (PocketBase Realtime)')}
+      ${p('Persistente Verbindung zu wss://ads.aiwakeel.ai für Echtzeit-Datensynchronisation. Keine Cookies. Keine Drittanbieter. Art. 6 Abs. 1 lit. b DSGVO.')}
+      ${h3('3. Optional (nur mit Einwilligung)')}
+      ${p('<strong style="color:var(--text)">Google Fonts:</strong> Google Ireland Limited. IP-Übermittlung, keine Cookies. Widerruf jederzeit.<br><strong style="color:var(--text)">Stripe:</strong> Stripe Payments Europe Ltd. Betrugsschutz-Cookies. Art. 6 Abs. 1 lit. b DSGVO.')}
+      ${h3('4. Keine Werbe-Cookies')}
       ${p('Kein Tracking, keine Analyse, keine Werbenetzwerke.')}
-      ${h3('4. Kontakt')}
-      ${p('kontakt@aiwakeel.ai')}
+      ${h3('5. Kontakt')}
+      ${p('kontakt@aiwakeel.ai · Canatay Cakmak, CanTurSoft, Dompfaffenweg 51a, 50829 Köln')}
+      ${h3('Stand: Juni 2026')}
     `)}
   ;
   if (!c[type]) return;
@@ -1272,10 +1495,278 @@ function closeModal(e) {
   if (!e || e.target.classList.contains('modal')) document.getElementById('legal-modal').style.display = 'none';
 }
 
-// #49 Confetti CSS needed
+// =========================================================
+// REALTIME CONNECTION INDICATOR
+// =========================================================
+function updateRealtimeDot(connected) {
+  const dot = document.getElementById('realtime-dot');
+  const lbl = document.getElementById('realtime-label');
+  if (!dot || !lbl) return;
+  dot.className = 'realtime-dot' + (connected ? ' connected' : '');
+  lbl.textContent = connected ? 'Echtzeit aktiv' : 'Verbindung getrennt';
+}
+
+// =========================================================
+// LIVE KEYWORD TICKER
+// =========================================================
+function updateKeywordTicker(keyword) {
+  const el = document.getElementById('keyword-ticker');
+  if (!el || !keyword || keyword === 'N/A') return;
+  el.textContent = '✦ Optimiert: ' + keyword;
+}
+
+// =========================================================
+// SCORE RING (optimization_score 0-100)
+// =========================================================
+function renderScoreRing(score) {
+  if (!score && score !== 0) return;
+  const wrap = document.getElementById('score-ring-wrap');
+  const fill = document.getElementById('score-ring-fill');
+  const txt = document.getElementById('score-ring-text');
+  if (!wrap || !fill || !txt) return;
+  wrap.style.display = 'flex';
+  const pct = Math.min(Math.max(score, 0), 100);
+  const offset = 251 - (251 * pct / 100);
+  setTimeout(() => { fill.style.strokeDashoffset = offset; }, 100);
+  txt.textContent = pct + '%';
+  fill.style.stroke = pct >= 70 ? 'var(--success)' : pct >= 40 ? 'var(--gold)' : 'var(--error)';
+}
+
+// =========================================================
+// DELTA METRICS (today vs yesterday)
+// =========================================================
+function renderDeltas(reports) {
+  if (reports.length < 2) return;
+  const today = reports[0], yesterday = reports[1];
+  const deltas = [
+    { id: 'clicks-delta', today: today.clicks || 0, yesterday: yesterday.clicks || 0, fmt: v => v.toLocaleString('de-DE'), lowerBetter: false },
+    { id: 'pos-delta', today: today.position || 0, yesterday: yesterday.position || 0, fmt: v => v.toFixed(1), lowerBetter: true },
+    { id: 'cpc-delta', today: today.current_cpc || 0, yesterday: yesterday.current_cpc || 0, fmt: v => v.toFixed(2) + '€', lowerBetter: true },
+    { id: 'imps-delta', today: today.impressions || 0, yesterday: yesterday.impressions || 0, fmt: v => v.toLocaleString('de-DE'), lowerBetter: false }
+  ];
+  deltas.forEach(d => {
+    const el = document.getElementById(d.id); if (!el) return;
+    if (!d.yesterday) { el.textContent = '—'; el.className = 'metric-delta neutral'; return; }
+    const diff = d.today - d.yesterday;
+    const pct = Math.round((diff / d.yesterday) * 100);
+    const isPositive = d.lowerBetter ? diff < 0 : diff > 0;
+    const arrow = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
+    el.textContent = `${arrow} ${Math.abs(pct)}% vs. gestern`;
+    el.className = 'metric-delta ' + (diff === 0 ? 'neutral' : isPositive ? 'up' : 'down');
+  });
+}
+
+// =========================================================
+// BUDGET FORECAST
+// =========================================================
+function renderBudgetForecast(user) {
+  const el = document.getElementById('budget-forecast'); if (!el) return;
+  const budget = user.budget || 0;
+  const spent = user.current_spend || 0;
+  if (!budget || !spent) { el.textContent = 'Noch kein Verbrauch diesen Monat erfasst.'; return; }
+  const now = new Date();
+  const dayOfMonth = now.getDate();
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const dailyRate = spent / dayOfMonth;
+  const projected = dailyRate * daysInMonth;
+  const remaining = budget - spent;
+  const daysLeft = remaining > 0 ? Math.round(remaining / dailyRate) : 0;
+  if (projected > budget) {
+    el.textContent = `⚠ Prognose: ${projected.toFixed(0)}€ bis Monatsende (Budget: ${budget}€). Budget könnte in ~${daysLeft}T aufgebraucht sein.`;
+    el.style.borderColor = 'rgba(255,80,80,.3)'; el.style.color = 'var(--error)';
+  } else {
+    el.textContent = `Prognose Monatsende: ~${projected.toFixed(0)}€ von ${budget}€. Noch ${remaining.toFixed(0)}€ verfügbar.`;
+  }
+}
+
+// =========================================================
+// STRIPE PLAN INFO
+// =========================================================
+function renderStripePlanInfo(user) {
+  const el = document.getElementById('stripe-plan-name');
+  const pr = document.getElementById('stripe-plan-price');
+  if (!el || !pr) return;
+  const isPremium = (user.plan || '') === 'premium';
+  el.textContent = isPremium ? 'Maison' : 'Atelier';
+  pr.textContent = isPremium ? '99€' : '49€';
+}
+
+// =========================================================
+// DATA RIGHTS PANEL
+// =========================================================
+function renderDataPanel(user) {
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || '—'; };
+  set('data-email', user.email);
+  set('data-plan', user.plan === 'premium' ? '✦ Maison' : 'Atelier');
+  set('data-budget', user.budget ? user.budget + '€' : '0€');
+  set('data-agent', user.agent_status === 'active' ? 'Aktiv' : 'Pausiert');
+  set('data-ads-id', user.ads_customer_id ? '****' + String(user.ads_customer_id).slice(-4) : 'Nicht verbunden');
+  set('data-created', user.created ? new Date(user.created).toLocaleDateString('de-DE') : '—');
+}
+
+// =========================================================
+// DATA EXPORT (DSGVO Art. 20)
+// =========================================================
+function exportUserData() {
+  const user = pb.authStore.record || pb.authStore.model;
+  const exportData = {
+    exported_at: new Date().toISOString(),
+    note: 'Datenexport gemäß Art. 20 DSGVO – AiWakeel / CanTurSoft',
+    account: {
+      email: user.email,
+      plan: user.plan,
+      budget: user.budget,
+      agent_status: user.agent_status,
+      ads_customer_id: user.ads_customer_id,
+      created: user.created
+    },
+    reports: allReports.map(r => ({
+      date: r.created,
+      clicks: r.clicks,
+      impressions: r.impressions,
+      position: r.position,
+      keyword: r.keyword,
+      best_keyword: r.best_keyword,
+      current_cpc: r.current_cpc,
+      optimization_score: r.optimization_score
+    }))
+  };
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `aiwakeel-daten-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast('✦ Daten exportiert', false, true);
+}
+
+// =========================================================
+// ACCOUNT DELETION (DSGVO Art. 17)
+// =========================================================
+function requestAccountDeletion() {
+  document.getElementById('confirm-heading').textContent = 'Account wirklich löschen?';
+  document.getElementById('confirm-text').textContent =
+    'Alle deine Daten, Reports und das laufende Abo werden unwiderruflich gelöscht. Diese Aktion kann nicht rückgängig gemacht werden. (Art. 17 DSGVO)';
+  document.getElementById('confirm-ok-btn').style.borderColor = 'var(--error)';
+  document.getElementById('confirm-ok-btn').style.color = 'var(--error)';
+  document.getElementById('confirm-ok-btn').onclick = () => { closeConfirm(false); executeAccountDeletion(); };
+  document.getElementById('confirm-dialog').classList.add('show');
+}
+
+async function executeAccountDeletion() {
+  const user = pb.authStore.record || pb.authStore.model;
+  showToast('Löschung wird verarbeitet …');
+  try {
+    // Send deletion request to n8n (cancels Stripe, removes PB record, sends confirmation email)
+    await fetch('https://n8n.aiwakeel.ai/webhook/delete-account', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: user.id, email: user.email })
+    });
+    // Logout immediately
+    pb.authStore.clear();
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity .5s ease';
+    setTimeout(() => {
+      window.location.replace('https://aiwakeel.ai?deleted=1');
+    }, 600);
+  } catch(e) {
+    showToast('Fehler – bitte schreibe an kontakt@aiwakeel.ai', true);
+  }
+}
+
+// =========================================================
+// SCROLL REVEAL (if not already defined)
+// =========================================================
+function initScrollReveal() {
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('revealed')); return;
+  }
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); obs.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.card,.reveal').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) el.classList.add('reveal', 'revealed');
+    else { el.classList.add('reveal'); obs.observe(el); }
+  });
+}
 const confStyle = document.createElement('style');
 confStyle.textContent = '@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(200px) rotate(720deg);opacity:0}}';
 document.head.appendChild(confStyle);
+
+// =========================================================
+// #1 DASHBOARD CANVAS PARTICLES
+// =========================================================
+function initDashParticles() {
+  const canvas = document.getElementById('db-particle-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, pts = [];
+  const resize = () => { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; };
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+  for (let i = 0; i < 5; i++) pts.push({
+    x: Math.random() * 1400, y: Math.random() * 1400,
+    r: .8 + Math.random() * 1.4,
+    vx: (Math.random() - .5) * .14, vy: (Math.random() - .5) * .14,
+    o: .05 + Math.random() * .09
+  });
+  const draw = () => {
+    ctx.clearRect(0, 0, W, H);
+    pts.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      ctx.beginPath(); ctx.arc(p.x % W, p.y % H, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(201,168,76,${p.o})`; ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  };
+  draw();
+}
+
+// =========================================================
+// #2 DASHBOARD CINEMATIC INTRO
+// =========================================================
+function initDashIntro() {
+  const intro = document.getElementById('db-intro');
+  if (!intro) return;
+  if (sessionStorage.getItem('dbIntroSeen')) { intro.remove(); return; }
+  setTimeout(() => {
+    intro.classList.add('fade-out');
+    setTimeout(() => intro.remove(), 700);
+    sessionStorage.setItem('dbIntroSeen', '1');
+  }, 1500);
+}
+
+// =========================================================
+// #3 SCROLL REVEAL
+// =========================================================
+function initScrollReveal() {
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('revealed'));
+    return;
+  }
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('revealed'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) el.classList.add('revealed');
+    else obs.observe(el);
+  });
+}
+
+// =========================================================
+// #6 CHART CONTAINER PRE-HIDE (fade-in handled in renderChart)
+// =========================================================
+function initChartReveal() {
+  const box = document.getElementById('chart-container-box');
+  if (box) { box.style.opacity = '0'; box.style.transition = 'opacity .6s ease'; }
+}
 </script>
 </body>
 </html>
