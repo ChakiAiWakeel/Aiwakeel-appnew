@@ -966,24 +966,24 @@ async function executeToggle() {
   toggleBtn.classList.add('processing');
   haptic(isCurrentlyActive ? [60,40,60] : 60);
 
-  try {
-    await pb.collection(CFG.COLLECTION_USERS).update(user.id, { agent_status: nextStatus });
+    try {
+    await pb.collection(CFG.COLLECTION_USERS).update(pb.authStore.model.id, { agent_status: nextStatus });
 
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), 10000);
     
-    // HIER MIT DER ERWEITERTEN PAYLOAD (userId + customer_id + status)
+    // JETZT MIT VOLLSTÄNDIGER PAYLOAD:
     fetch(CFG.N8N_TOGGLE, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-User-Token': pb.authStore.token.slice(0, 16) },
       body: JSON.stringify({ 
         userId: user.id, 
-        customer_id: user.ads_customer_id, 
+        customer_id: user.ads_customer_id, // <-- Das hat gefehlt!
         status: nextStatus 
       }),
       signal: ctrl.signal
     }).then(() => clearTimeout(tid)).catch(() => clearTimeout(tid));
-
+      
     updateUI(!isCurrentlyActive);
     showToast(nextStatus === 'active' ? '✦ Agent gestartet' : 'Agent pausiert');
     if (nextStatus === 'active') showCelebration();
@@ -993,7 +993,6 @@ async function executeToggle() {
     toggleBtn.classList.remove('processing');
   }
 }
-
 
 function updateUI(isActive) {
   const t = document.getElementById('agent-toggle');
