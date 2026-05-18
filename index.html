@@ -854,7 +854,7 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
       </div>
             <div style="margin:20px 0;display:flex;gap:10px;font-size:11px;color:var(--text-muted)">
         <input type="checkbox" id="check-legal" onchange="validateFinal()" style="accent-color:var(--gold);margin-top:2px;flex-shrink:0" aria-label="Unternehmerstatus, AGB und Datenschutz akzeptieren">
-        <span>Ich bestätige ausdrücklich, dass ich als Unternehmer (§ 14 BGB) handle, und akzeptiere die <a href="javascript:void(0)" onclick="showLegal('agb')" style="color:var(--gold)">AGB</a> sowie den <a href="javascript:void(0)" onclick="showLegal('privacy')" style="color:var(--gold)">Datenschutz</a>. Ein gesetzliches Widerrufsrecht besteht nicht.</span>
+        <span>Ich bestätige ausdrücklich, dass ich im Rahmen meiner gewerblichen oder selbständigen Tätigkeit als Unternehmer (§ 14 BGB) handle, und akzeptiere die <a href="javascript:void(0)" onclick="showLegal('agb')" style="color:var(--gold)">AGB</a> sowie den <a href="javascript:void(0)" onclick="showLegal('privacy')" style="color:var(--gold)">Datenschutz</a>. Ein gesetzliches Widerrufsrecht besteht nicht.</span>
       </div>
       <div class="slide-to-activate" id="slider-activate" style="display:none" role="button" aria-label="Ziehen oder Leertaste drücken zum Aktivieren" tabindex="0">
         <div class="slide-bg" id="slide-bg"></div>
@@ -1200,7 +1200,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initCardGlow();
   initMetricCountup();
   init3DCardTilt();
-  initSocialProofTicker();
   injectCompareCTA();
   updateBudgetIntelligence(state.budget || 300); // #1 init budget comment
 
@@ -1865,33 +1864,7 @@ function typewriterTitle(el) {
     if (i >= text.length) clearInterval(iv);
   }, 28);
 }
-
-// =========================================================
-// #30 SIMPLE ROI TICKER (social proof, simulated)
-// =========================================================
-function initSocialProofTicker() {
-  const names = ['Khalid · Dubai','Sara · Frankfurt','Muhammed · Wien','Layla · Zürich','Ibrahim · München','Nour · Hamburg'];
-  const actions = ['hat sich angemeldet','hat den Agenten gestartet','hat ein neues Keyword gefunden','hat sein Budget erhöht'];
-  let ticker;
-  const show = () => {
-    const name = names[Math.floor(Math.random() * names.length)];
-    const action = actions[Math.floor(Math.random() * actions.length)];
-    const mins = Math.floor(Math.random() * 55) + 5;
-    const el = document.getElementById('live-num');
-    if (!el) return;
-    const container = el.closest('.live-counter');
-    if (!container) return;
-    const t = document.createElement('div');
-    t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--border);padding:10px 16px;font-size:10px;color:var(--text-muted);border-radius:2px;z-index:9990;opacity:0;transition:all .4s cubic-bezier(0.22,1,0.36,1);white-space:nowrap;max-width:320px;text-align:center';
-    t.innerHTML = `<span style="color:var(--gold)">✦ ${name}</span> ${action} · vor ${mins}min`;
-    document.body.appendChild(t);
-    requestAnimationFrame(() => { t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)'; });
-    setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(-10px)'; setTimeout(() => t.remove(), 400); }, 4000);
-  };
-  // Show first after 20s, then every 45-90s
-  setTimeout(() => { show(); ticker = setInterval(show, 45000 + Math.random() * 45000); }, 20000);
-}
-
+  
 // =========================================================
 // #32 COMPARE TABLE CTA BUTTON (injected after table)
 // =========================================================
