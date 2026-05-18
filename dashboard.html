@@ -819,7 +819,7 @@ function renderChart(data, days = 7) {
     grid: { show: false },
     // #54 Fixed x-axis label color
     xaxis: {
-      categories: sliced.map(r => new Date(r.created).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' })),
+      categories: sliced.map(r => new Date(r.created.replace(' ', 'T')).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' })),
       labels: { style: { colors: Array(sliced.length).fill('rgba(240,237,232,0.28)'), fontSize: '9px', fontFamily: 'DM Sans, system-ui' } }
     },
     yaxis: { show: false },
