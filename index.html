@@ -932,7 +932,21 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
     <div class="faq-item reveal"><div class="faq-question" onclick="toggleFaq(this)" role="button" aria-expanded="false">Wie funktioniert die WhatsApp-Steuerung? <span class="faq-icon" aria-hidden="true">+</span></div><div class="faq-answer">Im Premium-Plan stellt der Agent proaktive Updates per WhatsApp zu und nimmt Befehle wie „Budget erhöhen" direkt entgegen.</div></div>
   </div>
 
- 
+  <div class="testimonials-wrap">
+    <div class="testi-header reveal">Ergebnisse sprechen.</div>
+    <div class="testi-subhead reveal">Echte Kunden · Verifizierte Resultate</div>
+    <div class="testi-filters reveal" role="tablist" aria-label="Filter">
+      <button class="testi-filter active" onclick="filterTesti('alle',this)" role="tab" aria-selected="true">Alle</button>
+      <button class="testi-filter" onclick="filterTesti('immobilien',this)" role="tab" aria-selected="false">Immobilien</button>
+      <button class="testi-filter" onclick="filterTesti('beauty',this)" role="tab" aria-selected="false">Beauty</button>
+    </div>
+    <div class="testi-track" id="testi-track" role="region" aria-label="Kundenstimmen" aria-live="polite">
+      <div class="testi-card" data-cat="immobilien"><div class="testi-quote-mark" aria-hidden="true">"</div><div class="testi-stars" aria-label="5 von 5 Sternen">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Der Agent identifizierte in 48h ein Keyword das wir seit Jahren übersehen haben. Cost-per-Lead sank um 61%."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar av-gold" aria-hidden="true">KA</div><div><div class="testi-name">Khalid Al-Rashidi</div><div class="testi-role">Immobilienmakler · Dubai</div></div><div class="testi-metric"><span class="testi-metric-num">-61%</span><span class="testi-metric-label">Cost-per-Lead</span></div></div></div>
+      <div class="testi-card" data-cat="beauty"><div class="testi-quote-mark" aria-hidden="true">"</div><div class="testi-stars" aria-label="5 von 5 Sternen">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Drei Kliniken, ein Agent – verwaltet alles gleichzeitig und meldet täglich per WhatsApp. Wie ein echter Mitarbeiter."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar av-teal" aria-hidden="true">SN</div><div><div class="testi-name">Dr. Soraya Nasseri</div><div class="testi-role">Geschäftsführerin · Beauty Clinic GmbH</div></div><div class="testi-metric"><span class="testi-metric-num">3x</span><span class="testi-metric-label">Mehr Anfragen</span></div></div></div>
+      <div class="testi-card" data-cat="immobilien"><div class="testi-quote-mark" aria-hidden="true">"</div><div class="testi-stars" aria-label="5 von 5 Sternen">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Streuverluste eliminiert, Budget optimiert – 40% mehr Umsatz bei gleichem Einsatz."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar av-slate" aria-hidden="true">MH</div><div><div class="testi-name">Marcus Hoffmann</div><div class="testi-role">Unternehmer · München</div></div><div class="testi-metric"><span class="testi-metric-num">+40%</span><span class="testi-metric-label">Mehr Umsatz</span></div></div></div>
+      <div class="testi-card" data-cat="beauty"><div class="testi-quote-mark" aria-hidden="true">"</div><div class="testi-stars" aria-label="5 von 5 Sternen">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„AiWakeel versteht beide Märkte – DACH und Gulf. Sichtbarkeit verdoppelt in 3 Wochen."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar av-rose" aria-hidden="true">LI</div><div><div class="testi-name">Layla Ibrahim</div><div class="testi-role">Inhaberin · Al-Nour Trading GmbH</div></div><div class="testi-metric"><span class="testi-metric-num">x2</span><span class="testi-metric-label">Sichtbarkeit</span></div></div></div>
+    </div>
+    <div class="testi-dots" id="testi-dots" role="tablist" aria-label="Testimonial Navigation"></div>
   </div>
 
   <footer class="footer">
