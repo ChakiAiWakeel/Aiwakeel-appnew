@@ -566,6 +566,28 @@
     </div>
   </div>
 
+  <div class="card" style="margin-top:20px">
+    <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:300;margin-bottom:16px">Meine Daten</h2>
+    <div class="data-rights-section">
+      <div class="data-rights-title" style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);margin-bottom:10px">Gespeicherte Informationen (Art. 15 DSGVO)</div>
+      <div class="data-row" style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border2);font-size:11px;"><span class="data-key" style="color:var(--text-dim)">E-Mail</span><span class="data-val" id="data-email">—</span></div>
+      <div class="data-row" style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border2);font-size:11px;"><span class="data-key" style="color:var(--text-dim)">Plan</span><span class="data-val" id="data-plan">—</span></div>
+      <div class="data-row" style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border2);font-size:11px;"><span class="data-key" style="color:var(--text-dim)">Budget</span><span class="data-val" id="data-budget">—</span></div>
+      <div class="data-row" style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border2);font-size:11px;"><span class="data-key" style="color:var(--text-dim)">Agent-Status</span><span class="data-val" id="data-agent">—</span></div>
+      <div class="data-row" style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border2);font-size:11px;"><span class="data-key" style="color:var(--text-dim)">Google Ads ID</span><span class="data-val" id="data-ads-id">—</span></div>
+      <div class="data-row" style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border2);font-size:11px;"><span class="data-key" style="color:var(--text-dim)">Mitglied seit</span><span class="data-val" id="data-created">—</span></div>
+      <button class="data-rights-btn" onclick="exportUserData()" style="width:100%;padding:9px;background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:9px;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;font-family:var(--font-sans);transition:all .3s;margin-top:10px;border-radius:2px;" aria-label="Daten exportieren (Art. 20 DSGVO)">
+        &#8681; Daten exportieren (JSON) · Art. 20 DSGVO
+      </button>
+    </div>
+    <div class="danger-zone" style="margin-top:20px;padding:16px;border:1px solid rgba(255,80,80,.2);background:rgba(255,80,80,.04);border-radius:2px">
+      <div class="danger-zone-title" style="font-size:10px;color:var(--error);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;gap:6px">⚠ Account-Verwaltung</div>
+      <button class="danger-btn" onclick="requestAccountDeletion()" style="width:100%;padding:10px;background:transparent;border:1px solid rgba(255,80,80,.3);color:var(--error);font-size:10px;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;font-family:var(--font-sans);transition:all .3s;border-radius:2px" aria-label="Account und alle Daten löschen">
+        Account &amp; alle Daten löschen · Art. 17 DSGVO
+      </button>
+    </div>
+  </div>
+
 </div>
 
 <footer class="footer">
@@ -685,6 +707,8 @@ async function initApp() {
   await loadHistory(user);
   loadChecklist(user);
   loadNotifications(user);
+  renderDataPanel(user); // <-- Neu hinzugefügt
+  initScrollReveal();
 
   // Inits
   initScrollProgress();
@@ -799,7 +823,82 @@ function updateBudgetProgress(user) {
   document.getElementById('budget-spent-label').textContent = `${spent.toFixed(2)}€ von ${budget}€ verbraucht`;
   document.getElementById('budget-pct-label').textContent = pct + '%';
 }
+}
 
+function renderDataPanel(user) {
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || '—'; };
+  set('data-email', user.email);
+  set('data-plan', user.plan === 'premium' ? '✦ Maison' : 'Atelier');
+  set('data-budget', user.budget ? user.budget + '€' : '0€');
+  set('data-agent', user.agent_status === 'active' ? 'Aktiv' : 'Pausiert');
+  set('data-ads-id', user.ads_customer_id ? '****' + String(user.ads_customer_id).slice(-4) : 'Nicht verbunden');
+  set('data-created', user.created ? new Date(user.created).toLocaleDateString('de-DE') : '—');
+}
+
+function exportUserData() {
+  const user = pb.authStore.record || pb.authStore.model;
+  const exportData = {
+    exported_at: new Date().toISOString(),
+    note: 'Datenexport gemäß Art. 20 DSGVO – AiWakeel / CanTurSoft',
+    account: {
+      email: user.email,
+      plan: user.plan,
+      budget: user.budget,
+      agent_status: user.agent_status,
+      ads_customer_id: user.ads_customer_id,
+      created: user.created
+    },
+    reports: allReports.map(r => ({
+      date: r.created,
+      clicks: r.clicks,
+      impressions: r.impressions,
+      position: r.position,
+      keyword: r.keyword,
+      current_cpc: r.current_cpc
+    }))
+  };
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `aiwakeel-daten-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast('✦ Daten exportiert', false, true);
+}
+
+function requestAccountDeletion() {
+  document.getElementById('confirm-heading').textContent = 'Account wirklich löschen?';
+  document.getElementById('confirm-text').textContent =
+    'Alle deine Daten, Reports und das laufende Abo werden unwiderruflich gelöscht. Diese Aktion kann nicht rückgängig gemacht werden. (Art. 17 DSGVO)';
+  document.getElementById('confirm-ok-btn').style.borderColor = 'var(--error)';
+  document.getElementById('confirm-ok-btn').style.color = 'var(--error)';
+  document.getElementById('confirm-ok-btn').onclick = () => { closeConfirm(false); executeAccountDeletion(); };
+  document.getElementById('confirm-dialog').classList.add('show');
+}
+
+async function executeAccountDeletion() {
+  const user = pb.authStore.record || pb.authStore.model;
+  showToast('Löschung wird verarbeitet …');
+  try {
+    await fetch('https://n8n.aiwakeel.ai/webhook/delete-account', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: user.id, email: user.email })
+    });
+    pb.authStore.clear();
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity .5s ease';
+    setTimeout(() => {
+      window.location.replace('https://aiwakeel.ai?deleted=1');
+    }, 600);
+  } catch(e) {
+    showToast('Fehler – bitte schreibe an kontakt@aiwakeel.ai', true);
+  }
+}
+
+// =========================================================
+// CHART (#53 gold tooltip, #54 label color, #72 time range)
+// =========================================================
 // =========================================================
 // CHART (#53 gold tooltip, #54 label color, #72 time range)
 // =========================================================
@@ -1220,31 +1319,41 @@ function showLegal(type) {
       ${h3('2. Hosting')}
       ${p('IONOS SE, Elgendorfer Str. 57, 56410 Montabaur. Rechenzentrum Frankfurt. AVV nach Art. 28 DSGVO liegt vor.')}
       ${h3('3. PocketBase (Authentifizierung & Datenspeicher)')}
-      ${p('Selbst gehostete PocketBase-Instanz auf IONOS-Server Frankfurt. Verarbeitete Daten: E-Mail, Name, Agent-Status, Budget, Google-Konto-IDs. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.')}
-      ${h3('4. Google Fonts (nur mit Einwilligung)')}
+      ${p('Selbst gehostete PocketBase-Instanz auf IONOS-Server Frankfurt. Verarbeitete Daten: E-Mail, Name, Agent-Status, Budget, Google-Konto-IDs, tägliche Performance-Reports. Speicherdauer: Vertragsdauer + 3 Jahre. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.')}
+      ${h3('4. PocketBase Realtime (WebSocket)')}
+      ${p('Das Dashboard nutzt eine WebSocket-Verbindung zu PocketBase (wss://ads.aiwakeel.ai) für Echtzeit-Datensynchronisation. Dabei werden keine personenbezogenen Daten an Dritte übermittelt. Die Verbindung besteht nur während aktiver Dashboard-Nutzung. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.')}
+      ${h3('5. Google Fonts (nur mit Einwilligung)')}
       ${p('Google Ireland Limited, Gordon House, Dublin 4. IP-Übermittlung. Keine Cookies. Rechtsgrundlage: Art. 6 Abs. 1 lit. a DSGVO. Widerruf jederzeit möglich.')}
-      ${h3('5. Google OAuth & APIs')}
+      ${h3('6. Google OAuth & APIs')}
       ${p('Verbindung zu Google Ads und Search Console über offizielle OAuth 2.0. Keine Passwörter gespeichert. Token nur serverseitig in n8n. Rechtsgrundlage: Art. 6 Abs. 1 lit. a und b DSGVO.')}
-      ${h3('6. Stripe')}
+      ${h3('7. Stripe')}
       ${p('Stripe Payments Europe Ltd., Dublin. Zahlungsverarbeitung. AVV liegt vor. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.')}
-      ${h3('7. Ihre Rechte')}
+      ${h3('8. Datenexport (Art. 20 DSGVO)')}
+      ${p('Sie können jederzeit über den Bereich „Meine Daten" einen vollständigen Export Ihrer gespeicherten Daten im JSON-Format herunterladen.')}
+      ${h3('9. Löschung (Art. 17 DSGVO)')}
+      ${p('Sie können jederzeit die Löschung Ihres Accounts und aller gespeicherten Daten über den Bereich „Meine Daten" beantragen. Die Löschung erfolgt innerhalb von 72 Stunden. Stripe-Abos werden gleichzeitig gekündigt.')}
+      ${h3('10. Ihre Rechte')}
       ${p('Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung (Art. 18), Datenübertragbarkeit (Art. 20), Widerspruch (Art. 21). Kontakt: kontakt@aiwakeel.ai')}
-      ${h3('8. Beschwerderecht')}
+      ${h3('11. Beschwerderecht')}
       ${p('LDI NRW, Kavalleriestr. 2–4, 40213 Düsseldorf, <a href="https://www.ldi.nrw.de" style="color:var(--gold)">www.ldi.nrw.de</a>')}
+      ${h3('Stand: Juni 2026')}
     `),
     agb: s('AGB', `
       ${h3('§ 1 Geltungsbereich')}
       ${p('Diese AGB gelten für alle Verträge zwischen Canatay Cakmak · CanTurSoft und dem Kunden über die Nutzung von AiWakeel.')}
       ${h3('§ 2 Leistung')}
       ${p('KI-gestützte Google Ads Automatisierung als SaaS. Verfügbarkeitsziel: 99% / Monat.')}
-      ${h3('§ 3 Preise')}
-      ${p('Atelier: 29€/mtl. + 49€ Setup. Maison: 59€/mtl. + 79€ Setup. Gemäß § 19 UStG keine MwSt. Google Ads Budget separat bei Google.')}
+      ${h3('§ 3 Preise und Zahlungsbedingungen')}
+      ${p('<strong style="color:var(--text)">Atelier-Plan:</strong> 49€ / Monat zzgl. einmaligem Setup 99€.<br><strong style="color:var(--text)">Maison-Plan:</strong> 99€ / Monat zzgl. einmaligem Setup 149€.<br>Gemäß § 19 UStG wird keine Umsatzsteuer erhoben. Google Ads Budget wird separat bei Google abgebucht. Zahlung monatlich im Voraus über Stripe.')}
       ${h3('§ 4 Kündigung')}
       ${p('Monatlich kündbar zum Monatsende über das Stripe-Kundenportal oder per E-Mail an kontakt@aiwakeel.ai.')}
-      ${h3('§ 5 Haftung')}
+      ${h3('§ 5 Datenlöschung bei Kündigung')}
+      ${p('Bei Kündigung werden alle personenbezogenen Daten nach 3 Jahren gelöscht. Auf Antrag des Nutzers erfolgt eine sofortige Löschung gemäß Art. 17 DSGVO über den Dashboard-Bereich „Meine Daten".')}
+      ${h3('§ 6 Haftung')}
       ${p('Unbeschränkt bei Vorsatz/grober Fahrlässigkeit. Bei leichter Fahrlässigkeit nur bei Kardinalpflichtverletzung, max. 3 Monatsgebühren. Keine Garantie für spez. Kampagnenergebnisse.')}
-      ${h3('§ 6 Anwendbares Recht')}
+      ${h3('§ 7 Anwendbares Recht')}
       ${p('Deutsches Recht. Gerichtsstand Köln für Kaufleute.')}
+      ${h3('Stand: Juni 2026')}
     `),
     widerruf: s('Widerrufsbelehrung', `
       ${h3('Widerrufsrecht')}
@@ -1253,20 +1362,24 @@ function showLegal(type) {
       ${p('Canatay Cakmak · CanTurSoft · Dompfaffenweg 51a · 50829 Köln · kontakt@aiwakeel.ai · +49 172 7419318')}
       ${h3('⚠ Erlöschen des Widerrufsrechts')}
       ${p('<strong style="color:var(--gold)">Gemäß § 356 Abs. 5 BGB erlischt das Widerrufsrecht,</strong> sobald der Anbieter die Dienstleistung vollständig erbracht hat und Sie der Ausführung ausdrücklich zugestimmt und Ihre Kenntnis über den Verlust des Widerrufsrechts bestätigt haben.')}
-      ${h3('Folgen')}
-      ${p('Rückzahlung innerhalb von 14 Tagen auf gleichem Zahlungsweg.')}
+      ${h3('Folgen des Widerrufs')}
+      ${p('Rückzahlung aller erhaltenen Zahlungen innerhalb von 14 Tagen auf gleichem Zahlungsweg.')}
+      ${h3('Stand: Juni 2026')}
     `),
     cookies: s('Cookie-Richtlinie', `
       ${h3('1. Technisch notwendig')}
-      ${p('<strong style="color:var(--text)">sessionStorage:</strong> Onboarding-Daten, Sitzungsdauer. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.<br><strong style="color:var(--text)">localStorage:</strong> Cookie-Consent mit Zeitstempel, 12 Monate. Rechtsgrundlage: Art. 6 Abs. 1 lit. c DSGVO.')}
-      ${h3('2. Optional (nur mit Einwilligung)')}
-      ${p('<strong style="color:var(--text)">Google Fonts:</strong> Google Ireland Limited. IP-Übermittlung, keine Cookies. Widerruf jederzeit.<br><strong style="color:var(--text)">Google OAuth:</strong> Google Ireland Limited. Authentifizierungscookies nach Google-Richtlinie.<br><strong style="color:var(--text)">Stripe:</strong> Stripe Payments Europe Ltd. Betrugsschutz-Cookies, Session bis 2 Jahre.')}
-      ${h3('3. Keine Werbe-Cookies')}
+      ${p('<strong style="color:var(--text)">localStorage (Consent):</strong> Cookie-Entscheidung + Zeitstempel. 12 Monate. Art. 6 Abs. 1 lit. c DSGVO.<br><strong style="color:var(--text)">PocketBase Auth-Token:</strong> Authentifizierungstoken im localStorage. Sitzungsdauer. Art. 6 Abs. 1 lit. b DSGVO.')}
+      ${h3('2. WebSocket (PocketBase Realtime)')}
+      ${p('Persistente Verbindung zu wss://ads.aiwakeel.ai für Echtzeit-Datensynchronisation. Keine Cookies. Keine Drittanbieter. Art. 6 Abs. 1 lit. b DSGVO.')}
+      ${h3('3. Optional (nur mit Einwilligung)')}
+      ${p('<strong style="color:var(--text)">Google Fonts:</strong> Google Ireland Limited. IP-Übermittlung, keine Cookies. Widerruf jederzeit.<br><strong style="color:var(--text)">Stripe:</strong> Stripe Payments Europe Ltd. Betrugsschutz-Cookies. Art. 6 Abs. 1 lit. b DSGVO.')}
+      ${h3('4. Keine Werbe-Cookies')}
       ${p('Kein Tracking, keine Analyse, keine Werbenetzwerke.')}
-      ${h3('4. Kontakt')}
-      ${p('kontakt@aiwakeel.ai')}
-    `)}
-  ;
+      ${h3('5. Kontakt')}
+      ${p('kontakt@aiwakeel.ai · Canatay Cakmak, CanTurSoft, Dompfaffenweg 51a, 50829 Köln')}
+      ${h3('Stand: Juni 2026')}
+    `)};
+  
   if (!c[type]) return;
   document.getElementById('modal-text').innerHTML = c[type];
   document.getElementById('legal-modal').style.display = 'block';
