@@ -409,7 +409,7 @@
   <!-- #99 UPGRADE BANNER (shown for Atelier users) -->
   <div id="upgrade-banner" role="complementary" aria-label="Upgrade-Angebot">
     <div class="upgrade-title">&#10022; Maison freischalten</div>
-    <p class="upgrade-text">WhatsApp-Direktsteuerung, Echtzeit-Alerts und tägliche Berichte direkt auf dein Handy. Upgrade auf Maison für nur 30€ mehr pro Monat.</p>
+    <p class="upgrade-text">WhatsApp-Direktsteuerung, Echtzeit-Alerts und tägliche Berichte direkt auf dein Handy. Upgrade auf Maison für nur 50€ mehr pro Monat.</p>
     <button class="upgrade-btn" onclick="openStripePortal()">Jetzt upgraden &rarr;</button>
   </div>
 
@@ -439,7 +439,7 @@
       </div>
       <div style="width:1px;background:var(--border2)"></div>
       <div class="opt-item">
-        <span class="opt-val" id="next-opt">07:00</span>
+        <span class="opt-val" id="next-opt">08:00</span>
         <span class="opt-label">Nächste Optimierung</span>
       </div>
     </div>
@@ -710,10 +710,10 @@ function updateOptTimes() {
   if (now >= next) next.setDate(next.getDate() + 1);
 
   const isToday = next.getDate() === new Date(Date.now() + 86400000).getDate() ? 'Morgen' : 'Heute';
-  document.getElementById('next-opt').textContent = `${isToday} 07:00`;
+  document.getElementById('next-opt').textContent = `${isToday} 08:00`;
 
-  // Last optimization: if before 7am today, yesterday 07:00, else today 07:00
-  const lastOpt = now.getHours() >= 7 ? 'Heute 07:00' : 'Gestern 07:00';
+  // Last optimization: if before 7am today, yesterday 08:00, else today 08:00
+  const lastOpt = now.getHours() >= 8 ? 'Heute 08:00' : 'Gestern 08:00';
   document.getElementById('last-opt').textContent = lastOpt;
 }
 
@@ -906,7 +906,7 @@ function loadNotifications(user) {
   const list = document.getElementById('notif-list');
   const notifs = [];
   if (!user.budget || user.budget === 0) notifs.push({ type:'warn', text:'Kein Budget gesetzt – Agent kann keine Kampagnen starten.', time:'Jetzt' });
-  if (user.agent_status === 'active') notifs.push({ type:'ok', text:'Agent läuft – nächste Optimierung heute um 07:00 Uhr.', time:'Täglich' });
+  if (user.agent_status === 'active') notifs.push({ type:'ok', text:'Agent läuft – nächste Optimierung heute um 08:00 Uhr.', time:'Täglich' });
   if (user.plan !== 'premium') notifs.push({ type:'info', text:'Upgrade auf Maison verfügbar – WhatsApp-Berichte und Echtzeit-Alerts.', time:'Angebot' });
 
   if (!notifs.length) return;
