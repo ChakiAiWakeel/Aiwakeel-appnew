@@ -554,16 +554,14 @@
   <div class="card" style="margin-top:20px">
     <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:300;margin-bottom:16px">Support</h2>
     <div class="support-row">
-      <button class="support-btn" onclick="openSupport('whatsapp')" aria-label="WhatsApp Support">
-        <span>&#128172;</span> WhatsApp
-      </button>
-      <button class="support-btn" onclick="openSupport('email')" aria-label="E-Mail Support">
-        <span>&#128231;</span> E-Mail
-      </button>
-      <button class="support-btn" onclick="openFeedback()" aria-label="Feedback geben">
-        <span>&#11088;</span> Feedback
-      </button>
+      <button class="support-btn" onclick="openSupport('whatsapp')">WhatsApp</button>
+      <button class="support-btn" onclick="openSupport('email')">E-Mail</button>
+      <button class="support-btn" onclick="openFeedback()">Feedback</button>
     </div>
+    <button onclick="exportUserData()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-size:10px;text-transform:uppercase;letter-spacing:.1em;cursor:pointer;font-family:var(--font-sans);transition:all .3s;margin-top:10px;border-radius:2px;">
+      &#8681; Daten exportieren (JSON)
+    </button>
+  </div>
   </div>
 
 </div>
@@ -1199,9 +1197,6 @@ function showToast(msg, isError = false, isSuccess = false) {
   clearTimeout(t._timer);
   t._timer = setTimeout(() => t.classList.remove('show'), 3200);
 }
-<button onclick="exportUserData()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-size:10px;text-transform:uppercase;letter-spacing:.1em;cursor:pointer;font-family:var(--font-sans);transition:all .3s;margin-top:10px;border-radius:2px;">
-  &#8681; Daten exportieren (JSON)
-</button>
 // =========================================================
 // LEGAL TEXTS (full, DSGVO-compliant - #9)
 // =========================================================
