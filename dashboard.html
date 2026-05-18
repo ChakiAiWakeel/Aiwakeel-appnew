@@ -814,18 +814,22 @@ function renderChart(data, days = 7) {
     ],
     chart: { height: 200, toolbar: { show: false }, background: 'transparent', stacked: false, animations: { enabled: true, easing: 'easeinout', speed: 600 } },
     colors: ['#C9A84C', '#F0EDE8'],
-    stroke: { curve: 'smooth', width: [2, 2] },
+    // GSC nutzt gerade Linien (straight) anstatt weicher Kurven (smooth)
+    stroke: { curve: 'straight', width: [2, 2] },
     fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: [0.35, 0], opacityTo: [0, 0] } },
     grid: { show: false },
     xaxis: {
       categories: sliced.map(r => {
-        // Schutzschild: Falls das Datum fehlt, nimm das aktuelle
         const dStr = r.created ? String(r.created).replace(' ', 'T') : new Date().toISOString();
         return new Date(dStr).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
       }),
       labels: { style: { colors: Array(sliced.length).fill('rgba(240,237,232,0.28)'), fontSize: '9px', fontFamily: 'DM Sans, system-ui' } }
     },
-    yaxis: { show: false },
+    // HIER IST DER GSC-TRICK: Zwei voneinander unabhängige Skalierungen!
+    yaxis: [
+      { show: false, min: 0 }, // Eigene Skalierung für Impressionen
+      { show: false, min: 0 }  // Eigene Skalierung für Klicks
+    ],
     dataLabels: { enabled: false },
     tooltip: {
       theme: 'dark',
