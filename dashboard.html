@@ -1199,7 +1199,9 @@ function showToast(msg, isError = false, isSuccess = false) {
   clearTimeout(t._timer);
   t._timer = setTimeout(() => t.classList.remove('show'), 3200);
 }
-
+<button onclick="exportUserData()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-size:10px;text-transform:uppercase;letter-spacing:.1em;cursor:pointer;font-family:var(--font-sans);transition:all .3s;margin-top:10px;border-radius:2px;">
+  &#8681; Daten exportieren (JSON)
+</button>
 // =========================================================
 // LEGAL TEXTS (full, DSGVO-compliant - #9)
 // =========================================================
@@ -1285,6 +1287,33 @@ function closeModal(e) {
 const confStyle = document.createElement('style');
 confStyle.textContent = '@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(200px) rotate(720deg);opacity:0}}';
 document.head.appendChild(confStyle);
+// --- JSON EXPORT (DSGVO Art. 20) ---
+async function exportUserData() {
+  const user = pb.authStore.record || pb.authStore.model;
+  const reports = await pb.collection('daily_reports').getFullList({ filter: `user = "${user.id}"`, sort: '-created' });
+  const exportData = { user, reports };
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `AiWakeel_Daten_${user.email}.json`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast('✦ Download gestartet', false, true);
+}
+
+// --- ACCOUNT LÖSCHUNG (DSGVO Art. 17) ---
+async function executeAccountDeletion() {
+  const user = pb.authStore.record || pb.authStore.model;
+  try {
+    await fetch('https://n8n.aiwakeel.ai/webhook/delete-account', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: user.id, email: user.email })
+    });
+    pb.authStore.clear();
+    window.location.replace('https://aiwakeel.ai?deleted=1');
+  } catch(e) { showToast('Fehler bei der Löschung', true); }
+}
 </script>
 </body>
 </html>
