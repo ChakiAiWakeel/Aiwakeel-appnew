@@ -932,23 +932,6 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
     <div class="faq-item reveal"><div class="faq-question" onclick="toggleFaq(this)" role="button" aria-expanded="false">Wie funktioniert die WhatsApp-Steuerung? <span class="faq-icon" aria-hidden="true">+</span></div><div class="faq-answer">Im Premium-Plan stellt der Agent proaktive Updates per WhatsApp zu und nimmt Befehle wie „Budget erhöhen" direkt entgegen.</div></div>
   </div>
 
-  <div class="testimonials-wrap">
-    <div class="testi-header reveal">Ergebnisse sprechen.</div>
-    <div class="testi-subhead reveal">Echte Kunden · Verifizierte Resultate</div>
-    <div class="testi-filters reveal" role="tablist" aria-label="Filter">
-      <button class="testi-filter active" onclick="filterTesti('alle',this)" role="tab" aria-selected="true">Alle</button>
-      <button class="testi-filter" onclick="filterTesti('immobilien',this)" role="tab" aria-selected="false">Immobilien</button>
-      <button class="testi-filter" onclick="filterTesti('beauty',this)" role="tab" aria-selected="false">Beauty</button>
-    </div>
-    <div class="testi-track" id="testi-track" role="region" aria-label="Kundenstimmen" aria-live="polite">
-      <div class="testi-card" data-cat="immobilien"><div class="testi-quote-mark" aria-hidden="true">"</div><div class="testi-stars" aria-label="5 von 5 Sternen">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Der Agent identifizierte in 48h ein Keyword das wir seit Jahren übersehen haben. Cost-per-Lead sank um 61%."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar av-gold" aria-hidden="true">KA</div><div><div class="testi-name">Khalid Al-Rashidi</div><div class="testi-role">Immobilienmakler · Dubai</div></div><div class="testi-metric"><span class="testi-metric-num">-61%</span><span class="testi-metric-label">Cost-per-Lead</span></div></div></div>
-      <div class="testi-card" data-cat="beauty"><div class="testi-quote-mark" aria-hidden="true">"</div><div class="testi-stars" aria-label="5 von 5 Sternen">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Drei Kliniken, ein Agent – verwaltet alles gleichzeitig und meldet täglich per WhatsApp. Wie ein echter Mitarbeiter."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar av-teal" aria-hidden="true">SN</div><div><div class="testi-name">Dr. Soraya Nasseri</div><div class="testi-role">Geschäftsführerin · Beauty Clinic GmbH</div></div><div class="testi-metric"><span class="testi-metric-num">3x</span><span class="testi-metric-label">Mehr Anfragen</span></div></div></div>
-      <div class="testi-card" data-cat="immobilien"><div class="testi-quote-mark" aria-hidden="true">"</div><div class="testi-stars" aria-label="5 von 5 Sternen">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Streuverluste eliminiert, Budget optimiert – 40% mehr Umsatz bei gleichem Einsatz."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar av-slate" aria-hidden="true">MH</div><div><div class="testi-name">Marcus Hoffmann</div><div class="testi-role">Unternehmer · München</div></div><div class="testi-metric"><span class="testi-metric-num">+40%</span><span class="testi-metric-label">Mehr Umsatz</span></div></div></div>
-      <div class="testi-card" data-cat="beauty"><div class="testi-quote-mark" aria-hidden="true">"</div><div class="testi-stars" aria-label="5 von 5 Sternen">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„AiWakeel versteht beide Märkte – DACH und Gulf. Sichtbarkeit verdoppelt in 3 Wochen."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar av-rose" aria-hidden="true">LI</div><div><div class="testi-name">Layla Ibrahim</div><div class="testi-role">Inhaberin · Al-Nour Trading GmbH</div></div><div class="testi-metric"><span class="testi-metric-num">x2</span><span class="testi-metric-label">Sichtbarkeit</span></div></div></div>
-    </div>
-    <div class="testi-dots" id="testi-dots" role="tablist" aria-label="Testimonial Navigation"></div>
-  </div>
-
   <footer class="footer">
     <div class="footer-fade"></div>
     <div class="footer-login"><a href="login.html">&rarr; Kunden-Login · Dashboard</a></div>
@@ -1183,11 +1166,9 @@ document.addEventListener('DOMContentLoaded', () => {
   playIntro();
   updateBudget(state.budget || 300);
   buildDots();
-  startTestiTimer();
   initSlide();
   initScrollReveal();
   initKeyboardNav();
-  initTestiSwipe();
   initScrollDimming();
   initScrollProgress();
   initOfflineDetection();
@@ -1957,17 +1938,6 @@ function showLegal(type){
   document.getElementById('legal-modal').style.display='block';
 }
 function closeModal(e){if(!e||e.target.classList.contains('modal'))document.getElementById('legal-modal').style.display='none';}
-
-// =========================================================
-// TESTIMONIALS
-// =========================================================
-let tIdx=0,tTimer;
-function buildDots(){const track=document.getElementById('testi-track'),dots=document.getElementById('testi-dots');dots.innerHTML='';[...track.querySelectorAll('.testi-card:not(.hidden)')].forEach((_,i)=>{const d=document.createElement('div');d.className='testi-dot'+(i===0?' active':'');d.setAttribute('role','tab');d.setAttribute('aria-selected',String(i===0));d.onclick=()=>{scrollT(i);resetT();};dots.appendChild(d);});}
-function filterTesti(cat,btn){document.querySelectorAll('.testi-filter').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});btn.classList.add('active');btn.setAttribute('aria-selected','true');document.querySelectorAll('.testi-card').forEach(c=>c.classList.toggle('hidden',cat!=='alle'&&c.dataset.cat!==cat));tIdx=0;const t=document.getElementById('testi-track');t.style.scrollBehavior='auto';t.scrollLeft=0;requestAnimationFrame(()=>{t.style.scrollBehavior='';});buildDots();resetT();}
-function scrollT(idx){const t=document.getElementById('testi-track');const vis=[...t.querySelectorAll('.testi-card:not(.hidden)')];if(!vis[idx])return;t.scrollTo({left:vis[idx].offsetLeft,behavior:'smooth'});tIdx=idx;document.querySelectorAll('.testi-dot').forEach((d,i)=>{d.classList.toggle('active',i===idx);d.setAttribute('aria-selected',String(i===idx));});}
-function startTestiTimer(){resetT();document.getElementById('testi-track').addEventListener('scroll',()=>{const t=document.getElementById('testi-track');const vis=[...t.querySelectorAll('.testi-card:not(.hidden)')];const i=vis.findIndex(c=>c.offsetLeft>=t.scrollLeft-10);if(i>=0&&i!==tIdx){tIdx=i;document.querySelectorAll('.testi-dot').forEach((d,j)=>{d.classList.toggle('active',j===i);d.setAttribute('aria-selected',String(j===i));});}},{passive:true});}
-function resetT(){clearInterval(tTimer);tTimer=setInterval(()=>{const vis=[...document.querySelectorAll('.testi-card:not(.hidden)')];if(!vis.length)return;tIdx=(tIdx+1)%vis.length;scrollT(tIdx);},4500);}
-function initTestiSwipe(){const track=document.getElementById('testi-track');let sx=0,dragging=false;track.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;dragging=true;},{passive:true});track.addEventListener('touchend',e=>{if(!dragging)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>50){const vis=[...track.querySelectorAll('.testi-card:not(.hidden)')];tIdx=dx<0?Math.min(tIdx+1,vis.length-1):Math.max(tIdx-1,0);scrollT(tIdx);resetT();}dragging=false;},{passive:true});}
 </script>
 </body>
 </html>
