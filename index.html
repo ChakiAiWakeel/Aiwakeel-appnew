@@ -135,6 +135,9 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .card{transition:box-shadow 0.3s ease,border-color 0.5s ease}
 .card.step-glow{border-color:rgba(201,168,76,0.28);box-shadow:0 40px 100px rgba(0,0,0,.8),inset 0 0 60px rgba(201,168,76,0.03),0 0 0 1px rgba(201,168,76,0.08)}
 
+/* METRIC COUNTUP */
+.testi-metric-num{font-family:var(--font-serif);font-size:22px;color:var(--gold);display:block;transition:opacity 0.3s}
+
 /* COMPARE TABLE */
 .compare-table .col-ai-cell{background:rgba(201,168,76,0.05);border-left:1px solid rgba(201,168,76,0.12);border-right:1px solid rgba(201,168,76,0.12)}
 .compare-table thead .col-ai-head{background:rgba(201,168,76,0.08);border-left:1px solid rgba(201,168,76,0.2);border-right:1px solid rgba(201,168,76,0.2);border-top:1px solid rgba(201,168,76,0.2)}
@@ -461,6 +464,38 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
 .faq-item.active .faq-answer{max-height:300px;padding-bottom:20px}
 .faq-icon{font-size:14px;color:var(--gold);transition:transform .3s;flex-shrink:0;opacity:.7}
 .faq-item.active .faq-icon{transform:rotate(45deg)}
+
+/* TESTIMONIALS */
+.testi-header{font-family:var(--font-serif);font-size:24px;text-align:center;color:var(--gold);letter-spacing:.05em;margin:44px 0 6px}
+.testi-subhead{text-align:center;font-size:10px;color:var(--text-dim);letter-spacing:.2em;text-transform:uppercase;margin-bottom:18px}
+.testi-filters{display:flex;justify-content:center;gap:8px;margin-bottom:18px}
+.testi-filter{padding:5px 14px;border:1px solid var(--border2);border-radius:20px;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);cursor:pointer;transition:.3s;background:none;font-family:var(--font-sans)}
+.testi-filter.active{border-color:var(--gold);color:var(--gold);background:var(--gold-dim)}
+.testi-track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:10px;scrollbar-width:none;scroll-behavior:smooth}
+.testi-track::-webkit-scrollbar{display:none}
+.testi-card{flex:0 0 calc(100% - 2px);scroll-snap-align:start;background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:24px 20px;position:relative;overflow:hidden;transition:transform .3s ease,box-shadow .3s ease}
+.testi-card:hover{transform:translateY(-2px);box-shadow:0 16px 48px rgba(0,0,0,.6),0 0 0 1px rgba(201,168,76,.1)}
+.testi-card.hidden{display:none}
+.testi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.testi-quote-mark{font-family:var(--font-serif);font-size:64px;line-height:.8;color:var(--gold);opacity:.1;position:absolute;top:16px;right:16px;pointer-events:none}
+.testi-stars{color:var(--gold);font-size:11px;letter-spacing:3px;margin-bottom:14px}
+.testi-text{font-family:var(--font-serif);font-size:15px;font-weight:300;font-style:italic;color:var(--text);line-height:1.75;margin-bottom:18px;position:relative;z-index:1}
+.testi-divider{height:1px;background:var(--border2);margin-bottom:14px}
+.testi-author{display:flex;align-items:center;gap:12px}
+.testi-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0;font-family:var(--font-serif)}
+.av-gold{background:rgba(201,168,76,.18);border:1px solid rgba(201,168,76,.4);color:var(--gold-light)}
+.av-teal{background:rgba(32,178,170,.12);border:1px solid rgba(32,178,170,.3);color:#7fffd4}
+.av-slate{background:rgba(100,149,237,.12);border:1px solid rgba(100,149,237,.3);color:#b0c4de}
+.av-rose{background:rgba(188,143,143,.15);border:1px solid rgba(188,143,143,.35);color:#e8c5c5}
+.testi-name{font-size:13px;color:var(--text);font-weight:500}
+.testi-role{font-size:9px;color:var(--text-dim);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+.testi-metric{margin-left:auto;text-align:right}
+.testi-metric-num{font-family:var(--font-serif);font-size:22px;color:var(--gold);display:block}
+.testi-metric-label{font-size:8px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em}
+.testi-dots{display:flex;justify-content:center;gap:6px;margin-top:14px}
+.testi-dot{width:5px;height:5px;border-radius:50%;background:var(--border);transition:.3s;cursor:pointer}
+.testi-dot.active{background:var(--gold);width:18px;border-radius:3px}
+.testimonials-wrap{margin-bottom:60px}
 
 /* COOKIE */
 #cookie-popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:99999;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(18px) brightness(0.35);-webkit-backdrop-filter:blur(18px) brightness(0.35)}
@@ -897,6 +932,23 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
     <div class="faq-item reveal"><div class="faq-question" onclick="toggleFaq(this)" role="button" aria-expanded="false">Wie funktioniert die WhatsApp-Steuerung? <span class="faq-icon" aria-hidden="true">+</span></div><div class="faq-answer">Im Premium-Plan stellt der Agent proaktive Updates per WhatsApp zu und nimmt Befehle wie „Budget erhöhen" direkt entgegen.</div></div>
   </div>
 
+  <div class="testimonials-wrap">
+    <div class="testi-header reveal">Ergebnisse sprechen.</div>
+    <div class="testi-subhead reveal">Echte Kunden · Verifizierte Resultate</div>
+    <div class="testi-filters reveal" role="tablist" aria-label="Filter">
+      <button class="testi-filter active" onclick="filterTesti('alle',this)" role="tab" aria-selected="true">Alle</button>
+      <button class="testi-filter" onclick="filterTesti('immobilien',this)" role="tab" aria-selected="false">Immobilien</button>
+      <button class="testi-filter" onclick="filterTesti('beauty',this)" role="tab" aria-selected="false">Beauty</button>
+    </div>
+    <div class="testi-track" id="testi-track" role="region" aria-label="Kundenstimmen" aria-live="polite">
+      <div class="testi-card" data-cat="immobilien"><div class="testi-quote-mark" aria-hidden="true">"</div><div class="testi-stars" aria-label="5 von 5 Sternen">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Der Agent identifizierte in 48h ein Keyword das wir seit Jahren übersehen haben. Cost-per-Lead sank um 61%."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar av-gold" aria-hidden="true">KA</div><div><div class="testi-name">Khalid Al-Rashidi</div><div class="testi-role">Immobilienmakler · Dubai</div></div><div class="testi-metric"><span class="testi-metric-num">-61%</span><span class="testi-metric-label">Cost-per-Lead</span></div></div></div>
+      <div class="testi-card" data-cat="beauty"><div class="testi-quote-mark" aria-hidden="true">"</div><div class="testi-stars" aria-label="5 von 5 Sternen">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Drei Kliniken, ein Agent – verwaltet alles gleichzeitig und meldet täglich per WhatsApp. Wie ein echter Mitarbeiter."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar av-teal" aria-hidden="true">SN</div><div><div class="testi-name">Dr. Soraya Nasseri</div><div class="testi-role">Geschäftsführerin · Beauty Clinic GmbH</div></div><div class="testi-metric"><span class="testi-metric-num">3x</span><span class="testi-metric-label">Mehr Anfragen</span></div></div></div>
+      <div class="testi-card" data-cat="immobilien"><div class="testi-quote-mark" aria-hidden="true">"</div><div class="testi-stars" aria-label="5 von 5 Sternen">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„Streuverluste eliminiert, Budget optimiert – 40% mehr Umsatz bei gleichem Einsatz."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar av-slate" aria-hidden="true">MH</div><div><div class="testi-name">Marcus Hoffmann</div><div class="testi-role">Unternehmer · München</div></div><div class="testi-metric"><span class="testi-metric-num">+40%</span><span class="testi-metric-label">Mehr Umsatz</span></div></div></div>
+      <div class="testi-card" data-cat="beauty"><div class="testi-quote-mark" aria-hidden="true">"</div><div class="testi-stars" aria-label="5 von 5 Sternen">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="testi-text">„AiWakeel versteht beide Märkte – DACH und Gulf. Sichtbarkeit verdoppelt in 3 Wochen."</div><div class="testi-divider"></div><div class="testi-author"><div class="testi-avatar av-rose" aria-hidden="true">LI</div><div><div class="testi-name">Layla Ibrahim</div><div class="testi-role">Inhaberin · Al-Nour Trading GmbH</div></div><div class="testi-metric"><span class="testi-metric-num">x2</span><span class="testi-metric-label">Sichtbarkeit</span></div></div></div>
+    </div>
+    <div class="testi-dots" id="testi-dots" role="tablist" aria-label="Testimonial Navigation"></div>
+  </div>
+
   <footer class="footer">
     <div class="footer-fade"></div>
     <div class="footer-login"><a href="login.html">&rarr; Kunden-Login · Dashboard</a></div>
@@ -1131,9 +1183,11 @@ document.addEventListener('DOMContentLoaded', () => {
   playIntro();
   updateBudget(state.budget || 300);
   buildDots();
+  startTestiTimer();
   initSlide();
   initScrollReveal();
   initKeyboardNav();
+  initTestiSwipe();
   initScrollDimming();
   initScrollProgress();
   initOfflineDetection();
@@ -1287,6 +1341,7 @@ function initMetricCountup() {
       requestAnimationFrame(step);
     });
   }, {threshold:0.6});
+  document.querySelectorAll('.testi-metric-num').forEach(t=>obs.observe(t));
 }
 function initScrollProgress() {
   const bar=document.getElementById('scroll-progress'); if (!bar) return;
@@ -1902,6 +1957,17 @@ function showLegal(type){
   document.getElementById('legal-modal').style.display='block';
 }
 function closeModal(e){if(!e||e.target.classList.contains('modal'))document.getElementById('legal-modal').style.display='none';}
+
+// =========================================================
+// TESTIMONIALS
+// =========================================================
+let tIdx=0,tTimer;
+function buildDots(){const track=document.getElementById('testi-track'),dots=document.getElementById('testi-dots');dots.innerHTML='';[...track.querySelectorAll('.testi-card:not(.hidden)')].forEach((_,i)=>{const d=document.createElement('div');d.className='testi-dot'+(i===0?' active':'');d.setAttribute('role','tab');d.setAttribute('aria-selected',String(i===0));d.onclick=()=>{scrollT(i);resetT();};dots.appendChild(d);});}
+function filterTesti(cat,btn){document.querySelectorAll('.testi-filter').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});btn.classList.add('active');btn.setAttribute('aria-selected','true');document.querySelectorAll('.testi-card').forEach(c=>c.classList.toggle('hidden',cat!=='alle'&&c.dataset.cat!==cat));tIdx=0;const t=document.getElementById('testi-track');t.style.scrollBehavior='auto';t.scrollLeft=0;requestAnimationFrame(()=>{t.style.scrollBehavior='';});buildDots();resetT();}
+function scrollT(idx){const t=document.getElementById('testi-track');const vis=[...t.querySelectorAll('.testi-card:not(.hidden)')];if(!vis[idx])return;t.scrollTo({left:vis[idx].offsetLeft,behavior:'smooth'});tIdx=idx;document.querySelectorAll('.testi-dot').forEach((d,i)=>{d.classList.toggle('active',i===idx);d.setAttribute('aria-selected',String(i===idx));});}
+function startTestiTimer(){resetT();document.getElementById('testi-track').addEventListener('scroll',()=>{const t=document.getElementById('testi-track');const vis=[...t.querySelectorAll('.testi-card:not(.hidden)')];const i=vis.findIndex(c=>c.offsetLeft>=t.scrollLeft-10);if(i>=0&&i!==tIdx){tIdx=i;document.querySelectorAll('.testi-dot').forEach((d,j)=>{d.classList.toggle('active',j===i);d.setAttribute('aria-selected',String(j===i));});}},{passive:true});}
+function resetT(){clearInterval(tTimer);tTimer=setInterval(()=>{const vis=[...document.querySelectorAll('.testi-card:not(.hidden)')];if(!vis.length)return;tIdx=(tIdx+1)%vis.length;scrollT(tIdx);},4500);}
+function initTestiSwipe(){const track=document.getElementById('testi-track');let sx=0,dragging=false;track.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;dragging=true;},{passive:true});track.addEventListener('touchend',e=>{if(!dragging)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>50){const vis=[...track.querySelectorAll('.testi-card:not(.hidden)')];tIdx=dx<0?Math.min(tIdx+1,vis.length-1):Math.max(tIdx-1,0);scrollT(tIdx);resetT();}dragging=false;},{passive:true});}
 </script>
 </body>
 </html>
