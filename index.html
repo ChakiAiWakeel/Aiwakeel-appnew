@@ -575,11 +575,12 @@ input[type=range]::-webkit-slider-thumb:active{box-shadow:0 0 0 10px rgba(201,16
     <span>&#10022; Fortschritt gespeichert – weitermachen?</span>
     <button class="saved-btn" onclick="dismissSavedBanner()">Fortfahren &rarr;</button>
   </div>
-  <div id="page-header">
-    <div class="system-status">
-  <div class="live-dot"></div>
-  <span><strong>Online & Aktiv</strong></span>
-</div>
+<div id="page-header" style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px;">
+  
+  <div class="live-counter" style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 11px; letter-spacing: .08em; color: var(--text-muted); margin-bottom: 8px;">
+    <div class="live-dot"></div>
+    <span>System-Status: <strong>Online & Aktiv</strong></span>
+  </div>
     <p class="social-proof-disclaimer">Illustrative Beispiele · Keine Echtzeit-Daten</p>
     <div class="logo">
       <div class="logo-text glitch">AiWakeel</div>
